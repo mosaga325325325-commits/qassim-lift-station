@@ -629,6 +629,19 @@
 @media(max-width:1050px){.main-grid.review-grid{grid-template-columns:minmax(0,1fr)}}
 @media print {.main-grid.review-grid{display:block}.review-grid .specs-card{break-inside:avoid}.review-grid .log-card{margin-top:1rem}}
 
+#stationOperatingLevels{grid-column:1/-1;min-width:0;border-top:1px solid var(--s-edge);padding-top:10px;margin-top:5px;color:#203e47}
+#stationOperatingLevels[hidden]{display:none}
+#stationOperatingLevels .station-level-heading{display:flex;align-items:center;justify-content:space-between;gap:5px 16px;flex-wrap:wrap}
+#stationOperatingLevels h3{margin:0;font-size:.9rem}
+#stationOperatingLevels h3 small{font-size:.72rem;color:#526972;font-weight:400;margin-inline-start:.25rem;white-space:nowrap}
+#stationOperatingLevels .station-current{font-size:.78rem;color:#0c556b;display:inline-flex;align-items:center;gap:.3em}
+#stationOperatingLevels .station-current::before{content:"";width:7px;height:7px;background:#197891;transform:rotate(45deg);margin-inline-end:.2em}
+#stationOperatingLevels bdi{font-family:Consolas,monospace;font-weight:700;font-variant-numeric:tabular-nums}
+#stationLevelList{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,145px),1fr));list-style:none;gap:6px 14px;margin:8px 0 0;padding:0}
+#stationLevelList li{display:flex;align-items:center;gap:5px;min-width:0;font-size:.76rem}
+#stationLevelList li::before{content:"";flex:0 0 10px;border-top:3px dashed var(--level-color);filter:brightness(.75)}
+#stationLevelList bdi{margin-inline-start:auto;white-space:nowrap}
+
 
 </style>
 </head>
@@ -676,6 +689,60 @@
   </header>
 
   <main class="main-wrap">
+    <!-- ==================== 8 KPI CARDS ==================== -->
+    <section class="kpi-grid" aria-label="مؤشرات التشغيل">
+      <div id="kpiStatusCard" class="kpi-card status-normal">
+        <div class="status-head">
+          <span class="kpi-label">حالة المنظومة</span>
+          <span id="kpiStatusDot" class="status-dot dot-green"></span>
+        </div>
+        <div id="kpiStatusTitle" class="kpi-val" style="color:#065f46;font-size:0.9rem;">تعمل بانتظام</div>
+        <div id="kpiStatusSub" class="kpi-sub" style="color:#047857;">لا توجد إنذارات</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-label">منسوب البيارة الحالي</div>
+        <div id="kpiLevel" class="kpi-val" dir="ltr" style="text-align:right;">-6.36 m</div>
+        <div id="kpiLevelAbs" class="kpi-sub">منسوب: 589.70 م</div>
+      </div>
+
+      <div class="kpi-card top-sky">
+        <div class="kpi-label">المضخات النشطة (2+1)</div>
+        <div id="kpiPump" class="kpi-val">في الانتظار</div>
+        <div id="kpiPumpRpm" class="kpi-sub">التناوب المتوازن</div>
+      </div>
+
+      <div class="kpi-card top-cyan">
+        <div class="kpi-label">التدفق والسرعة</div>
+        <div id="kpiFlow" class="kpi-val">0.0 ل/ث</div>
+        <div id="kpiVel" class="kpi-sub">0.00 م/ث (ID 123.4 مم)</div>
+      </div>
+
+      <div class="kpi-card top-indigo">
+        <div class="kpi-label">الرفع الكلي عند المضخة</div>
+        <div id="kpiTdh" class="kpi-val">11.4 م</div>
+        <div id="kpiPressure" class="kpi-sub">شامل فواقد الفرع والخط</div>
+      </div>
+
+      <div class="kpi-card top-teal">
+        <div class="kpi-label">مخزون خزانات GLS</div>
+        <div id="kpiTanks" class="kpi-val">32.0 م³</div>
+        <div id="kpiTanksPct" class="kpi-sub">16.0% من 200 م³</div>
+      </div>
+
+      <div class="kpi-card top-rose">
+        <div class="kpi-label">آخر موعد آمن للوايت</div>
+        <div id="kpiSafeWindow" class="kpi-val" style="color:var(--qu-green);">آمن (&gt; 8 س)</div>
+        <div id="kpiSafeSub" class="kpi-sub">زمن وصول وتجهيز: 60 د</div>
+      </div>
+
+      <div class="kpi-card top-amber">
+        <div class="kpi-label">الدورات / رحلات الوايت</div>
+        <div id="kpiCycles" class="kpi-val">0 دورة | 0 مكتملة</div>
+        <div id="kpiSimClock" class="kpi-sub">اليوم 1 — 08:00</div>
+      </div>
+    </section>
+
 <section id="stationStudio" class="studio" aria-labelledby="stationTitle">
   <header class="studio-header">
     <div class="studio-heading">
@@ -820,9 +887,16 @@
       </div>
       <div class="studio-layers" role="group" aria-label="طبقات العرض">
         <button type="button" id="stationSection" class="station-section" aria-pressed="true"><span>كشف القطاع الداخلي</span><i aria-hidden="true"></i></button>
-        <button type="button" id="stationLevels" class="station-section" aria-pressed="false"><span>إظهار المناسيب</span><i aria-hidden="true"></i></button>
+        <button type="button" id="stationLevels" class="station-section" aria-pressed="true" aria-controls="stationOperatingLevels stationViewCanvas"><span>إظهار المناسيب</span><i aria-hidden="true"></i></button>
       </div>
       <div class="studio-key" aria-label="ألوان الخطوط"><span><i class="dirty"></i>وارد</span><span><i class="lift"></i>طرد</span><span><i class="tanker"></i>تفريغ</span><span><i class="future"></i>مستقبلي</span></div>
+      <section id="stationOperatingLevels" aria-labelledby="stationLevelsTitle">
+        <div class="station-level-heading">
+          <h3 id="stationLevelsTitle">مستويات تشغيل البيارة <small>بالمتر من سطح الأرض</small></h3>
+          <span class="station-current">منسوب المياه الآن <bdi id="stationCurrentLevel" dir="ltr"></bdi> م</span>
+        </div>
+        <ul id="stationLevelList"></ul>
+      </section>
     </aside>
   </div>
   <div id="stationDiagram" hidden><div class="diagram-note station-pid-toolbar"><span>اتجاه التدفق من اليمين إلى اليسار. مرّر المؤشر فوق المكوّن لعرض بياناته.</span><button id="stationValveDetail" type="button" aria-pressed="false">تكبير غرفة المحابس</button></div><div class="svg-box">
@@ -1160,59 +1234,7 @@
       <div class="coords-text">MH-75: E 403152.302 | N 2921094.667</div>
     </section>
 
-    <!-- ==================== 8 KPI CARDS ==================== -->
-    <section class="kpi-grid">
-      <div id="kpiStatusCard" class="kpi-card status-normal">
-        <div class="status-head">
-          <span class="kpi-label">حالة المنظومة</span>
-          <span id="kpiStatusDot" class="status-dot dot-green"></span>
-        </div>
-        <div id="kpiStatusTitle" class="kpi-val" style="color:#065f46;font-size:0.9rem;">تعمل بانتظام</div>
-        <div id="kpiStatusSub" class="kpi-sub" style="color:#047857;">لا توجد إنذارات</div>
-      </div>
 
-      <div class="kpi-card">
-        <div class="kpi-label">منسوب البيارة الحالي</div>
-        <div id="kpiLevel" class="kpi-val" dir="ltr" style="text-align:right;">-6.36 m</div>
-        <div id="kpiLevelAbs" class="kpi-sub">منسوب: 589.70 م</div>
-      </div>
-
-      <div class="kpi-card top-sky">
-        <div class="kpi-label">المضخات النشطة (2+1)</div>
-        <div id="kpiPump" class="kpi-val">في الانتظار</div>
-        <div id="kpiPumpRpm" class="kpi-sub">التناوب المتوازن</div>
-      </div>
-
-      <div class="kpi-card top-cyan">
-        <div class="kpi-label">التدفق والسرعة</div>
-        <div id="kpiFlow" class="kpi-val">0.0 ل/ث</div>
-        <div id="kpiVel" class="kpi-sub">0.00 م/ث (ID 123.4 مم)</div>
-      </div>
-
-      <div class="kpi-card top-indigo">
-        <div class="kpi-label">الرفع الكلي عند المضخة</div>
-        <div id="kpiTdh" class="kpi-val">11.4 م</div>
-        <div id="kpiPressure" class="kpi-sub">شامل فواقد الفرع والخط</div>
-      </div>
-
-      <div class="kpi-card top-teal">
-        <div class="kpi-label">مخزون خزانات GLS</div>
-        <div id="kpiTanks" class="kpi-val">32.0 م³</div>
-        <div id="kpiTanksPct" class="kpi-sub">16.0% من 200 م³</div>
-      </div>
-
-      <div class="kpi-card top-rose">
-        <div class="kpi-label">آخر موعد آمن للوايت</div>
-        <div id="kpiSafeWindow" class="kpi-val" style="color:var(--qu-green);">آمن (&gt; 8 س)</div>
-        <div id="kpiSafeSub" class="kpi-sub">زمن وصول وتجهيز: 60 د</div>
-      </div>
-
-      <div class="kpi-card top-amber">
-        <div class="kpi-label">الدورات / رحلات الوايت</div>
-        <div id="kpiCycles" class="kpi-val">0 دورة | 0 مكتملة</div>
-        <div id="kpiSimClock" class="kpi-sub">اليوم 1 — 08:00</div>
-      </div>
-    </section>
 
     <!-- ==================== FLOW BALANCE + 24H HYDROGRAPH ==================== -->
     <section class="card mb-bar">
@@ -1431,6 +1453,7 @@ class StationViewport {
       face:(p,c)=>this.polygon(p,c),
       line:(p,c,w=1)=>this.polyline(p,c,w),
       flowing:(p,c)=>this.flow(p,c),
+      operatingLevels:(model,definitions)=>{this.levelAnnotation={model,definitions}},
       label:(x,y,z,str,key)=>this.captions.push({p:[x,y,z],str,key})
     };
     this.preset('overview');
@@ -1588,7 +1611,7 @@ class StationViewport {
     this.lastState=state;
     this.updateFlight(performance.now());
     if(!this.ctx || !this.setupCamera()) return;
-    this.frame++; this.queue=[]; this.captions=[];
+    this.frame++; this.queue=[]; this.captions=[]; this.levelAnnotation=null;
     const ctx=this.ctx;
     ctx.clearRect(0,0,this.w,this.h);
     this.drawScene(this.geometry,state);
@@ -1611,20 +1634,22 @@ class StationViewport {
         if(item.seal) { ctx.strokeStyle=item.c; ctx.lineWidth=.42; ctx.stroke() }
       }
     }
-    if(this.captions.length) this.drawLabels();
+    const levels=this.levelAnnotation && positionOperatingLevels(this,this.levelAnnotation);
+    if(this.captions.length) this.drawLabels(levels ? levels.reserved : []);
+    if(levels) levels.paint();
     if(this.flight) this.invalidate();
     if(this.frame%80===0) {
       for(const [key,mesh] of this.meshes) if(mesh.last<this.frame-4) this.meshes.delete(key);
     }
   }
-  drawLabels() {
+  drawLabels(reserved=[]) {
     const ctx=this.ctx;
     ctx.save();
     const compact=this.w<500, height=compact?22:26, offset=compact?14:24;
     const pad=compact?7:10, top=compact?32:37, bottom=this.h-(compact?35:40);
     ctx.font=(compact?'600 11px ':'600 12px ')+'Tahoma, Arial, sans-serif';
     ctx.textAlign='center'; ctx.textBaseline='middle';
-    const placed=[];
+    const placed=reserved.slice();
     for(const {p,str,key} of this.captions) {
       const [x,y]=this.project(p);
       if(x<0||x>this.w||y<0||y>this.h) continue;
@@ -1854,6 +1879,137 @@ class StationViewport {
       this.queue.push({type:2,p:[p],depth:p[2]+.34,c,w:width});
     }
   }
+}
+
+
+// Enqueue a screen-space annotation on the actual wet-well cut face.
+// The mesh and the snapshot use metres above the same zero datum.
+function drawOperatingLevels(g, model, definitions) {
+  if (model.section && model.levels && (model.view === 'well' || model.view === 'overview')) {
+    g.operatingLevels(model, definitions);
+  }
+}
+
+function positionOperatingLevels(viewport, {model, definitions}) {
+  const {ctx, w, h} = viewport;
+  const detailed = model.view === 'well';
+  // Match the visible water chord of drawWet, including its physical Z offset.
+  const z = 1.47 * Math.sin(Math.PI * .85);
+  const point = (x, elevation) => viewport.project([x, elevation, z]);
+  const marks = definitions.map(level => ({
+    ...level, outer:point(-10.26, level.value), inner:point(-9.14, level.value)
+  }));
+  if (!marks.length) return null;
+  const flowing = Number.isFinite(model.wellLevel);
+  const water = flowing ? {inner:point(-8.96, model.wellLevel), outer:point(-7.74, model.wellLevel)} : null;
+  const gaugeX = marks[0].outer[0], topY = marks[0].outer[1], lowY = marks[marks.length-1].outer[1];
+  const left = Math.min(gaugeX, marks[0].inner[0]), right = Math.max(gaugeX, marks[0].inner[0]);
+  const visibleGauge = right >= 0 && left <= w && lowY >= 0 && topY <= h;
+  const visibleWater = water && water.outer[1] >= 0 && water.outer[1] <= h &&
+    Math.max(water.inner[0], water.outer[0]) >= 0 && Math.min(water.inner[0], water.outer[0]) <= w;
+  if (!visibleGauge && !visibleWater) return null;
+
+  const pad = w < 500 ? 7 : 13;
+  const edgeY = w < 500 ? 42 : 48;
+  const gap = w < 500 ? 12 : 21;
+  const font = 'Tahoma, Arial, sans-serif';
+  const labelFont = '600 ' + (w < 500 ? 11 : 12) + 'px ' + font;
+  const valueFont = '600 ' + (w < 500 ? 10 : 12) + 'px Consolas, monospace';
+  const waterColor = '#63edff';
+  const valueText = n => n.toFixed(2).replace('-', '−') + ' م';
+  const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+  const reserved = [];
+  const gaugePoints = marks.flatMap(mark => [mark.outer,mark.inner]);
+  if (water) gaugePoints.push(water.outer,water.inner);
+  const xx = gaugePoints.map(p => p[0]), yy = gaugePoints.map(p => p[1]);
+  reserved.push({left:Math.min(...xx)-3,right:Math.max(...xx)+3,
+    y0:Math.min(...yy)-3,y1:Math.max(...yy)+3});
+  // Names stay in elevation order. Only the leaders fan out from their true
+  // elevations to the reading column; the threshold strokes never move apart.
+  function card(anchor, goesLeft, items, isWater) {
+    const x = anchor[0];
+    const room = Math.max(54, goesLeft ? x-pad-gap : w-pad-gap-x);
+    ctx.font = labelFont;
+    const widestName = Math.max(...items.map(t => ctx.measureText(t.label).width));
+    ctx.font = valueFont;
+    const widestValue = Math.max(...items.map(t => ctx.measureText(valueText(t.value)).width));
+    const singleWidth = Math.ceil(widestName + widestValue + 33);
+    const stacked = room < singleWidth;
+    const width = Math.min(stacked ? Math.ceil(Math.max(widestName, widestValue)+20) : singleWidth, room, w-2*pad);
+    const row = stacked ? 30 : 22;
+    const height = items.length*row + 4;
+    const x0 = clamp(goesLeft ? x-gap-width : x+gap, pad, w-pad-width);
+    const y0 = clamp(anchor[1]-height/2, edgeY, h-edgeY-height);
+    const box = {left:x0,right:x0+width,y0,y1:y0+height};
+    reserved.push(box);
+    return {box, items, row, stacked, goesLeft, isWater, widestValue};
+  }
+  const scaleLeft = marks[0].outer[0] <= marks[0].inner[0];
+  const cards = [];
+  ctx.save();
+  if (detailed && visibleGauge) cards.push(card([gaugeX,(topY+lowY)/2],scaleLeft,marks,false));
+  if (detailed && visibleWater) cards.push(card(water.outer,!scaleLeft,[
+    {value:model.wellLevel,outer:water.outer,label:'المياه الآن',color:waterColor}
+  ],true));
+  ctx.restore();
+
+  const stroke = (points, color, width, dash = []) => {
+    ctx.strokeStyle=color; ctx.lineWidth=width; ctx.setLineDash(dash); ctx.beginPath();
+    ctx.moveTo(...points[0]);
+    for(let i=1;i<points.length;i++) ctx.lineTo(...points[i]);
+    ctx.stroke();
+  };
+  function paintCard({box, items, row, stacked, goesLeft, isWater, widestValue}) {
+    const {left, right, y0, y1} = box;
+    const end = goesLeft ? right : left;
+    const elbow = end + (goesLeft ? 1 : -1)*5;
+    items.forEach((item,i) => {
+      const cy=y0+2+(i+.5)*row;
+      stroke([item.outer,[elbow,cy],[end,cy]],item.color,1);
+    });
+    ctx.beginPath(); ctx.roundRect(left,y0,right-left,y1-y0,5);
+    ctx.fillStyle='#102a36'; ctx.fill(); ctx.strokeStyle=isWater?'#3c91a1':'#48616c';
+    ctx.lineWidth=.8; ctx.stroke();
+    items.forEach((item,i) => {
+      const cy=y0+2+(i+.5)*row;
+      if(i) stroke([[left+6,cy-row/2],[right-6,cy-row/2]],'#2a434f',.7);
+      if(isWater) {
+        const middle=end+(goesLeft?-1:1)*3;
+        ctx.fillStyle=waterColor; ctx.beginPath();
+        ctx.moveTo(middle,cy-3);ctx.lineTo(middle+3,cy);ctx.lineTo(middle,cy+3);ctx.lineTo(middle-3,cy);ctx.fill();
+      } else {
+        stroke([[end,cy-4],[end,cy+4]],item.color,2.6);
+      }
+      ctx.textBaseline='middle'; ctx.textAlign='right'; ctx.direction='rtl'; ctx.font=labelFont;
+      ctx.fillStyle='#edf5f5';
+      ctx.fillText(item.label,right-8,cy+(stacked?-6:0),Math.max(1,right-left-(stacked?16:widestValue+26)));
+      ctx.textAlign='left'; ctx.direction='ltr'; ctx.font=valueFont; ctx.fillStyle=item.color;
+      ctx.fillText(valueText(item.value),left+8,cy+(stacked?7:0),Math.max(1,right-left-16));
+    });
+  }
+  return {reserved, paint() {
+    ctx.save(); ctx.lineCap='round'; ctx.lineJoin='round';
+    if (visibleGauge) {
+      stroke([marks[0].outer,marks[marks.length-1].outer],'#273e49',detailed?2:1);
+      for (const {outer,inner,color} of marks) {
+        stroke([outer,inner],'#18323b',detailed?2.8:1.6);
+        stroke([outer,inner],color,detailed?1.6:1, detailed?[4,2]:[]);
+        if(detailed) {
+          ctx.fillStyle=color;
+          ctx.fillRect(outer[0]-1.5,outer[1]-1.5,3,3);
+        }
+      }
+    }
+    if(visibleWater) {
+      stroke([water.inner,water.outer],'#123b4b',detailed?4:2.3);
+      stroke([water.inner,water.outer],waterColor,detailed?2.4:1.6);
+      const [x,y] = water.outer, r = detailed ? 4 : 2.4;
+      ctx.fillStyle=waterColor; ctx.beginPath();
+      ctx.moveTo(x,y-r);ctx.lineTo(x+r,y);ctx.lineTo(x,y+r);ctx.lineTo(x-r,y);ctx.closePath();ctx.fill();
+    }
+    for (const item of cards) paintCard(item);
+    ctx.restore();
+  }};
 }
 
 
@@ -2758,7 +2914,27 @@ function createStationPresentation(parameters){
     tanks:'سعة كل خزان 100 م³. محبس التوازن السفلي يتيح انتقال المياه بينهما عند اختلاف المنسوب.',
     outlet:'خروج الصرف حاليًا بالوايتات. المخرج الثاني مخصص لمحطة المعالجة المستقبلية ومغلق في النموذج.'
   };
-  const cfg={view:'overview',section:true,levels:false,mode:'3D',tour:false};
+  const cfg={view:'overview',section:true,levels:true,mode:'3D',tour:false};
+  const definitions=[
+    {key:'alarm',label:'الإنذار العالي',value:parameters.alarm,color:'#ff917f'},
+    {key:'start2',label:'تشغيل المضخة المساندة',value:parameters.start2,color:'#ffc16a'},
+    {key:'start1',label:'تشغيل المضخة الأولى',value:parameters.start1,color:'#79baff'},
+    {key:'stop2',label:'إيقاف المضخة المساندة',value:parameters.stop2,color:'#c6b5ff'},
+    {key:'stop',label:'إيقاف جميع المضخات',value:parameters.stop,color:'#8adc9d'}
+  ];
+  const levelPanel=byId('stationOperatingLevels');
+  const currentLevel=byId('stationCurrentLevel');
+  const formatLevel=value=>value.toFixed(2).replace('-','−');
+  for(const entry of definitions){
+    const row=document.createElement('li'), name=document.createElement('span'), number=document.createElement('bdi');
+    row.dataset.levelKey=entry.key;
+    row.dataset.levelValue=String(entry.value);
+    row.style.setProperty('--level-color',entry.color);
+    name.textContent=entry.label;
+    number.dir='ltr';number.textContent=formatLevel(entry.value);
+    row.append(name,number);
+    byId('stationLevelList').append(row);
+  }
   const icons=[...root.querySelectorAll('[data-station-camera]')];
   const refs=Object.fromEntries(['stationPause','stationRunText','studioClock','sceneDetailTitle','sceneDetailNote','stationTracePath','stationTraceLabel','stationTrendName','stationSnapshot'].map(k=>[k,byId(k)]));
   const fields=Array.from({length:3},()=>{
@@ -2811,8 +2987,6 @@ function createStationPresentation(parameters){
     if(!s.section)return;
     if(s.view==='inlet'||s.view==='overview')mark(-10.8,parameters.invert,.65,'قاع المدخل '+signed(parameters.invert,3)+' م',.4);
     if(s.view==='well'){
-      mark(-11.15,parameters.start1,1.05,'التشغيل '+signed(parameters.start1)+' م',.73);
-      mark(-8.7,parameters.stop,1.24,'الإيقاف '+signed(parameters.stop)+' م',1.04);
       mark(-10.1,parameters.floor,.35,'القاع '+signed(parameters.floor)+' م',.48);
     }
   }
@@ -2844,6 +3018,7 @@ function createStationPresentation(parameters){
         g.label(.40,.55,2.39,'المعالجة المستقبلية · مغلق','future');
         g.label(4.30,.93,3.43,'وصلة تحميل الوايت','outlet');break;
     }
+    if(s.levels&&s.section&&(s.view==='well'||s.view==='overview'))drawOperatingLevels(g,s,definitions);
   }
   const viewport=canvas.getContext('2d')?new StationViewport(canvas,drawScene):null;
   const activeDraw=s=>s.outMode==='tanker'&&s.tankerRemainingM3>.05&&latestAvailability>.05;
@@ -2861,6 +3036,8 @@ function createStationPresentation(parameters){
   function update(s,available,force=false){
     latest=s;latestAvailability=available;record(s);
     if(!visible&&!force)return;
+    levelPanel.hidden=cfg.mode!=='3D'||!cfg.section||!cfg.levels||(cfg.view!=='well'&&cfg.view!=='overview');
+    if(!levelPanel.hidden)text(currentLevel,formatLevel(s.wellLevel));
     const now=performance.now();
     if(!force&&now-lastPaint<65)return;
     const pausedKey=s.running?'':JSON.stringify([s.simSeconds,s.inflowM3h,s.pOn,s.pFault,s.pDegraded,s.tankMode,s.drawMode,s.outMode,s.balanceOpen,s.tankerRemainingM3]);
@@ -2948,6 +3125,11 @@ function createStationPresentation(parameters){
   function openLinkedView(){
     if(location.hash==='#2d'||location.hash==='#2d-valves'){
       setMode('2D');setValveDetail(location.hash==='#2d-valves');
+    }else if(location.hash==='#3d-levels'&&viewport){
+      cfg.tour=false;cfg.levels=true;cfg.section=true;
+      pressed(byId('stationLevels'),true);pressed(byId('stationSection'),true);
+      setMode('3D');setCamera('well',true);
+      requestAnimationFrame(()=>byId('stationModel').scrollIntoView({block:'start'}));
     }else if(location.hash==='#3d'&&viewport){setMode('3D');}
   }
   window.addEventListener('hashchange',openLinkedView);
@@ -4139,7 +4321,7 @@ function createStationPresentation(parameters){
       el("btnClearAllCost").addEventListener("click", () => { COST_ITEMS.forEach((i) => { i.checked = false; }); renderCostTable(); });
       el("chkContingency").addEventListener("change", updateCostTotals);
 
-      const stationPresentation = createStationPresentation({floor:LEVEL_FLOOR,invert:LEVEL_INVERT,start1:LEVEL_START1,stop:LEVEL_STOP,pipeArea:PIPE_AREA});
+      const stationPresentation = createStationPresentation({floor:LEVEL_FLOOR,invert:LEVEL_INVERT,alarm:LEVEL_HHWL,start2:LEVEL_START2,start1:LEVEL_START1,stop2:LEVEL_STOP2,stop:LEVEL_STOP,pipeArea:PIPE_AREA});
       // Init
       buildHydrograph();
       syncControlButtons();
