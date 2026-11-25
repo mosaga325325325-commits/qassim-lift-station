@@ -642,6 +642,23 @@
 #stationLevelList li::before{content:"";flex:0 0 10px;border-top:3px dashed var(--level-color);filter:brightness(.75)}
 #stationLevelList bdi{margin-inline-start:auto;white-space:nowrap}
 
+#stationStudio .station-camera-row{display:flex;align-items:center;gap:6px 16px;flex-wrap:wrap;margin-top:6px;padding-top:7px;border-top:1px solid #cfddd8}
+#stationStudio .station-drag-modes{display:inline-flex;border:1px solid #bbcec8;border-radius:6px;overflow:hidden;background:#fff}
+#stationStudio .station-drag-modes button{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:34px;border:0;border-radius:0;padding:.22rem .65rem;font:inherit;font-weight:700;font-size:.78rem;background:transparent;color:#304f50}
+#stationStudio .station-drag-modes button:focus-visible{outline-offset:-3px}
+#stationStudio .station-drag-modes button[aria-pressed=true]{color:white;background:#145d57}
+#stationStudio .station-drag-modes button span{font:1.12rem/1 Arial}
+#stationStudio .station-datum-choice{display:inline-flex;align-items:center;gap:6px;color:#385752;font-weight:650;font-size:.76rem}
+#stationStudio #stationLevelDatum{font:inherit;color:#254b46;border:1px solid #bbcec8;border-radius:5px;background:white;min-height:34px;padding:2px 4px}
+#stationStudio #stationCameraHelp{background:transparent;border:0;border-radius:4px;color:#175e59;margin-inline-start:auto;padding:.35rem .2rem;min-height:34px;font:inherit;font-size:.75rem;font-weight:700}
+#stationStudio #stationCameraHelp:hover,#stationStudio #stationCameraHelp[aria-expanded=true]{text-decoration:underline}
+#stationStudio .station-camera-guide{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:6px 15px;border-top:1px solid #d1ded8;margin-top:7px;padding-top:7px;color:#355355;font-size:.78rem;line-height:1.6}
+#stationStudio .station-camera-guide p{margin:0}
+#stationStudio .station-camera-guide strong{display:block;color:#1c4748}
+#stationStudio .touch-hint{display:none}
+@media(pointer:coarse){#stationStudio .touch-hint{display:inline}#stationStudio .mouse-hint{display:none}}
+@media(max-width:550px){#stationStudio .station-camera-row{gap:4px 7px}#stationStudio .station-drag-modes button{padding-inline:.45rem}#stationStudio .station-datum-choice{gap:3px}#stationStudio .station-camera-guide{grid-template-columns:1fr}}
+
 
 </style>
 </head>
@@ -856,16 +873,33 @@
         <button type="button" data-station-camera="tanks" aria-pressed="false"><i class="cam-icon icon-tank" aria-hidden="true"></i><span>خزانات التجميع</span></button>
         <button type="button" data-station-camera="outlet" aria-pressed="false"><i class="cam-icon icon-out" aria-hidden="true"></i><span>مخرجا الخزانات</span></button>
       </div>
+      <div class="station-camera-row">
+        <div class="station-drag-modes" role="group" aria-label="وظيفة السحب على المجسّم">
+          <button type="button" id="stationOrbitMode" aria-pressed="true" aria-controls="stationViewCanvas"><span aria-hidden="true">⟳</span> تدوير</button>
+          <button type="button" id="stationPanMode" aria-pressed="false" aria-controls="stationViewCanvas"><span aria-hidden="true">✥</span> تحريك</button>
+        </div>
+        <label class="station-datum-choice">المناسيب
+          <select id="stationLevelDatum" aria-label="مرجع عرض المناسيب بالمتر">
+            <option value="relative">من سطح الأرض</option><option value="survey">المنسوب المساحي</option>
+          </select>
+        </label>
+        <button type="button" id="stationCameraHelp" aria-expanded="false" aria-controls="cameraGuideKeys">دليل التحكم</button>
+      </div>
+      <div id="cameraGuideKeys" class="station-camera-guide" hidden>
+        <p><strong>الماوس</strong>اسحب بالزر الأيسر بالأداة المختارة. للتحريك مباشرةً، اضغط عجلة الماوس أو الزر الأيمن واسحب. لفّ العجلة للتكبير عند المؤشر.</p>
+        <p><strong>اللمس</strong>اسحب بإصبع واحد بالأداة المختارة. اسحب بإصبعين للتحريك، وباعد أو قرّب بينهما لتغيير التكبير.</p>
+        <p><strong>لوحة المفاتيح</strong>بعد تحديد الرسم، استخدم الأسهم للتدوير، و<span dir="ltr">Shift</span> مع الأسهم للتحريك، و<span dir="ltr">+ / −</span> للتكبير، و<span dir="ltr">Home</span> لاستعادة المشهد.</p>
+      </div>
     </nav>
     <div class="station-stage">
-      <canvas id="stationViewCanvas" role="img" tabindex="0" aria-label="قطاع تفاعلي لمحطة الرفع. اسحب أو استخدم الأسهم للدوران وزري الجمع والطرح للتقريب والإبعاد."></canvas>
+      <canvas id="stationViewCanvas" role="img" tabindex="0" aria-label="مجسّم محطة الرفع. الأسهم للتدوير، وShift مع الأسهم للتحريك، وزر Home لاستعادة المشهد."></canvas>
       <div class="stage-top"><span class="studio-live"><b id="stationRunText">المحاكاة جارية</b></span><time id="studioClock" class="stage-clock" dir="ltr" aria-label="ساعة المحاكاة">08:00</time></div>
       <div class="stage-tools" role="group" aria-label="التحكم في الكاميرا">
         <button type="button" id="stationZoomIn" aria-label="تقريب المجسّم" title="تقريب">+</button>
         <button type="button" id="stationZoomOut" aria-label="إبعاد المجسّم" title="إبعاد">−</button>
         <button type="button" id="stationHome" aria-label="استعادة زاوية العرض" title="استعادة زاوية العرض"><i aria-hidden="true"></i></button>
       </div>
-      <div class="stage-note">اسحب لتدوير المجسّم</div>
+      <div class="stage-note"><span class="mouse-hint">اضغط العجلة واسحب للتحريك</span><span class="touch-hint">حرّك أو كبّر بإصبعين</span></div>
     </div>
     <aside class="studio-inspector" aria-label="تفاصيل المشهد وأدوات القطاع">
       <div class="studio-reading">
@@ -892,7 +926,7 @@
       <div class="studio-key" aria-label="ألوان الخطوط"><span><i class="dirty"></i>وارد</span><span><i class="lift"></i>طرد</span><span><i class="tanker"></i>تفريغ</span><span><i class="future"></i>مستقبلي</span></div>
       <section id="stationOperatingLevels" aria-labelledby="stationLevelsTitle">
         <div class="station-level-heading">
-          <h3 id="stationLevelsTitle">مستويات تشغيل البيارة <small>بالمتر من سطح الأرض</small></h3>
+          <h3 id="stationLevelsTitle">مستويات تشغيل البيارة <small id="stationDatumLegend">بالمتر من سطح الأرض</small></h3>
           <span class="station-current">منسوب المياه الآن <bdi id="stationCurrentLevel" dir="ltr"></bdi> م</span>
         </div>
         <ul id="stationLevelList"></ul>
@@ -1442,6 +1476,7 @@ class StationViewport {
     this.colors = new Map();
     this.shades = new Map();
     this.pointerMap = new Map();
+    this.dragMode = 'orbit';
     this.lastState = null;
     this.frame = 0;
     this.life = new AbortController();
@@ -1499,9 +1534,28 @@ class StationViewport {
     this.pitch=f.pitch+(p.pitch-f.pitch)*u;
     if(t>=1) this.flight=null;
   }
-  zoomBy(factor) {
+  setDragMode(mode) {
+    if(mode==='orbit' || mode==='pan') this.dragMode=mode;
+  }
+  panBy(dx,dy) {
+    if((dx===0 && dy===0) || !Number.isFinite(dx) || !Number.isFinite(dy)) return;
     this.flight=null;
-    if(Number.isFinite(factor) && factor>0) this.zoom=StationViewport.clamp(this.zoom*factor,0.52,4.3);
+    if(!this.setupCamera()) return;
+    // Move the model with the pointer, regardless of orbit angle or zoom.
+    for(let axis=0;axis<3;axis++) {
+      this.target[axis]+=(dy*this.up[axis]-dx*this.right[axis])/this.scale;
+    }
+    this.invalidate();
+  }
+  zoomBy(factor,x,y) {
+    if(!Number.isFinite(factor) || factor<=0) return;
+    this.flight=null;
+    const before=this.zoom;
+    this.zoom=StationViewport.clamp(before*factor,0.52,4.3);
+    if(Number.isFinite(x) && Number.isFinite(y)) {
+      const correction=1-this.zoom/before;
+      this.panBy((x-this.canvas.clientWidth/2)*correction,(y-this.canvas.clientHeight/2)*correction);
+    }
     this.invalidate();
   }
   rotateBy(rad) {
@@ -1517,15 +1571,21 @@ class StationViewport {
     const c=this.canvas, opts={signal:this.life.signal};
     c.style.touchAction='none';
     if(!c.hasAttribute('tabindex')) c.tabIndex=0;
-    const pos=e=>[e.clientX,e.clientY];
-    const pinchDistance=()=>{
+    const position=e=>{
+      const rect=c.getBoundingClientRect();
+      return {x:e.clientX-rect.left,y:e.clientY-rect.top};
+    };
+    const touchPair=()=>{
       const [a,b]=this.pointerMap.values();
-      return a && b ? Math.hypot(a[0]-b[0],a[1]-b[1]) : 0;
+      return {x:(a.x+b.x)/2,y:(a.y+b.y)/2,distance:Math.hypot(a.x-b.x,a.y-b.y)};
     };
     c.addEventListener('pointerdown',e=>{
-      if(e.pointerType==='mouse' && e.button!==0) return;
+      if(e.button<0 || e.button>2) return;
+      const active=this.pointerMap.values().next().value;
+      if(active && active.type!==e.pointerType) return;
+      e.preventDefault();
       this.flight=null;
-      this.pointerMap.set(e.pointerId,pos(e));
+      this.pointerMap.set(e.pointerId,{...position(e),type:e.pointerType});
       try { c.setPointerCapture(e.pointerId) } catch {}
       if(c.focus) c.focus({preventScroll:true});
       c.style.cursor='grabbing';
@@ -1533,14 +1593,22 @@ class StationViewport {
     c.addEventListener('pointermove',e=>{
       const prev=this.pointerMap.get(e.pointerId);
       if(!prev) return;
-      const before=pinchDistance();
-      this.pointerMap.set(e.pointerId,pos(e));
-      if(this.pointerMap.size===2 && before>2) {
-        this.zoomBy(pinchDistance()/before);
+      const before=this.pointerMap.size===2 ? touchPair() : null;
+      const next=position(e);
+      this.pointerMap.set(e.pointerId,{...next,type:prev.type});
+      if(before) {
+        const after=touchPair();
+        if(before.distance>2 && after.distance>2) this.zoomBy(after.distance/before.distance,before.x,before.y);
+        this.panBy(after.x-before.x,after.y-before.y);
       } else if(this.pointerMap.size===1) {
-        this.yaw-=(e.clientX-prev[0])*0.008;
-        this.pitch=StationViewport.clamp(this.pitch+(e.clientY-prev[1])*0.006,0.045,1.30);
-        this.invalidate();
+        const dx=next.x-prev.x,dy=next.y-prev.y;
+        if(this.dragMode==='pan' || e.shiftKey || (e.buttons & 6)) {
+          this.panBy(dx,dy);
+        } else {
+          this.yaw-=dx*.007;
+          this.pitch=StationViewport.clamp(this.pitch+dy*.0055,0.045,1.30);
+          this.invalidate();
+        }
       }
     },opts);
     const end=e=>{
@@ -1548,15 +1616,24 @@ class StationViewport {
       if(!this.pointerMap.size) c.style.cursor='grab';
     };
     for(const type of ['pointerup','pointercancel','lostpointercapture']) c.addEventListener(type,end,opts);
+    c.addEventListener('contextmenu',e=>e.preventDefault(),opts);
+    c.addEventListener('auxclick',e=>{ if(e.button===1) e.preventDefault(); },opts);
     c.addEventListener('wheel',e=>{
-      if(e.deltaY===0) return;
+      if(e.deltaX===0 && e.deltaY===0) return;
       e.preventDefault();
-      const unit=e.deltaMode===1?16:e.deltaMode===2?this.canvas.clientHeight:1;
-      this.zoomBy(Math.exp(-StationViewport.clamp(e.deltaY*unit,-240,240)*0.0018));
+      const unit=e.deltaMode===1?16:e.deltaMode===2?c.clientHeight:1;
+      if(!e.ctrlKey && (e.shiftKey || e.deltaY===0)) {
+        this.panBy(-(e.deltaX || e.deltaY)*unit,e.deltaX?-e.deltaY*unit:0);
+        return;
+      }
+      const anchor=position(e),sensitivity=e.ctrlKey ? .009 : .0018;
+      this.zoomBy(Math.exp(-StationViewport.clamp(e.deltaY*unit,-240,240)*sensitivity),anchor.x,anchor.y);
     },{passive:false,signal:this.life.signal});
     c.addEventListener('keydown',e=>{
       if(e.ctrlKey || e.altKey || e.metaKey) return;
-      if(e.key==='ArrowLeft') this.rotateBy(-0.10);
+      const panKeys={ArrowLeft:[-36,0],ArrowRight:[36,0],ArrowUp:[0,-36],ArrowDown:[0,36]};
+      if(e.shiftKey && Object.hasOwn(panKeys,e.key)) this.panBy(...panKeys[e.key]);
+      else if(e.key==='ArrowLeft') this.rotateBy(-0.10);
       else if(e.key==='ArrowRight') this.rotateBy(0.10);
       else if(e.key==='ArrowUp' || e.key==='ArrowDown') {
         this.flight=null;
@@ -1882,135 +1959,170 @@ class StationViewport {
 }
 
 
-// Enqueue a screen-space annotation on the actual wet-well cut face.
-// The mesh and the snapshot use metres above the same zero datum.
-function drawOperatingLevels(g, model, definitions) {
-  if (model.section && model.levels && (model.view === 'well' || model.view === 'overview')) {
-    g.operatingLevels(model, definitions);
-  }
+// Label geometry stays in local metres. Only the printed numbers use the selected datum.
+function drawOperatingLevels(g, model, definitions, parameters) {
+  if (!model.section || !model.levels || (model.view !== 'well' && model.view !== 'overview')) return;
+  g.operatingLevels({
+    view:model.view, wellLevel:model.wellLevel, levelOffset:model.levelOffset || 0,
+    floor:parameters.floor, invert:parameters.invert
+  }, definitions);
 }
 
 function positionOperatingLevels(viewport, {model, definitions}) {
   const {ctx, w, h} = viewport;
   const detailed = model.view === 'well';
-  // Match the visible water chord of drawWet, including its physical Z offset.
+  const compact = w < 500;
+  const pad = compact ? 7 : 13;
+  const edgeY = compact ? 42 : 48;
+  const gap = compact ? 9 : 16;
+  const font = 'Tahoma, Arial, sans-serif';
+  const nameFont = '600 ' + (compact ? 11 : 12) + 'px ' + font;
+  const valueFont = '600 ' + (compact ? 10 : 12) + 'px Consolas, monospace';
+  const waterColor = '#63edff', datumColor = '#ffcb81';
+  const valueText = item => (item.value + model.levelOffset).toFixed(item.digits ?? 2).replace('-', '−') + ' م';
+  const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
+
+  // The projected threshold strokes and water indicator share the chord of drawWet.
   const z = 1.47 * Math.sin(Math.PI * .85);
   const point = (x, elevation) => viewport.project([x, elevation, z]);
   const marks = definitions.map(level => ({
     ...level, outer:point(-10.26, level.value), inner:point(-9.14, level.value)
   }));
+  const water = Number.isFinite(model.wellLevel) ? {
+    value:model.wellLevel, label:'المياه الآن', color:waterColor, water:true,
+    inner:point(-8.96, model.wellLevel), outer:point(-7.74, model.wellLevel)
+  } : null;
+  // The inlet leader lands at the pipe mouth (z=0), independent of the cut-face chord.
+  const references = detailed ? [
+    {label:'سطح الأرض', value:0, outer:viewport.project([-7.40,0,0])},
+    {label:'قاع ماسورة الدخول', value:model.invert, digits:3, outer:viewport.project([-10.25,model.invert,0])},
+    {label:'قاع البيارة', value:model.floor, outer:point(-7.65,model.floor)}
+  ].map(item=>({...item, color:datumColor, reference:true})) : [];
   if (!marks.length) return null;
-  const flowing = Number.isFinite(model.wellLevel);
-  const water = flowing ? {inner:point(-8.96, model.wellLevel), outer:point(-7.74, model.wellLevel)} : null;
-  const gaugeX = marks[0].outer[0], topY = marks[0].outer[1], lowY = marks[marks.length-1].outer[1];
-  const left = Math.min(gaugeX, marks[0].inner[0]), right = Math.max(gaugeX, marks[0].inner[0]);
-  const visibleGauge = right >= 0 && left <= w && lowY >= 0 && topY <= h;
-  const visibleWater = water && water.outer[1] >= 0 && water.outer[1] <= h &&
-    Math.max(water.inner[0], water.outer[0]) >= 0 && Math.min(water.inner[0], water.outer[0]) <= w;
-  if (!visibleGauge && !visibleWater) return null;
-
-  const pad = w < 500 ? 7 : 13;
-  const edgeY = w < 500 ? 42 : 48;
-  const gap = w < 500 ? 12 : 21;
-  const font = 'Tahoma, Arial, sans-serif';
-  const labelFont = '600 ' + (w < 500 ? 11 : 12) + 'px ' + font;
-  const valueFont = '600 ' + (w < 500 ? 10 : 12) + 'px Consolas, monospace';
-  const waterColor = '#63edff';
-  const valueText = n => n.toFixed(2).replace('-', '−') + ' م';
-  const clamp = (n, min, max) => Math.max(min, Math.min(max, n));
-  const reserved = [];
-  const gaugePoints = marks.flatMap(mark => [mark.outer,mark.inner]);
-  if (water) gaugePoints.push(water.outer,water.inner);
-  const xx = gaugePoints.map(p => p[0]), yy = gaugePoints.map(p => p[1]);
-  reserved.push({left:Math.min(...xx)-3,right:Math.max(...xx)+3,
-    y0:Math.min(...yy)-3,y1:Math.max(...yy)+3});
-  // Names stay in elevation order. Only the leaders fan out from their true
-  // elevations to the reading column; the threshold strokes never move apart.
-  function card(anchor, goesLeft, items, isWater) {
-    const x = anchor[0];
-    const room = Math.max(54, goesLeft ? x-pad-gap : w-pad-gap-x);
-    ctx.font = labelFont;
-    const widestName = Math.max(...items.map(t => ctx.measureText(t.label).width));
-    ctx.font = valueFont;
-    const widestValue = Math.max(...items.map(t => ctx.measureText(valueText(t.value)).width));
-    const singleWidth = Math.ceil(widestName + widestValue + 33);
-    const stacked = room < singleWidth;
-    const width = Math.min(stacked ? Math.ceil(Math.max(widestName, widestValue)+20) : singleWidth, room, w-2*pad);
-    const row = stacked ? 30 : 22;
-    const height = items.length*row + 4;
-    const x0 = clamp(goesLeft ? x-gap-width : x+gap, pad, w-pad-width);
-    const y0 = clamp(anchor[1]-height/2, edgeY, h-edgeY-height);
-    const box = {left:x0,right:x0+width,y0,y1:y0+height};
-    reserved.push(box);
-    return {box, items, row, stacked, goesLeft, isWater, widestValue};
+  function strokeVisible(item) {
+    const [x,y] = item.outer, [a,b] = item.inner || item.outer;
+    return Math.max(x,a)>=0 && Math.min(x,a)<=w && Math.max(y,b)>=0 && Math.min(y,b)<=h;
   }
+  const visibleMarks=marks.filter(strokeVisible);
+  const visibleWater=water && strokeVisible(water);
+  const visibleRefs=references.filter(strokeVisible);
+  if (!(visibleMarks.length || visibleWater || visibleRefs.length)) return null;
+
+  const reserved = [];
+  const points=visibleMarks.flatMap(item=>[item.outer,item.inner]);
+  if (visibleWater) points.push(water.inner,water.outer);
+  if (points.length) {
+    const xx=points.map(p=>p[0]), yy=points.map(p=>p[1]);
+    reserved.push({left:Math.min(...xx)-3,right:Math.max(...xx)+3,y0:Math.min(...yy)-3,y1:Math.max(...yy)+3});
+  }
+
   const scaleLeft = marks[0].outer[0] <= marks[0].inner[0];
-  const cards = [];
+  const gaugeX = marks[0].outer[0], waterX = (water || marks[0]).outer[0];
+  const available = (x,toLeft) => toLeft ? x-pad-gap : w-pad-gap-x;
+  function chooseSide(x, preferred) {
+    return available(x,preferred)>=112 || available(x,preferred)>=available(x,!preferred) ? preferred : !preferred;
+  }
+  const leftEdge = Math.min(gaugeX,waterX), rightEdge = Math.max(gaugeX,waterX);
+  const toLeft = detailed ? scaleLeft : chooseSide(gaugeX,scaleLeft);
+  // When the well lies at the edge of a narrow view, one compact column on
+  // the roomy side keeps every name legible while the anchors remain on the well.
+  const merge = !detailed || Math.min(available(leftEdge,true),available(rightEdge,false))<86;
+  const cards=[];
+  function makeCard(items,x,toLeft,condensed=false,docked=false) {
+    if (!items.length) return;
+    ctx.font=nameFont;
+    const widestName=Math.max(...items.map(item=>ctx.measureText(item.label).width));
+    ctx.font=valueFont;
+    const widestValue=Math.max(...items.map(item=>ctx.measureText(valueText(item)).width));
+    const fullWidth=Math.ceil(widestName+widestValue+27);
+    const room=Math.max(docked ? Math.min(fullWidth,170) : 56,available(x,toLeft));
+    const stacked=!condensed && room<fullWidth;
+    const target=stacked ? Math.max(widestName,widestValue)+18 : fullWidth;
+    const width=Math.min(Math.ceil(target),room,w-2*pad);
+    const row=stacked ? 28 : (compact||!detailed ? 18 : 22);
+    const height=items.length*row+4;
+    const center=items.reduce((total,item)=>total+item.outer[1],0)/items.length;
+    const left=clamp(toLeft ? x-gap-width : x+gap,pad,w-pad-width);
+    const top=clamp(center-height/2,edgeY,h-edgeY-height);
+    const box={left,right:left+width,y0:top,y1:top+height};
+    reserved.push(box);
+    cards.push({items,row,stacked,widestValue,box,toLeft});
+  }
+  const contextual=[...visibleRefs];
+  if (visibleWater) contextual.push(water);
+  // Order the physical reference lines by elevation. Current water can cross the inlet.
+  contextual.sort((a,b)=>b.value-a.value);
   ctx.save();
-  if (detailed && visibleGauge) cards.push(card([gaugeX,(topY+lowY)/2],scaleLeft,marks,false));
-  if (detailed && visibleWater) cards.push(card(water.outer,!scaleLeft,[
-    {value:model.wellLevel,outer:water.outer,label:'المياه الآن',color:waterColor}
-  ],true));
+  if (merge) {
+    const all=detailed ? [...visibleMarks,...contextual].sort((a,b)=>b.value-a.value) :
+      [...visibleMarks,...contextual];
+    // On a phone the column may lie on the opposite side of the gauge; start
+    // it beyond the whole cut section so it cannot hide a pump or a marker.
+    const side=available(toLeft ? leftEdge : rightEdge,toLeft)>=125 ? toLeft :
+      available(leftEdge,true)>=available(rightEdge,false);
+    const anchor=side ? leftEdge : rightEdge;
+    makeCard(all,anchor,side,detailed || available(anchor,side)>=125,true);
+  } else {
+    makeCard(visibleMarks,toLeft?leftEdge:rightEdge,toLeft);
+    makeCard(contextual,toLeft?rightEdge:leftEdge,!toLeft);
+  }
   ctx.restore();
 
-  const stroke = (points, color, width, dash = []) => {
-    ctx.strokeStyle=color; ctx.lineWidth=width; ctx.setLineDash(dash); ctx.beginPath();
+  function stroke(points,color,width,dash=[]) {
+    ctx.strokeStyle=color;ctx.lineWidth=width;ctx.setLineDash(dash);ctx.beginPath();
     ctx.moveTo(...points[0]);
-    for(let i=1;i<points.length;i++) ctx.lineTo(...points[i]);
+    for(let i=1;i<points.length;i++)ctx.lineTo(...points[i]);
     ctx.stroke();
-  };
-  function paintCard({box, items, row, stacked, goesLeft, isWater, widestValue}) {
-    const {left, right, y0, y1} = box;
-    const end = goesLeft ? right : left;
-    const elbow = end + (goesLeft ? 1 : -1)*5;
-    items.forEach((item,i) => {
+  }
+  function diamond(x,y,r,color) {
+    ctx.fillStyle=color;ctx.beginPath();ctx.moveTo(x,y-r);ctx.lineTo(x+r,y);
+    ctx.lineTo(x,y+r);ctx.lineTo(x-r,y);ctx.closePath();ctx.fill();
+  }
+  function paintCard({items,row,stacked,widestValue,box,toLeft}) {
+    const {left,right,y0,y1}=box;
+    const end=toLeft ? right : left;
+    const elbow=end+(toLeft ? 1 : -1)*6;
+    items.forEach((item,i)=>{
       const cy=y0+2+(i+.5)*row;
-      stroke([item.outer,[elbow,cy],[end,cy]],item.color,1);
+      stroke([item.outer,[elbow,cy],[end,cy]],item.color,1,item.reference?[2,2]:[]);
     });
-    ctx.beginPath(); ctx.roundRect(left,y0,right-left,y1-y0,5);
-    ctx.fillStyle='#102a36'; ctx.fill(); ctx.strokeStyle=isWater?'#3c91a1':'#48616c';
-    ctx.lineWidth=.8; ctx.stroke();
-    items.forEach((item,i) => {
+    ctx.setLineDash([]);
+    ctx.beginPath();ctx.roundRect(left,y0,right-left,y1-y0,5);
+    ctx.fillStyle='#102a36';ctx.fill();ctx.strokeStyle='#48616c';ctx.lineWidth=.8;ctx.stroke();
+    items.forEach((item,i)=>{
       const cy=y0+2+(i+.5)*row;
-      if(i) stroke([[left+6,cy-row/2],[right-6,cy-row/2]],'#2a434f',.7);
-      if(isWater) {
-        const middle=end+(goesLeft?-1:1)*3;
-        ctx.fillStyle=waterColor; ctx.beginPath();
-        ctx.moveTo(middle,cy-3);ctx.lineTo(middle+3,cy);ctx.lineTo(middle,cy+3);ctx.lineTo(middle-3,cy);ctx.fill();
-      } else {
-        stroke([[end,cy-4],[end,cy+4]],item.color,2.6);
-      }
-      ctx.textBaseline='middle'; ctx.textAlign='right'; ctx.direction='rtl'; ctx.font=labelFont;
-      ctx.fillStyle='#edf5f5';
-      ctx.fillText(item.label,right-8,cy+(stacked?-6:0),Math.max(1,right-left-(stacked?16:widestValue+26)));
-      ctx.textAlign='left'; ctx.direction='ltr'; ctx.font=valueFont; ctx.fillStyle=item.color;
-      ctx.fillText(valueText(item.value),left+8,cy+(stacked?7:0),Math.max(1,right-left-16));
+      if(i)stroke([[left+6,cy-row/2],[right-6,cy-row/2]],'#2a434f',.7);
+      if(item.water)diamond(end+(toLeft?-1:1)*3,cy,3,waterColor);
+      else stroke([[end,cy-4],[end,cy+4]],item.color,2.6);
+      ctx.textBaseline='middle';ctx.textAlign='right';ctx.direction='rtl';ctx.font=nameFont;ctx.fillStyle='#edf5f5';
+      ctx.fillText(item.label,right-7,cy+(stacked?-6:0),Math.max(1,right-left-(stacked?14:widestValue+19)));
+      ctx.textAlign='left';ctx.direction='ltr';ctx.font=valueFont;ctx.fillStyle=item.color;
+      ctx.fillText(valueText(item),left+7,cy+(stacked?7:0),Math.max(1,right-left-14));
     });
   }
-  return {reserved, paint() {
-    ctx.save(); ctx.lineCap='round'; ctx.lineJoin='round';
-    if (visibleGauge) {
-      stroke([marks[0].outer,marks[marks.length-1].outer],'#273e49',detailed?2:1);
-      for (const {outer,inner,color} of marks) {
+  return {reserved,paint(){
+    ctx.save();ctx.lineCap='round';ctx.lineJoin='round';
+    if(visibleMarks.length) {
+      stroke([visibleMarks[0].outer,visibleMarks[visibleMarks.length-1].outer],'#273e49',detailed?2:1);
+      for(const {outer,inner,color} of visibleMarks){
         stroke([outer,inner],'#18323b',detailed?2.8:1.6);
-        stroke([outer,inner],color,detailed?1.6:1, detailed?[4,2]:[]);
-        if(detailed) {
-          ctx.fillStyle=color;
-          ctx.fillRect(outer[0]-1.5,outer[1]-1.5,3,3);
-        }
+        stroke([outer,inner],color,detailed?1.6:1,detailed?[4,2]:[]);
+        ctx.fillStyle=color;ctx.fillRect(outer[0]-1.3,outer[1]-1.3,2.6,2.6);
       }
     }
-    if(visibleWater) {
+    for(const item of visibleRefs){
+      const [x,y]=item.outer;ctx.fillStyle=datumColor;ctx.fillRect(x-1.5,y-1.5,3,3);
+    }
+    if(visibleWater){
       stroke([water.inner,water.outer],'#123b4b',detailed?4:2.3);
       stroke([water.inner,water.outer],waterColor,detailed?2.4:1.6);
-      const [x,y] = water.outer, r = detailed ? 4 : 2.4;
-      ctx.fillStyle=waterColor; ctx.beginPath();
-      ctx.moveTo(x,y-r);ctx.lineTo(x+r,y);ctx.lineTo(x,y+r);ctx.lineTo(x-r,y);ctx.closePath();ctx.fill();
+      diamond(water.outer[0],water.outer[1],detailed?4:2.4,waterColor);
     }
-    for (const item of cards) paintCard(item);
+    for(const card of cards)paintCard(card);
     ctx.restore();
   }};
 }
+
 
 
 /* An illustrative site cut. Elevations and connected equipment come from the simulation. */
@@ -2909,12 +3021,12 @@ function createStationPresentation(parameters){
   const notes = {
     overview:'يتجمع صرف الكليات في البيارة، ثم ترفعه المضخات إلى خزاني التجميع.',
     inlet:'يصل الصرف من المنهول MH-75 إلى البيارة عبر خط P-75 بقطر 400 مم.',
-    well:'يبدأ الضخ عند منسوب −6.30 م، وتدخل المضخة المساندة عند −6.05 م. تعمل مضختان كحد أقصى.',
+    get well(){return 'يبدأ الضخ عند '+elevation(parameters.start1)+' م، وتدخل المضخة المساندة عند '+elevation(parameters.start2)+' م. تعمل مضختان كحد أقصى.';},
     force:'يجمع الخط تصرف المضخات العاملة، ثم يتفرع لتغذية الخزانين من أعلى. طول خط الطرد في النموذج 50 م.',
     tanks:'سعة كل خزان 100 م³. محبس التوازن السفلي يتيح انتقال المياه بينهما عند اختلاف المنسوب.',
     outlet:'خروج الصرف حاليًا بالوايتات. المخرج الثاني مخصص لمحطة المعالجة المستقبلية ومغلق في النموذج.'
   };
-  const cfg={view:'overview',section:true,levels:true,mode:'3D',tour:false};
+  const cfg={view:'overview',section:true,levels:true,mode:'3D',tour:false,levelOffset:0};
   const definitions=[
     {key:'alarm',label:'الإنذار العالي',value:parameters.alarm,color:'#ff917f'},
     {key:'start2',label:'تشغيل المضخة المساندة',value:parameters.start2,color:'#ffc16a'},
@@ -2924,7 +3036,9 @@ function createStationPresentation(parameters){
   ];
   const levelPanel=byId('stationOperatingLevels');
   const currentLevel=byId('stationCurrentLevel');
-  const formatLevel=value=>value.toFixed(2).replace('-','−');
+  const datumTitle=()=>cfg.levelOffset?'منسوب مساحي بالمتر':'بالمتر من سطح الأرض';
+  const formatLevel=(value,digits=2)=>(!cfg.levelOffset&&value>0?'+':'')+(value+cfg.levelOffset).toFixed(digits).replace('-','−');
+  const elevation=(value,digits=2)=>'\u2066'+formatLevel(value,digits)+'\u2069';
   for(const entry of definitions){
     const row=document.createElement('li'), name=document.createElement('span'), number=document.createElement('bdi');
     row.dataset.levelKey=entry.key;
@@ -2941,7 +3055,6 @@ function createStationPresentation(parameters){
     const row=document.createElement('div'),term=document.createElement('dt'),value=document.createElement('dd');
     row.className='station-field';row.append(term,value);byId('sceneReadings').appendChild(row);return [term,value];
   });
-  const signed=(n,digits=2)=>'\u2066'+(n>0?'+':'')+n.toFixed(digits).replace('-','−')+'\u2069';
   const units=(n,s,digits=1)=>n.toFixed(digits)+' '+s;
   function text(node,value){if(node.textContent!==value)node.textContent=value;}
   let latest=null,latestAvailability=null,visible=true,lastPaint=-Infinity,lastPausedKey='',lastPaintState=null;
@@ -2972,23 +3085,21 @@ function createStationPresentation(parameters){
     refs.stationTracePath.setAttribute('d',pts.length===1?'M '+pts[0].join(' ')+' l .01 0':pts.map((p,i)=>(i?'L ':'M ')+p.join(' ')).join(' '));
     text(refs.stationTrendName,'منسوب البيارة · آخر 10 دقائق');
     const values=history.map(p=>p.v),minimum=Math.min(...values),maximum=Math.max(...values);
-    text(byId('stationTraceRange'),history.length<2?'تبدأ القراءات من لحظة التشغيل':'أدنى '+signed(minimum)+' م  ·  أعلى '+signed(maximum)+' م');
-    text(refs.stationTraceLabel,'منسوب مياه البيارة بالمتر نسبةً إلى سطح الأرض. آخر قراءة '+current.v.toFixed(2)+' م.');
+    text(byId('stationTraceRange'),history.length<2?'تبدأ القراءات من لحظة التشغيل':'أدنى '+elevation(minimum)+' م  ·  أعلى '+elevation(maximum)+' م');
+    text(refs.stationTraceLabel,'منسوب مياه البيارة، '+datumTitle()+'. آخر قراءة '+elevation(current.v)+' م.');
   }
   function levelMarks(g,s){
+    if(s.view==='well'&&s.section)return;
     const light='#dfad62';
     function mark(x,y,z,caption,end=0.90){g.line([[x,y,z],[x+end,y,z]],light,1.7);g.label(x+end,y,z,caption,'datum');}
     if(s.view==='tanks'||s.view==='outlet'){
-      mark(4.05,0,2.18,'أرض الموقع 0.00 م');
-      if(s.view==='tanks')mark(12.1,5,-2.2,'التغذية +5.00 م');
+      mark(4.05,0,2.18,'أرض الموقع '+elevation(0)+' م');
+      if(s.view==='tanks')mark(12.1,5,-2.2,'التغذية '+elevation(5)+' م');
       return;
     }
-    mark(-10.8,0,1.1,'أرض الموقع 0.00 م');
+    mark(-10.8,0,1.1,'أرض الموقع '+elevation(0)+' م');
     if(!s.section)return;
-    if(s.view==='inlet'||s.view==='overview')mark(-10.8,parameters.invert,.65,'قاع المدخل '+signed(parameters.invert,3)+' م',.4);
-    if(s.view==='well'){
-      mark(-10.1,parameters.floor,.35,'القاع '+signed(parameters.floor)+' م',.48);
-    }
+    if(s.view==='inlet'||s.view==='overview')mark(-10.8,parameters.invert,.65,'قاع المدخل '+elevation(parameters.invert,3)+' م',.4);
   }
   function drawScene(g,s){
     drawStationYard(g,s);
@@ -3018,19 +3129,19 @@ function createStationPresentation(parameters){
         g.label(.40,.55,2.39,'المعالجة المستقبلية · مغلق','future');
         g.label(4.30,.93,3.43,'وصلة تحميل الوايت','outlet');break;
     }
-    if(s.levels&&s.section&&(s.view==='well'||s.view==='overview'))drawOperatingLevels(g,s,definitions);
+    drawOperatingLevels(g,s,definitions,parameters);
   }
   const viewport=canvas.getContext('2d')?new StationViewport(canvas,drawScene):null;
   const activeDraw=s=>s.outMode==='tanker'&&s.tankerRemainingM3>.05&&latestAvailability>.05;
   const tankName={tk1:'الخزان الأول',tk2:'الخزان الثاني',both:'الخزانان'};
   function readings(s,tankerActive){
     switch(cfg.view){
-      case 'inlet':return [['الوارد الحالي',units(s.inflowM3h,'م³/ساعة')],['قاع مدخل البيارة',signed(parameters.invert,3)+' م'],['التراكم قبل البيارة',units(s.upstreamStoredM3,'م³')]];
+      case 'inlet':return [['الوارد الحالي',units(s.inflowM3h,'م³/ساعة')],['قاع مدخل البيارة',elevation(parameters.invert,3)+' م'],['التراكم قبل البيارة',units(s.upstreamStoredM3,'م³')]];
       case 'well':return s.pOn.map((on,i)=>['P-0'+(i+1),s.pFault[i]?'عطل':on?(s.pDegraded[i]?'تعمل بأداء منخفض':'تعمل'):(s.pDegraded[i]?'جاهزة بأداء منخفض':'جاهزة')]);
       case 'force':return [['التصرف المضخوخ',units(s.lastActualPumpM3h,'م³/ساعة')],['سرعة المياه',units(s.lastActualPumpM3h/3600/parameters.pipeArea,'م/ث',2)],['وجهة التعبئة',tankName[s.tankMode]]];
       case 'tanks':return [['الخزان الأول',units(s.tank1Vol,'م³')],['الخزان الثاني',units(s.tank2Vol,'م³')],['محبس التوازن',s.balanceOpen?'مفتوح':'مغلق']];
       case 'outlet':return [['حالة خط الوايت',s.outMode==='closed'?'مغلق':tankerActive?'جارٍ التحميل':'بانتظار وايت'],[tankerActive?'حمولة الرحلة':'المنقول تراكميًا',units(tankerActive?s.tankerLoadedThisTrip:s.totalOutM3,'م³')],['مخرج المعالجة','مغلق · مستقبلي']];
-      default:return [['منسوب البيارة',signed(s.wellLevel)+' م'],['مضخات تعمل',s.pOn.filter(Boolean).length+' من 3'],['مخزون الخزانين',units(s.tank1Vol+s.tank2Vol,'م³')]];
+      default:return [['منسوب البيارة',elevation(s.wellLevel)+' م'],['مضخات تعمل',s.pOn.filter(Boolean).length+' من 3'],['مخزون الخزانين',units(s.tank1Vol+s.tank2Vol,'م³')]];
     }
   }
   function update(s,available,force=false){
@@ -3046,7 +3157,7 @@ function createStationPresentation(parameters){
     text(refs.stationPause,s.running?'إيقاف مؤقت':'استئناف التشغيل');
     if(cfg.mode!=='3D'||!viewport)return;
     const tankerActive=activeDraw(s);
-    const model={...s,stage:cfg.view,section:cfg.section,levels:cfg.levels,view:cfg.view,actualPumpM3h:s.lastActualPumpM3h,tankerActive};
+    const model={...s,stage:cfg.view,section:cfg.section,levels:cfg.levels,levelOffset:cfg.levelOffset,view:cfg.view,actualPumpM3h:s.lastActualPumpM3h,tankerActive};
     viewport.draw(model);
     const clock=String(Math.floor(s.simSeconds/3600)%24).padStart(2,'0')+':'+String(Math.floor(s.simSeconds/60)%60).padStart(2,'0');
     text(refs.studioClock,clock);text(refs.stationRunText,s.running?'المحاكاة جارية':'المحاكاة متوقفة');
@@ -3054,7 +3165,7 @@ function createStationPresentation(parameters){
     const details=readings(s,tankerActive);
     text(refs.sceneDetailTitle,titles[cfg.view]);text(refs.sceneDetailNote,notes[cfg.view]);
     details.forEach(([k,v],i)=>{text(fields[i][0],k);text(fields[i][1],v);});
-    chart();drawnModel=model;drawnInfo={title:'محطة رفع الصرف الصحي',viewLabel:titles[cfg.view],note:notes[cfg.view],clock,readings:details,running:s.running};
+    chart();drawnModel=model;drawnInfo={title:'محطة رفع الصرف الصحي',viewLabel:titles[cfg.view],note:notes[cfg.view]+' '+(cfg.levelOffset?'تُعرض المناسيب المساحية بالمتر.':'تُقاس المناسيب بالمتر من سطح الأرض.'),clock,readings:details,running:s.running};
   }
   const redraw=()=>{if(latest)update(latest,latestAvailability,true);};
   const pressed=(node,flag)=>node.setAttribute('aria-pressed',String(flag));
@@ -3086,6 +3197,24 @@ function createStationPresentation(parameters){
   byId('stationPrev').addEventListener('click',()=>setCamera(stages[Math.max(0,stages.indexOf(cfg.view)-1)]));
   byId('stationNext').addEventListener('click',()=>setCamera(stages[stages.indexOf(cfg.view)+1]||'overview'));
   byId('stationHome').addEventListener('click',()=>setCamera(cfg.view,true));
+  const orbitButton=byId('stationOrbitMode'),panButton=byId('stationPanMode');
+  function setDragMode(mode){
+    viewport?.setDragMode(mode);
+    pressed(orbitButton,mode==='orbit');pressed(panButton,mode==='pan');
+  }
+  orbitButton.addEventListener('click',()=>setDragMode('orbit'));
+  panButton.addEventListener('click',()=>setDragMode('pan'));
+  byId('stationCameraHelp').addEventListener('click',e=>{
+    const guide=byId('cameraGuideKeys');
+    guide.hidden=!guide.hidden;e.currentTarget.setAttribute('aria-expanded',String(!guide.hidden));
+  });
+  byId('stationLevelDatum').addEventListener('change',e=>{
+    cfg.levelOffset=e.currentTarget.value==='survey'?parameters.ground:0;
+    for(const row of byId('stationLevelList').children){
+      row.querySelector('bdi').textContent=formatLevel(Number(row.dataset.levelValue));
+    }
+    text(byId('stationDatumLegend'),datumTitle());chartVersion++;redraw();
+  });
   byId('stationTab3D').addEventListener('click',()=>setMode('3D'));
   byId('stationTab2D').addEventListener('click',()=>setMode('2D'));
   byId('stationZoomIn').addEventListener('click',()=>viewport?.zoomBy(1.2));
@@ -4321,7 +4450,7 @@ function createStationPresentation(parameters){
       el("btnClearAllCost").addEventListener("click", () => { COST_ITEMS.forEach((i) => { i.checked = false; }); renderCostTable(); });
       el("chkContingency").addEventListener("change", updateCostTotals);
 
-      const stationPresentation = createStationPresentation({floor:LEVEL_FLOOR,invert:LEVEL_INVERT,alarm:LEVEL_HHWL,start2:LEVEL_START2,start1:LEVEL_START1,stop2:LEVEL_STOP2,stop:LEVEL_STOP,pipeArea:PIPE_AREA});
+      const stationPresentation = createStationPresentation({ground:GL_ABS,floor:LEVEL_FLOOR,invert:LEVEL_INVERT,alarm:LEVEL_HHWL,start2:LEVEL_START2,start1:LEVEL_START1,stop2:LEVEL_STOP2,stop:LEVEL_STOP,pipeArea:PIPE_AREA});
       // Init
       buildHydrograph();
       syncControlButtons();
