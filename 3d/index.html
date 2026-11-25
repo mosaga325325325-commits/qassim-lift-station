@@ -306,8 +306,8 @@
     .sum-l { font-size: 0.7rem; color: var(--slate-500); font-weight: 600; }
     .sum-box.grand .sum-l { color: #bae6fd; }
     .sum-v { font-size: 0.96rem; font-weight: 800; margin-top: 0.12rem; direction: ltr; text-align: right; }
-  
-/* Interactive presentation of the hydraulic model */
+    svg[data-paused="true"] .flow-active, svg[data-paused="true"] .flow-slow, svg[data-paused="true"] .spin-active { animation-play-state: paused; }
+  /* Interactive presentation of the hydraulic model */
 #stationStudio {
   --s-ink:#123742;
   --s-muted:#49666c;
@@ -517,6 +517,118 @@
 }
 
 #stationStudio #stationTraceRange {display:block; color:#4c686a; font-size:.72rem; line-height:1.5; margin-top:3px;}
+/* One set of operating controls serves both drawings. In RTL pages this grid
+   deliberately uses physical left/right tracks and resets text direction inside. */
+#stationStudio .studio-width-toggle {
+  display:inline-flex;align-items:center;justify-content:center;gap:.45rem;min-height:37px;
+  padding:.29rem .68rem;border:1px solid #b5d3cd;border-radius:7px;background:#f0f7f4;
+  color:#185d58;font-size:.82rem;font-weight:700;white-space:nowrap;
+}
+#stationStudio .studio-width-toggle:hover {background:#dfefea}
+#stationStudio .studio-width-toggle i {width:16px;height:13px;border:1.5px solid currentColor;border-radius:2px;position:relative}
+#stationStudio .studio-width-toggle i::after {content:"";position:absolute;left:3px;top:0;bottom:0;border-left:1.5px solid currentColor}
+#stationStudio .station-workspace {
+  display:grid;grid-template-columns:clamp(265px,23cqw,332px) minmax(0,1fr);
+  grid-template-areas:"console drawing";min-width:0;direction:ltr;position:relative;isolation:isolate;
+}
+#stationStudio.controls-collapsed .station-workspace {grid-template-columns:minmax(0,1fr);grid-template-areas:"drawing"}
+#stationStudio .station-drawing-pane {grid-area:drawing;min-width:0;direction:rtl;background:#f8fbfa}
+#stationStudio #stationControls {
+  grid-area:console;position:relative;min-width:0;min-height:0;direction:rtl;background:#f7faf9;
+  border-right:1px solid var(--s-edge);color:var(--s-ink);
+}
+#stationStudio .console-top {
+  display:flex;position:absolute;top:0;left:0;right:0;height:46px;padding:0 14px;
+  align-items:center;justify-content:space-between;border-bottom:1px solid var(--s-edge);background:#e9f3ee;
+}
+#stationStudio .console-top h3 {margin:0;font-size:1rem;font-weight:800}
+#stationStudio #stationRailClose {height:31px;width:31px;display:grid;place-content:center;padding:0;border:1px solid #bfd5cd;border-radius:5px;background:white;color:#4b6466;font:1.3rem/1 Arial}
+#stationStudio .console-scroll {
+  position:absolute;inset:46px 0 0;overflow-y:auto;overflow-x:hidden;overscroll-behavior:contain;
+  scrollbar-gutter:stable;scrollbar-color:#91b5a9 #edf3f0;scrollbar-width:thin;
+}
+#stationStudio #stationControls .ctrl-card {border:0;box-shadow:none;border-radius:0;background:transparent;padding:.8rem .72rem 1.2rem;gap:.8rem;min-width:0}
+#stationStudio #stationControls .ctrl-card>.ctrl-heading {display:none}
+#stationStudio #stationControls .sub-lbl {font-size:.8rem;color:#35565b;line-height:1.5}
+#stationStudio #stationControls .ui-btn {line-height:1.4;font-size:.77rem;font-weight:650}
+#stationStudio #stationControls .ui-btn.active {color:white}
+#stationStudio #stationControls .ui-btn.red-active {color:white}
+#stationStudio #stationControls .ui-btn.amber-active {color:white}
+#stationStudio #stationControls .ui-btn:disabled {opacity:.78}
+#stationStudio .station-drawer-scrim {display:none}
+#stationStudio .station-drawing-pane .station-model {
+  grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto auto;
+  grid-template-areas:"rail" "stage" "readings";
+}
+#stationStudio .station-drawing-pane .station-stage {min-height:clamp(345px,34cqw,485px)}
+#stationStudio .station-drawing-pane .studio-inspector {
+  display:grid;grid-template-columns:minmax(0,1.65fr) minmax(155px,.88fr) minmax(122px,.67fr);
+  grid-template-areas:"values chart layers" "tour tour tour" "key key key";
+  gap:0 16px;align-items:start;padding:13px 17px 10px;border:0;border-top:1px solid var(--s-edge);
+}
+#stationStudio .station-drawing-pane .studio-reading {grid-area:values;min-width:0}
+#stationStudio .station-drawing-pane #sceneDetailTitle {font-size:1rem}
+#stationStudio .station-drawing-pane #sceneDetailNote {margin:.18rem 0 .48rem;line-height:1.5}
+#stationStudio .station-drawing-pane #sceneReadings {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}
+#stationStudio .station-drawing-pane .station-field {display:block;border:0;padding:.05rem 0 0}
+#stationStudio .station-drawing-pane .station-field dd {text-align:start;margin:2px 0 0}
+#stationStudio .station-drawing-pane .studio-trend {grid-area:chart;min-width:0;margin:0}
+#stationStudio .station-drawing-pane .studio-layers {grid-area:layers;margin:0;padding:0}
+#stationStudio .station-drawing-pane .studio-tour-nav {grid-area:tour;justify-content:flex-start;gap:12px;margin-top:8px}
+#stationStudio .station-drawing-pane .studio-key {grid-area:key;margin-top:9px;padding-top:7px}
+#stationStudio .station-drawing-pane #stationDiagram {min-width:0;direction:rtl}
+#stationStudio .station-drawing-pane #stationDiagram .svg-box {border:0;border-radius:0;padding:0;max-width:100%;min-width:0;overflow-x:auto;overscroll-behavior-x:contain}
+#stationStudio:is(:fullscreen,.is-expanded) .station-workspace {flex:1;min-height:0}
+#stationStudio:is(:fullscreen,.is-expanded) .station-drawing-pane {display:flex;flex-direction:column;overflow-y:auto}
+#stationStudio:is(:fullscreen,.is-expanded) .station-drawing-pane .station-model {width:100%;flex:1 0 auto;grid-template-rows:auto minmax(260px,1fr) auto}
+#stationStudio:is(:fullscreen,.is-expanded) .station-drawing-pane .station-stage {min-height:260px}
+#stationStudio:is(:fullscreen,.is-expanded) .station-drawing-pane #stationDiagram {display:flex;flex-direction:column;min-height:0}
+#stationStudio:is(:fullscreen,.is-expanded) #stationDiagram .svg-box {display:grid;align-items:center;flex:1;min-height:0}
+#stationStudio:is(:fullscreen,.is-expanded) #stationDiagram .svg-box svg {max-height:78dvh}
+@container studio (min-width:761px) and (max-width:990px) {
+  #stationStudio .station-drawing-pane .studio-inspector {grid-template-columns:minmax(0,1.35fr) minmax(130px,.8fr);grid-template-areas:"values chart" "layers layers" "tour tour" "key key";gap:8px 12px}
+  #stationStudio .station-drawing-pane .studio-layers {flex-direction:row;gap:12px}
+  #stationStudio .studio-cameras button {font-size:.73rem;padding-inline:2px}
+}
+@container studio (max-width:760px) {
+  #stationStudio .studio-header {padding:10px 11px}
+  #stationStudio .studio-actions {gap:4px}
+  #stationStudio .studio-width-toggle {min-height:32px;padding:4px 7px;font-size:.76rem}
+  #stationStudio .station-workspace,#stationStudio.controls-collapsed .station-workspace {display:block;min-height:0}
+  #stationStudio #stationControls {
+    position:absolute;inset:0 auto 0 0;width:min(318px,88%);z-index:4;background:#f7faf9;
+    box-shadow:7px 0 24px #102c393d;
+  }
+  #stationStudio .station-drawer-scrim {display:block;position:absolute;inset:0;z-index:3;width:100%;height:100%;background:#0c2c3859;border:0;padding:0;cursor:pointer}
+  #stationStudio .station-drawing-pane .station-stage {min-height:clamp(280px,63cqw,370px)}
+  #stationStudio .station-drawing-pane .studio-inspector {
+    grid-template-columns:minmax(0,1fr) minmax(0,.76fr);grid-template-areas:"values values" "tour tour" "chart layers" "key key";
+    gap:7px 12px;padding:10px 11px;
+  }
+  #stationStudio .station-drawing-pane .studio-key,#stationStudio .station-drawing-pane .studio-tour-nav {margin-top:0}
+  #stationStudio .station-drawing-pane #sceneDetailNote {margin:.13rem 0 .33rem}
+  #stationStudio .station-drawing-pane .studio-cameras {display:grid;grid-template-columns:repeat(3,minmax(0,1fr))}
+  #stationStudio .station-drawing-pane .studio-cameras button:first-child {margin:0}
+  #stationStudio .station-drawing-pane #stationDiagram .svg-box {min-height:280px}
+  #stationStudio:is(:fullscreen,.is-expanded) .station-workspace {display:flex}
+  #stationStudio:is(:fullscreen,.is-expanded) .station-drawing-pane {width:100%}
+}
+@media print {
+  #stationStudio .station-workspace {display:block}
+  #stationStudio #stationControls,#stationStudio .station-drawer-scrim {display:none!important}
+}
+
+.review-grid {grid-template-columns:minmax(0,3fr) minmax(15rem,1fr); align-items:start;}
+.review-grid .diagram-col > .specs-card {margin:0;min-width:0}
+.review-grid .sidebar .log-list {max-height:clamp(16rem,32vw,27rem)}
+#stationStudio .station-pid-toolbar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:.4rem .7rem;padding:.5rem .75rem}
+#stationStudio #stationValveDetail{color:#175951;background:white;border:1px solid #b4d2c9;border-radius:.4rem;padding:.35rem .65rem;font:inherit;font-weight:700}
+#stationStudio #stationValveDetail[aria-pressed=true]{color:white;background:#135c58}
+#stationStudio #stationDiagram.show-valve-detail .svg-box{display:grid;place-items:center;min-height:0;background:#f7fafc}
+#stationStudio #stationDiagram.show-valve-detail .svg-box svg{width:100%;min-width:0;height:clamp(270px,37vw,510px);max-height:70vh}
+@media(max-width:1050px){.main-grid.review-grid{grid-template-columns:minmax(0,1fr)}}
+@media print {.main-grid.review-grid{display:block}.review-grid .specs-card{break-inside:avoid}.review-grid .log-card{margin-top:1rem}}
+
 
 </style>
 </head>
@@ -576,9 +688,97 @@
         <button type="button" id="stationTab3D" aria-pressed="true" aria-controls="stationModel"><b lang="en">3D</b> المجسّم</button>
         <button type="button" id="stationTab2D" aria-pressed="false" aria-controls="stationDiagram"><b lang="en">2D</b> المخطط</button>
       </div>
+      <button type="button" id="stationToggleControls" class="studio-width-toggle" aria-controls="stationControls" aria-expanded="true"><i aria-hidden="true"></i><span>توسيع الرسم</span></button>
       <button type="button" id="stationExpand" class="station-tool" aria-label="ملء الشاشة" title="ملء الشاشة"><i aria-hidden="true"></i></button>
     </div>
   </header>
+  <div class="station-workspace">
+    <aside id="stationControls" aria-label="لوحة التحكم وسيناريوهات التشغيل">
+      <div class="console-top"><h3 id="stationControlsTitle" tabindex="-1">لوحة التشغيل</h3><button id="stationRailClose" type="button" aria-label="إخفاء لوحة التحكم وتوسيع الرسم" title="إخفاء لوحة التحكم">×</button></div>
+      <div class="console-scroll">        <div class="card ctrl-card">
+          <h2 class="ctrl-heading">لوحة التحكم وسيناريوهات التشغيل</h2>
+
+          <div>
+            <div class="sub-lbl">أوضاع التدفق اليومي والثابت (مجمع 11,960 طالبة):</div>
+            <div class="btn-grid-3">
+              <button type="button" data-preset="diurnal245" class="ui-btn preset-btn active">يوم 245 م³</button>
+              <button type="button" data-preset="diurnal200" class="ui-btn preset-btn">يوم 200 م³</button>
+              <button type="button" data-preset="diurnal175" class="ui-btn preset-btn">يوم 175 م³</button>
+            </div>
+            <div class="btn-grid-2" style="margin-top:0.4rem;">
+              <button type="button" data-preset="designPeak" class="ui-btn preset-btn green-soft">ذروة ثابتة (55 م³/س)</button>
+              <button type="button" data-preset="night" class="ui-btn preset-btn">منخفض ثابت (1.5 م³/س)</button>
+            </div>
+            <button type="button" data-preset="stress" class="ui-btn preset-btn red-soft stress-btn">
+              <span>اختبار إجهاد ثابت (طوارئ)</span>
+              <span class="stress-pill">67.3 م³/س</span>
+            </button>
+            <div id="inflowModeDesc" class="hint-text"></div>
+          </div>
+
+          <div>
+            <div class="slider-row">
+              <label for="sliderInflow" style="font-weight:700;color:var(--slate-700);">التدفق الداخل الحالي (P-75)</label>
+              <strong id="valInflow" style="color:var(--qu-navy);">22.0 م³/س</strong>
+            </div>
+            <input id="sliderInflow" type="range" min="0" max="75" step="0.5" value="22.0" />
+          </div>
+
+          <div class="tanker-box">
+            <div class="tanker-stats">
+              <strong>الوايتات (32 م³/رحلة):</strong>
+              <strong id="valTankerTrips" style="color:var(--qu-green);">0 مكتملة | 0 جزئية</strong>
+            </div>
+            <div class="tanker-stats">
+              <span id="valTankerPending">انتظار: 0 | ملغاة: 0</span>
+              <span id="valTankerVol">منقول: 0.0 م³</span>
+            </div>
+            <button id="btnToggleSchedule" type="button" class="ui-btn green-soft" style="width:100%;">جدول 8 رحلات يومية: مفعل</button>
+          </div>
+
+          <div class="divider">
+            <div class="sub-lbl">غرفة التوزيع قبل GLS (خزان التعبئة):</div>
+            <div class="btn-grid-3">
+              <button type="button" data-tank-mode="both" class="ui-btn tank-mode-btn active">الخزانان معاً</button>
+              <button type="button" data-tank-mode="tk1" class="ui-btn tank-mode-btn">TK-01 فقط</button>
+              <button type="button" data-tank-mode="tk2" class="ui-btn tank-mode-btn">TK-02 فقط</button>
+            </div>
+          </div>
+
+          <div class="divider">
+            <div class="sub-lbl">مخرج الوايتات (خزان السحب المستقل عند العزل):</div>
+            <div class="btn-grid-3" style="margin-bottom:0.35rem;">
+              <button type="button" data-draw-mode="both" class="ui-btn draw-mode-btn active">سحب: الخزانان</button>
+              <button type="button" data-draw-mode="tk1" class="ui-btn draw-mode-btn">سحب: TK-01</button>
+              <button type="button" data-draw-mode="tk2" class="ui-btn draw-mode-btn">سحب: TK-02</button>
+            </div>
+            <div class="btn-grid-3">
+              <button type="button" data-out-mode="tanker" class="ui-btn out-mode-btn active">شاحنات الصرف</button>
+              <button type="button" data-out-mode="closed" class="ui-btn out-mode-btn">إغلاق (تخزين)</button>
+              <button type="button" disabled title="خط مستقبلي مغلق حالياً" class="ui-btn locked-btn">معالجة (مغلق)</button>
+            </div>
+          </div>
+
+          <div class="divider" style="display:flex;flex-direction:column;gap:0.4rem;">
+            <div class="sub-lbl" style="margin:0;">اختبارات الأعطال والأداء:</div>
+            <div class="btn-grid-3">
+              <button id="btnFaultP1" type="button" class="ui-btn red-soft">عطل P-01</button>
+              <button id="btnFaultP2" type="button" class="ui-btn red-soft">عطل P-02</button>
+              <button id="btnFaultP3" type="button" class="ui-btn red-soft">عطل P-03</button>
+            </div>
+            <button id="btnDegradeP1" type="button" class="ui-btn amber-soft">
+              اختبار انسداد جزئي P-01 (المحرك يعمل والتصرف ضعيف)
+            </button>
+            <button id="btnToggleBalance" type="button" class="ui-btn green-soft">
+              محبس التوازن بين الخزانين (DN100): مفتوح
+            </button>
+          </div>
+        </div>
+
+</div>
+    </aside>
+    <button type="button" class="station-drawer-scrim" aria-label="إغلاق لوحة التشغيل" tabindex="-1" hidden></button>
+    <div id="stationDrawingPane" class="station-drawing-pane">
   <div id="stationModel" class="station-model">
     <nav class="studio-rail" aria-label="مشاهد المحطة ومسار الصرف">
       <div class="studio-cameras">
@@ -625,7 +825,7 @@
       <div class="studio-key" aria-label="ألوان الخطوط"><span><i class="dirty"></i>وارد</span><span><i class="lift"></i>طرد</span><span><i class="tanker"></i>تفريغ</span><span><i class="future"></i>مستقبلي</span></div>
     </aside>
   </div>
-  <div id="stationDiagram" hidden><div class="diagram-note">اتجاه التدفق من اليمين إلى اليسار. مرّر المؤشر فوق المكوّن لعرض بياناته.</div><div class="svg-box">
+  <div id="stationDiagram" hidden><div class="diagram-note station-pid-toolbar"><span>اتجاه التدفق من اليمين إلى اليسار. مرّر المؤشر فوق المكوّن لعرض بياناته.</span><button id="stationValveDetail" type="button" aria-pressed="false">تكبير غرفة المحابس</button></div><div class="svg-box">
             <svg viewBox="0 0 1080 486" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <linearGradient id="wellWaterG" x1="0" y1="0" x2="0" y2="1">
@@ -750,51 +950,71 @@
                 <text x="710" y="444" text-anchor="middle" font-size="9.5" font-weight="700" fill="#18734B">P-03</text>
               </g>
 
-              <!-- 4. COMPACT SLEEK PUMP VALVE CHAMBER (Proportional) -->
-              <g id="comp-valves" class="comp-clickable" data-comp="valves">
-                <rect x="556" y="214" width="96" height="92" rx="3" fill="#FFFFFF" stroke="#64748B" stroke-width="1.8"/>
-                <rect x="550" y="208" width="108" height="7" rx="1" fill="#64748B"/>
-                <text x="604" y="194" text-anchor="middle" font-size="10" font-weight="700" fill="#075579">غرفة محابس البيارة</text>
-                <text x="604" y="321" text-anchor="middle" font-size="8.6" fill="#64748B">3 عدم رجوع + 3 عزل + مجمع DN150</text>
-              </g>
-
-              <path d="M 802 392 L 802 232 L 568 232 L 568 290" fill="none" stroke="#CBD5E1" stroke-width="6" stroke-linejoin="round"/>
-              <path id="p1PipeFlow" d="M 802 392 L 802 232 L 568 232 L 568 290" fill="none" stroke="#0284C7" stroke-width="4.5" stroke-linejoin="round" opacity="0"/>
-              <path id="p1PipeDash" d="M 802 392 L 802 232 L 568 232 L 568 290" fill="none" stroke="#E0F2FE" stroke-width="1.8" stroke-linejoin="round" opacity="0"/>
-
-              <path d="M 750 392 L 750 261 L 568 261" fill="none" stroke="#CBD5E1" stroke-width="6" stroke-linejoin="round"/>
-              <path id="p2PipeFlow" d="M 750 392 L 750 261 L 568 261" fill="none" stroke="#0891B2" stroke-width="4.5" stroke-linejoin="round" opacity="0"/>
-              <path id="p2PipeDash" d="M 750 392 L 750 261 L 568 261" fill="none" stroke="#CFFAFE" stroke-width="1.8" stroke-linejoin="round" opacity="0"/>
-
-              <path d="M 698 392 L 698 290 L 568 290" fill="none" stroke="#CBD5E1" stroke-width="6" stroke-linejoin="round"/>
-              <path id="p3PipeFlow" d="M 698 392 L 698 290 L 568 290" fill="none" stroke="#0F766E" stroke-width="4.5" stroke-linejoin="round" opacity="0"/>
-              <path id="p3PipeDash" d="M 698 392 L 698 290 L 568 290" fill="none" stroke="#CCFBF1" stroke-width="1.8" stroke-linejoin="round" opacity="0"/>
-
-              <rect x="688" y="178" width="70" height="17" rx="4" fill="#FFFFFF" stroke="#075579" stroke-width="1"/>
-              <text x="723" y="190" text-anchor="middle" font-size="8.8" font-weight="700" fill="#075579">مخارج DN100</text>
-
-              <g class="comp-clickable" data-comp="wetwell">
-                <rect x="752" y="236" width="78" height="30" rx="5" fill="#FFFFFF" fill-opacity="0.96" stroke="#075579" stroke-width="1.1"/>
-                <text id="svgWellDepth" x="791" y="250" direction="ltr" unicode-bidi="bidi-override" text-anchor="middle" font-size="12.5" font-weight="700" fill="#075579">-6.36 m</text>
-                <text id="svgWellAbs" x="791" y="262" text-anchor="middle" font-size="8.5" fill="#64748B">589.70 م</text>
-              </g>
-
-              <!-- Compact 3 Check Valves & 3 Gate Valves inside Sleek Chamber -->
-              <rect id="nrv1" x="624" y="225" width="15" height="13" rx="2" fill="#FFFFFF" stroke="#475569" stroke-width="1.3"/>
-              <line x1="636" y1="228" x2="627" y2="235" stroke="#475569" stroke-width="1.2"/>
-              <polygon points="586,226 594,232 586,238" fill="#FFFFFF" stroke="#0F766E" stroke-width="1.3"/>
-              <polygon points="602,226 594,232 602,238" fill="#FFFFFF" stroke="#0F766E" stroke-width="1.3"/>
-
-              <rect id="nrv2" x="624" y="254" width="15" height="13" rx="2" fill="#FFFFFF" stroke="#475569" stroke-width="1.3"/>
-              <line x1="636" y1="257" x2="627" y2="264" stroke="#475569" stroke-width="1.2"/>
-              <polygon points="586,255 594,261 586,267" fill="#FFFFFF" stroke="#0F766E" stroke-width="1.3"/>
-              <polygon points="602,255 594,261 602,267" fill="#FFFFFF" stroke="#0F766E" stroke-width="1.3"/>
-
-              <rect id="nrv3" x="624" y="283" width="15" height="13" rx="2" fill="#FFFFFF" stroke="#475569" stroke-width="1.3"/>
-              <line x1="636" y1="286" x2="627" y2="293" stroke="#475569" stroke-width="1.2"/>
-              <polygon points="586,284 594,290 586,296" fill="#FFFFFF" stroke="#0F766E" stroke-width="1.3"/>
-              <polygon points="602,284 594,290 602,296" fill="#FFFFFF" stroke="#0F766E" stroke-width="1.3"/>
-
+              <!-- 4. Pump discharge valves and common collector -->
+    <g id="comp-valves" class="comp-clickable" data-comp="valves">
+      <rect x="513" y="214" width="141" height="94" rx="3" fill="#F8FBFD" stroke="#64748B" stroke-width="1.6"/>
+      <rect x="509" y="208" width="149" height="7" rx="1.2" fill="#64748B"/>
+      <text x="583" y="194" text-anchor="middle" font-size="10" font-weight="700" fill="#075579">غرفة محابس البيارة</text>
+    </g>
+    <g pointer-events="none">
+      <path d="M 802 392 V 232 H 560" fill="none" stroke="#91A7B8" stroke-width="5.5" stroke-linejoin="round"/>
+<path id="p1PipeFlow" d="M 802 392 V 232 H 560" fill="none" stroke="#0284C7" stroke-width="3.8" stroke-linejoin="round" opacity="0"/>
+<path id="p1PipeDash" d="M 802 392 V 232 H 560" fill="none" stroke="#E0F2FE" stroke-width="1.55" stroke-linejoin="round" opacity="0"/>
+<path d="M 750 392 V 261 H 560" fill="none" stroke="#91A7B8" stroke-width="5.5" stroke-linejoin="round"/>
+<path id="p2PipeFlow" d="M 750 392 V 261 H 560" fill="none" stroke="#0891B2" stroke-width="3.8" stroke-linejoin="round" opacity="0"/>
+<path id="p2PipeDash" d="M 750 392 V 261 H 560" fill="none" stroke="#CFFAFE" stroke-width="1.55" stroke-linejoin="round" opacity="0"/>
+<path d="M 698 392 V 290 H 560" fill="none" stroke="#91A7B8" stroke-width="5.5" stroke-linejoin="round"/>
+<path id="p3PipeFlow" d="M 698 392 V 290 H 560" fill="none" stroke="#0F766E" stroke-width="3.8" stroke-linejoin="round" opacity="0"/>
+<path id="p3PipeDash" d="M 698 392 V 290 H 560" fill="none" stroke="#CCFBF1" stroke-width="1.55" stroke-linejoin="round" opacity="0"/>
+      <path d="M 560 232 V 261" fill="none" stroke="#91A7B8" stroke-width="7" stroke-linejoin="round"/>
+<path id="pidHeader1Flow" d="M 560 232 V 261" fill="none" stroke="#1877A2" stroke-width="5.3" stroke-linejoin="round" opacity="0"/>
+<path id="pidHeader1Dash" d="M 560 232 V 261" fill="none" stroke="#E4F7FA" stroke-width="1.55" stroke-linejoin="round" opacity="0"/>
+      <path d="M 560 290 V 261" fill="none" stroke="#91A7B8" stroke-width="7" stroke-linejoin="round"/>
+<path id="pidHeader3Flow" d="M 560 290 V 261" fill="none" stroke="#1877A2" stroke-width="5.3" stroke-linejoin="round" opacity="0"/>
+<path id="pidHeader3Dash" d="M 560 290 V 261" fill="none" stroke="#E4F7FA" stroke-width="1.55" stroke-linejoin="round" opacity="0"/>
+      <path d="M 560 261 H 513" fill="none" stroke="#91A7B8" stroke-width="7" stroke-linejoin="round"/>
+<path id="pidCommonFlow" d="M 560 261 H 513" fill="none" stroke="#1478A4" stroke-width="5.3" stroke-linejoin="round" opacity="0"/>
+<path id="pidCommonDash" d="M 560 261 H 513" fill="none" stroke="#E4F7FA" stroke-width="1.55" stroke-linejoin="round" opacity="0"/>
+      <circle cx="560" cy="261" r="3.7" fill="#1C627E"/>
+    </g>
+    <g data-branch-valves="1" class="comp-clickable" data-comp="valves">
+      <title>P-01 · محبس عدم رجوع ثم محبس عزل</title>
+      <rect id="nrv1" x="624" y="225.5" width="17" height="13" rx="2" fill="#fff" stroke="#486578" stroke-width="1.25"/>
+      <path d="M 636 228.2 L 629 232 L 636 235.8 Z M 628 228 V 236" fill="none" stroke="#355366" stroke-width="1.25" stroke-linejoin="round"/>
+      <path d="M 585 226.5 L 601 237.5 V 226.5 L 585 237.5 Z" stroke="#0E6B63" stroke-width="1.4" stroke-linejoin="round" fill="#F5FCF8"/>
+      <path d="M 593 232 V 222.6 M 588.8 222.6 H 597.2" fill="none" stroke="#0E6B63" stroke-width="1.25"/>
+    </g>
+<g data-branch-valves="2" class="comp-clickable" data-comp="valves">
+      <title>P-02 · محبس عدم رجوع ثم محبس عزل</title>
+      <rect id="nrv2" x="624" y="254.5" width="17" height="13" rx="2" fill="#fff" stroke="#486578" stroke-width="1.25"/>
+      <path d="M 636 257.2 L 629 261 L 636 264.8 Z M 628 257 V 265" fill="none" stroke="#355366" stroke-width="1.25" stroke-linejoin="round"/>
+      <path d="M 585 255.5 L 601 266.5 V 255.5 L 585 266.5 Z" stroke="#0E6B63" stroke-width="1.4" stroke-linejoin="round" fill="#F5FCF8"/>
+      <path d="M 593 261 V 251.6 M 588.8 251.6 H 597.2" fill="none" stroke="#0E6B63" stroke-width="1.25"/>
+    </g>
+<g data-branch-valves="3" class="comp-clickable" data-comp="valves">
+      <title>P-03 · محبس عدم رجوع ثم محبس عزل</title>
+      <rect id="nrv3" x="624" y="283.5" width="17" height="13" rx="2" fill="#fff" stroke="#486578" stroke-width="1.25"/>
+      <path d="M 636 286.2 L 629 290 L 636 293.8 Z M 628 286 V 294" fill="none" stroke="#355366" stroke-width="1.25" stroke-linejoin="round"/>
+      <path d="M 585 284.5 L 601 295.5 V 284.5 L 585 295.5 Z" stroke="#0E6B63" stroke-width="1.4" stroke-linejoin="round" fill="#F5FCF8"/>
+      <path d="M 593 290 V 280.6 M 588.8 280.6 H 597.2" fill="none" stroke="#0E6B63" stroke-width="1.25"/>
+    </g>
+    <g id="pidCollectorFt" class="comp-clickable" data-comp="valves">
+      <title>عداد التدفق المشترك بعد تجميع المضخات</title>
+      <circle cx="533" cy="261" r="8.5" fill="#F6FBFD" stroke="#075579" stroke-width="1.5"/>
+      <text x="533" y="263.7" direction="ltr" text-anchor="middle" font-size="7.1" font-weight="750" fill="#075579">FT</text>
+      <text id="svgFtReadout" x="535" y="280" direction="ltr" unicode-bidi="bidi-override" text-anchor="middle" font-size="7.4" font-weight="700" fill="#075579">0.0 L/s</text>
+    </g>
+    <g class="comp-clickable" data-comp="valves" text-anchor="middle" font-weight="650" font-size="8.3" fill="#475569">
+      <text x="633" y="321">عدم رجوع</text><text x="593" y="321">عزل</text>
+      <text x="553" y="321" direction="ltr">DN150</text>
+    </g>
+    <rect x="688" y="178" width="70" height="17" rx="4" fill="#FFF" stroke="#075579"/>
+    <text x="723" y="190" text-anchor="middle" font-size="8.8" font-weight="700" fill="#075579">مخارج DN100</text>
+    <g class="comp-clickable" data-comp="wetwell">
+      <rect x="735" y="135" width="81" height="29" rx="5" fill="#FFF" stroke="#075579" stroke-width="1.1"/>
+      <text id="svgWellDepth" x="775" y="148" direction="ltr" unicode-bidi="bidi-override" text-anchor="middle" font-size="11.5" font-weight="700" fill="#075579">-6.36 m</text>
+      <text id="svgWellAbs" x="775" y="159" text-anchor="middle" font-size="8.5" fill="#64748B">589.70 م</text>
+    </g>
               <!-- 5. PRE-GLS DISTRIBUTION VALVE CHAMBER SHELL (Drawn BEFORE Rising Main for zero seam!) -->
               <g id="comp-glsvalves" class="comp-clickable" data-comp="glsvalves">
                 <rect x="288" y="214" width="84" height="86" rx="3" fill="#F0FDF4" stroke="#18734B" stroke-width="1.8"/>
@@ -803,35 +1023,34 @@
                 <text x="330" y="329" text-anchor="middle" font-size="8.8" fill="#475569">(قبل خزانات GLS — DN100)</text>
               </g>
 
-              <!-- 6. SINGLE CONTINUOUS BURIED 50m RISING MAIN + FT (Straight into Header x=352) -->
-              <g id="comp-rising" class="comp-clickable" data-comp="rising">
-                <line x1="568" y1="261" x2="352" y2="261" stroke="#CBD5E1" stroke-width="8"/>
-                <line id="risingMainFlow" x1="568" y1="261" x2="352" y2="261" stroke="#0284C7" stroke-width="6" opacity="0.22"/>
-                <line id="risingMainDash" x1="568" y1="261" x2="352" y2="261" stroke="#E0F2FE" stroke-width="2" opacity="0"/>
-
-                <circle cx="468" cy="261" r="15" fill="#FFFFFF" stroke="#075579" stroke-width="2"/>
-                <text x="468" y="265" text-anchor="middle" font-size="10.5" font-weight="700" fill="#075579">FT</text>
-                <text id="svgFtReadout" x="468" y="290" direction="ltr" unicode-bidi="bidi-override" text-anchor="middle" font-size="10.5" font-weight="700" fill="#075579">0.0 L/s</text>
-
-                <rect x="386" y="220" width="144" height="22" rx="5" fill="#EBF3F7" stroke="#075579" stroke-width="1"/>
-                <text x="458" y="235" text-anchor="middle" font-size="9.2" font-weight="700" fill="#075579">خط طرد 50 م (Ø140 SDR17)</text>
-                <text id="svgRisingVel" x="458" y="307" text-anchor="middle" font-size="9" fill="#475569">ID 123.4 مم | السرعة: 0.00 م/ث</text>
-              </g>
-
-              <!-- Vertical Distribution Header inside Pre-GLS Chamber (Clean T-Joint) -->
-              <g class="comp-clickable" data-comp="glsvalves">
-                <line x1="352" y1="235" x2="352" y2="283" stroke="#CBD5E1" stroke-width="6.5"/>
-                <line id="distHeaderFlow" x1="352" y1="235" x2="352" y2="283" stroke="#0284C7" stroke-width="4.8" opacity="0.22"/>
-                <line id="distHeaderDash" x1="352" y1="235" x2="352" y2="283" stroke="#E0F2FE" stroke-width="1.8" opacity="0"/>
-              </g>
-
+              <!-- 6. Rising main from the chamber wall to the tank distribution tee -->
+    <g id="comp-rising" class="comp-clickable" data-comp="rising">
+      <path d="M 513 261 H 352" fill="none" stroke="#91A7B8" stroke-width="7" stroke-linejoin="round"/>
+<path id="risingMainFlow" d="M 513 261 H 352" fill="none" stroke="#0284C7" stroke-width="5.3" stroke-linejoin="round" opacity="0"/>
+<path id="risingMainDash" d="M 513 261 H 352" fill="none" stroke="#E0F2FE" stroke-width="1.55" stroke-linejoin="round" opacity="0"/>
+      <path d="M 442 256 L 435 261 L 442 266" fill="none" stroke="#28536A" stroke-width="1.7" stroke-linejoin="round"/>
+      <rect x="379" y="222" width="127" height="20" rx="4" fill="#EBF3F7" stroke="#075579" stroke-width="1"/>
+      <text x="442.5" y="235.4" text-anchor="middle" font-size="8.7" font-weight="700" fill="#075579">خط طرد 50 م (Ø140 SDR17)</text>
+      <text id="svgRisingVel" x="442" y="299" text-anchor="middle" font-size="8.5" fill="#475569">ID 123.4 مم</text>
+    </g>
+              <!-- Independent branches from the tank distribution tee -->
+    <g class="comp-clickable" data-comp="glsvalves">
+      <path d="M 352 261 V 238" fill="none" stroke="#91A7B8" stroke-width="6.5" stroke-linejoin="round"/>
+<path id="distHeaderFlow" d="M 352 261 V 238" fill="none" stroke="#0284C7" stroke-width="4.8" stroke-linejoin="round" opacity="0"/>
+<path id="distHeaderDash" d="M 352 261 V 238" fill="none" stroke="#E0F2FE" stroke-width="1.55" stroke-linejoin="round" opacity="0"/>
+      <path d="M 352 261 V 280" fill="none" stroke="#91A7B8" stroke-width="6.5" stroke-linejoin="round"/>
+<path id="pidDistLowerFlow" d="M 352 261 V 280" fill="none" stroke="#0284C7" stroke-width="4.8" stroke-linejoin="round" opacity="0"/>
+<path id="pidDistLowerDash" d="M 352 261 V 280" fill="none" stroke="#E0F2FE" stroke-width="1.55" stroke-linejoin="round" opacity="0"/>
+      <circle cx="352" cy="261" r="3.5" fill="#196785"/>
+    </g>
               <path d="M 352 238 L 310 238 L 310 78 L 268 78 L 268 108" fill="none" stroke="#CBD5E1" stroke-width="6.5" stroke-linejoin="round"/>
               <path id="tk1InFlow" d="M 352 238 L 310 238 L 310 78 L 268 78 L 268 108" fill="none" stroke="#0284C7" stroke-width="4.8" stroke-linejoin="round" opacity="0"/>
               <path id="tk1InDash" d="M 352 238 L 310 238 L 310 78 L 268 78 L 268 108" fill="none" stroke="#E0F2FE" stroke-width="1.8" stroke-linejoin="round" opacity="0"/>
 
-              <path d="M 352 280 L 298 280 L 298 54 L 106 54 L 106 108" fill="none" stroke="#CBD5E1" stroke-width="6.5" stroke-linejoin="round"/>
-              <path id="tk2InFlow" d="M 352 280 L 298 280 L 298 54 L 106 54 L 106 108" fill="none" stroke="#0284C7" stroke-width="4.8" stroke-linejoin="round" opacity="0"/>
-              <path id="tk2InDash" d="M 352 280 L 298 280 L 298 54 L 106 54 L 106 108" fill="none" stroke="#E0F2FE" stroke-width="1.8" stroke-linejoin="round" opacity="0"/>
+              <path d="M 298 84 C 289 84 289 72 298 72" fill="none" stroke="#fff" stroke-width="10"/>
+<path d="M 352 280 H 298 V 84 C 289 84 289 72 298 72 V 54 H 106 V 108" fill="none" stroke="#CBD5E1" stroke-width="6.5" stroke-linejoin="round"/>
+              <path id="tk2InFlow" d="M 352 280 H 298 V 84 C 289 84 289 72 298 72 V 54 H 106 V 108" fill="none" stroke="#0284C7" stroke-width="4.8" stroke-linejoin="round" opacity="0"/>
+              <path id="tk2InDash" d="M 352 280 H 298 V 84 C 289 84 289 72 298 72 V 54 H 106 V 108" fill="none" stroke="#E0F2FE" stroke-width="1.8" stroke-linejoin="round" opacity="0"/>
 
               <g class="comp-clickable" data-comp="glsvalves">
                 <polygon id="gvTk1L" points="320,232 329,238 320,244" fill="#FFFFFF" stroke="#18734B" stroke-width="1.4"/>
@@ -912,6 +1131,8 @@
               </g>
             </svg>
           </div></div>
+    </div>
+  </div>
   <footer class="studio-footer">
     <div class="studio-playback"><button type="button" id="stationPause" class="studio-pause">إيقاف مؤقت</button><div class="speed-group">
               <span style="color:var(--slate-500);font-weight:600;">السرعة:</span>
@@ -1018,7 +1239,7 @@
     </section>
 
     <!-- ==================== MAIN WORKSPACE: P&ID + ASSET HEALTH + SIDEBAR ==================== -->
-    <section class="main-grid">
+    <section class="main-grid review-grid">
 
       <div class="diagram-col">
         <!-- Asset Health & Real Hydraulic Energy Strip (H-Q Card Removed per Request) -->
@@ -1057,100 +1278,6 @@
             </div>
           </div>
         </div>
-      </div>
-
-      <!-- Right Sidebar: Controls + SCADA Log -->
-      <div class="sidebar">
-        <div class="card ctrl-card">
-          <h2 class="ctrl-heading">لوحة التحكم وسيناريوهات التشغيل</h2>
-
-          <div>
-            <div class="sub-lbl">أوضاع التدفق اليومي والثابت (مجمع 11,960 طالبة):</div>
-            <div class="btn-grid-3">
-              <button type="button" data-preset="diurnal245" class="ui-btn preset-btn active">يوم 245 م³</button>
-              <button type="button" data-preset="diurnal200" class="ui-btn preset-btn">يوم 200 م³</button>
-              <button type="button" data-preset="diurnal175" class="ui-btn preset-btn">يوم 175 م³</button>
-            </div>
-            <div class="btn-grid-2" style="margin-top:0.4rem;">
-              <button type="button" data-preset="designPeak" class="ui-btn preset-btn green-soft">ذروة ثابتة (55 م³/س)</button>
-              <button type="button" data-preset="night" class="ui-btn preset-btn">منخفض ثابت (1.5 م³/س)</button>
-            </div>
-            <button type="button" data-preset="stress" class="ui-btn preset-btn red-soft stress-btn">
-              <span>اختبار إجهاد ثابت (طوارئ)</span>
-              <span class="stress-pill">67.3 م³/س</span>
-            </button>
-            <div id="inflowModeDesc" class="hint-text"></div>
-          </div>
-
-          <div>
-            <div class="slider-row">
-              <label for="sliderInflow" style="font-weight:700;color:var(--slate-700);">التدفق الداخل الحالي (P-75)</label>
-              <strong id="valInflow" style="color:var(--qu-navy);">22.0 م³/س</strong>
-            </div>
-            <input id="sliderInflow" type="range" min="0" max="75" step="0.5" value="22.0" />
-          </div>
-
-          <div class="tanker-box">
-            <div class="tanker-stats">
-              <strong>الوايتات (32 م³/رحلة):</strong>
-              <strong id="valTankerTrips" style="color:var(--qu-green);">0 مكتملة | 0 جزئية</strong>
-            </div>
-            <div class="tanker-stats">
-              <span id="valTankerPending">انتظار: 0 | ملغاة: 0</span>
-              <span id="valTankerVol">منقول: 0.0 م³</span>
-            </div>
-            <button id="btnToggleSchedule" type="button" class="ui-btn green-soft" style="width:100%;">جدول 8 رحلات يومية: مفعل</button>
-          </div>
-
-          <div class="divider">
-            <div class="sub-lbl">غرفة التوزيع قبل GLS (خزان التعبئة):</div>
-            <div class="btn-grid-3">
-              <button type="button" data-tank-mode="both" class="ui-btn tank-mode-btn active">الخزانان معاً</button>
-              <button type="button" data-tank-mode="tk1" class="ui-btn tank-mode-btn">TK-01 فقط</button>
-              <button type="button" data-tank-mode="tk2" class="ui-btn tank-mode-btn">TK-02 فقط</button>
-            </div>
-          </div>
-
-          <div class="divider">
-            <div class="sub-lbl">مخرج الوايتات (خزان السحب المستقل عند العزل):</div>
-            <div class="btn-grid-3" style="margin-bottom:0.35rem;">
-              <button type="button" data-draw-mode="both" class="ui-btn draw-mode-btn active">سحب: الخزانان</button>
-              <button type="button" data-draw-mode="tk1" class="ui-btn draw-mode-btn">سحب: TK-01</button>
-              <button type="button" data-draw-mode="tk2" class="ui-btn draw-mode-btn">سحب: TK-02</button>
-            </div>
-            <div class="btn-grid-3">
-              <button type="button" data-out-mode="tanker" class="ui-btn out-mode-btn active">شاحنات الصرف</button>
-              <button type="button" data-out-mode="closed" class="ui-btn out-mode-btn">إغلاق (تخزين)</button>
-              <button type="button" disabled title="خط مستقبلي مغلق حالياً" class="ui-btn locked-btn">معالجة (مغلق)</button>
-            </div>
-          </div>
-
-          <div class="divider" style="display:flex;flex-direction:column;gap:0.4rem;">
-            <div class="sub-lbl" style="margin:0;">اختبارات الأعطال والأداء:</div>
-            <div class="btn-grid-3">
-              <button id="btnFaultP1" type="button" class="ui-btn red-soft">عطل P-01</button>
-              <button id="btnFaultP2" type="button" class="ui-btn red-soft">عطل P-02</button>
-              <button id="btnFaultP3" type="button" class="ui-btn red-soft">عطل P-03</button>
-            </div>
-            <button id="btnDegradeP1" type="button" class="ui-btn amber-soft">
-              اختبار انسداد جزئي P-01 (المحرك يعمل والتصرف ضعيف)
-            </button>
-            <button id="btnToggleBalance" type="button" class="ui-btn green-soft">
-              محبس التوازن بين الخزانين (DN100): مفتوح
-            </button>
-          </div>
-        </div>
-
-        <div class="card log-card">
-          <div class="log-head">
-            <h2 class="ctrl-heading" style="border:none;padding:0;">سجل التشغيل الآلي (SCADA Log)</h2>
-            <button id="btnClearLog" type="button" class="clear-btn">مسح السجل</button>
-          </div>
-          <div id="eventLog" class="log-list"></div>
-        </div>
-      </div>
-    </section>
-
     <!-- ==================== DESIGN BASIS & SPECIFICATIONS ==================== -->
     <section class="card specs-card">
       <div class="section-head">
@@ -1192,7 +1319,21 @@
       </div>
     </section>
 
-    <!-- ==================== COLLAPSIBLE COST SHEET (5% CONTINGENCY, ALL ITEMS EXCL. GLS) ==================== -->
+      </div>
+
+      <!-- Simulation event log -->
+      <div class="sidebar">
+        <div class="card log-card">
+          <div class="log-head">
+            <h2 class="ctrl-heading" style="border:none;padding:0;">سجل التشغيل الآلي (SCADA Log)</h2>
+            <button id="btnClearLog" type="button" class="clear-btn">مسح السجل</button>
+          </div>
+          <div id="eventLog" class="log-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== COLLAPSIBLE COST SHEET (10% CONTINGENCY, ALL ITEMS EXCL. GLS) ==================== -->
     <section class="card cost-card">
       <button id="btnToggleCost" type="button" class="cost-toggle">
         <div>
@@ -1202,7 +1343,7 @@
         <div style="display:flex;align-items:center;gap:0.75rem;">
           <div style="text-align:left;">
             <div style="font-size:0.7rem;color:var(--slate-600);">الإجمالي النهائي شامل الضريبة</div>
-            <div id="costHeaderTotal" style="font-size:1.05rem;font-weight:800;color:var(--qu-navy);" dir="ltr">427,455 ر.س</div>
+            <div id="costHeaderTotal" style="font-size:1.05rem;font-weight:800;color:var(--qu-navy);" dir="ltr">447,810 ر.س</div>
           </div>
           <span id="costChevron" class="chevron">▼</span>
         </div>
@@ -1216,7 +1357,7 @@
           </div>
           <label style="display:flex;align-items:center;gap:0.4rem;font-size:0.76rem;font-weight:700;cursor:pointer;">
             <input id="chkContingency" type="checkbox" checked style="accent-color:var(--qu-navy);" />
-            <span>إضافة 5% احتياطي للطوارئ والموقع (المعتمد)</span>
+            <span>إضافة احتياطي للطوارئ والموقع بنسبة 10%</span>
           </label>
         </div>
 
@@ -1243,16 +1384,16 @@
             <div id="sumSub" class="sum-v" style="color:var(--slate-800);">354,000 ر.س</div>
           </div>
           <div class="sum-box">
-            <div class="sum-l">5% احتياطي</div>
-            <div id="sumCont" class="sum-v" style="color:var(--qu-amber);">17,700 ر.س</div>
+            <div class="sum-l">احتياطي 10%</div>
+            <div id="sumCont" class="sum-v" style="color:var(--qu-amber);">35,400 ر.س</div>
           </div>
           <div class="sum-box">
             <div class="sum-l">ضريبة القيمة المضافة (15% إلزامي)</div>
-            <div id="sumVat" class="sum-v" style="color:#0284c7;">55,755 ر.س</div>
+            <div id="sumVat" class="sum-v" style="color:#0284c7;">58,410 ر.س</div>
           </div>
           <div class="sum-box grand">
             <div class="sum-l">الإجمالي النهائي شامل الضريبة</div>
-            <div id="sumGrand" class="sum-v">427,455 ر.س</div>
+            <div id="sumGrand" class="sum-v">447,810 ر.س</div>
           </div>
         </div>
       </div>
@@ -2523,14 +2664,87 @@ async function saveStationSnapshot(viewport, model, info) {
 }
 
 
+function createDiagramLayout() {
+  const studio=document.getElementById('stationStudio');
+  const panel=document.getElementById('stationControls');
+  const drawing=document.getElementById('stationDrawingPane');
+  const toggle=document.getElementById('stationToggleControls');
+  const close=document.getElementById('stationRailClose');
+  const scrim=studio.querySelector('.station-drawer-scrim');
+  const scroller=panel.querySelector('.console-scroll');
+  const heading=panel.querySelector('.console-top h3');
+  const prefs={wide:true,compact:false};
+  let size='';
+  heading.tabIndex=-1;
+
+  function paint(focusPanel=false) {
+    const compact=size==='compact', open=prefs[size];
+    if(!open&&panel.contains(document.activeElement))toggle.focus({preventScroll:true});
+    studio.classList.toggle('controls-collapsed',!open);
+    panel.hidden=!open;
+    scrim.hidden=!(compact&&open);
+    drawing.inert=compact&&open;
+    toggle.setAttribute('aria-expanded',String(open));
+    const title=open?(compact?'إغلاق لوحة التحكم':'توسيع الرسم'):'إظهار لوحة التحكم';
+    toggle.querySelector('span').textContent=title;
+    toggle.title=title;
+    if(focusPanel&&open)heading.focus({preventScroll:true});
+  }
+  function resize() {
+    // CSS container queries use the content box, not the device viewport.
+    const next=studio.clientWidth<=760?'compact':'wide';
+    if(next!==size){size=next;paint();}
+  }
+  function setOpen(value,focusPanel=false) {
+    prefs[size]=value;paint(focusPanel);
+  }
+  function hide() {setOpen(false);toggle.focus({preventScroll:true});}
+  toggle.addEventListener('click',()=>{
+    const opening=!prefs[size];
+    setOpen(opening,opening&&size==='compact');
+  });
+  close.addEventListener('click',hide);
+  scrim.addEventListener('click',hide);
+  studio.addEventListener('keydown',event=>{
+    if(event.key==='Escape'&&size==='compact'&&prefs.compact){
+      event.preventDefault();event.stopPropagation();hide();
+    }
+  });
+  resize();
+  if('ResizeObserver' in window)new ResizeObserver(resize).observe(studio);
+  else window.addEventListener('resize',resize,{passive:true});
+  return {
+    revealControls(){
+      setOpen(true,true);
+      scroller.scrollTop=0;
+      const box=panel.getBoundingClientRect();
+      if(box.top<0||box.top>window.innerHeight-130){
+        panel.scrollIntoView({block:'start',behavior:'auto'});
+      }
+    }
+  };
+}
+
+
 function createStationPresentation(parameters){
   const root = document.getElementById('stationStudio');
   const byId = id => document.getElementById(id);
   const find = selector => root.querySelector(selector);
   const canvas = byId('stationViewCanvas');
-  const controls = document.querySelector('.sidebar .ctrl-card');
-  const controlTitle = controls.querySelector('.ctrl-heading');
-  controlTitle.tabIndex=-1;
+  const diagramLayout = createDiagramLayout();
+  const pid = byId('stationDiagram').querySelector('.svg-box svg');
+  const pidFullView = pid.getAttribute('viewBox');
+  const detailButton = byId('stationValveDetail');
+  function setValveDetail(active){
+    pid.setAttribute('viewBox',active?'477 170 210 155':pidFullView);
+    byId('stationDiagram').classList.toggle('show-valve-detail',active);
+    detailButton.setAttribute('aria-pressed',String(active));
+    detailButton.textContent=active?'عرض المخطط كاملًا':'تكبير غرفة المحابس';
+    const pane=pid.parentElement;
+    pane.scrollLeft=0;
+    pane.scrollTop=0;
+  }
+  detailButton.addEventListener('click',()=>setValveDetail(detailButton.getAttribute('aria-pressed')!=='true'));
   const stages = ['inlet','well','force','tanks','outlet'];
   const titles = {
     overview:'قراءات المحطة', inlet:'الدخول بالجاذبية', well:'المضخات الغاطسة',
@@ -2704,7 +2918,13 @@ function createStationPresentation(parameters){
   }
   byId('stationPause').addEventListener('click',()=>{byId('btnPlayPause').click();redraw();});
   const expanded=()=>document.fullscreenElement===root||root.classList.contains('is-expanded');
-  function syncExpand(){const b=byId('stationExpand'),label=expanded()?'إنهاء ملء الشاشة':'ملء الشاشة';b.setAttribute('aria-label',label);b.title=label;pressed(b,expanded());viewport?.invalidate();}
+  function syncExpand(){
+    const b=byId('stationExpand'),label=expanded()?'إنهاء ملء الشاشة':'ملء الشاشة';
+    b.setAttribute('aria-label',label);b.title=label;pressed(b,expanded());
+    const tooltip=byId('hoverTooltip'), host=expanded()?root:document.body;
+    if(tooltip.parentNode!==host){tooltip.classList.remove('visible');host.appendChild(tooltip);}
+    viewport?.invalidate();
+  }
   async function leaveFull(){
     if(document.fullscreenElement===root)await document.exitFullscreen();
     root.classList.remove('is-expanded');syncExpand();
@@ -2713,10 +2933,7 @@ function createStationPresentation(parameters){
     if(expanded())await leaveFull();
     else{try{if(!root.requestFullscreen)throw Error();await root.requestFullscreen();}catch{root.classList.add('is-expanded');}syncExpand();}
   });
-  byId('stationScenarioJump').addEventListener('click',async()=>{
-    if(expanded())await leaveFull();
-    controlTitle.focus({preventScroll:true});controls.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
-  });
+  byId('stationScenarioJump').addEventListener('click',()=>diagramLayout.revealControls());
   refs.stationSnapshot.addEventListener('click',async()=>{
     if(!drawnModel||cfg.mode!=='3D'||refs.stationSnapshot.disabled)return;
     refs.stationSnapshot.disabled=true;
@@ -2728,6 +2945,13 @@ function createStationPresentation(parameters){
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&root.classList.contains('is-expanded')){leaveFull();byId('stationExpand').focus();}});
   if('IntersectionObserver' in window)new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;if(visible)redraw();},{rootMargin:'160px'}).observe(root);
   if(!viewport){byId('stationTab3D').disabled=true;byId('stationTour').disabled=true;setMode('2D');}
+  function openLinkedView(){
+    if(location.hash==='#2d'||location.hash==='#2d-valves'){
+      setMode('2D');setValveDetail(location.hash==='#2d-valves');
+    }else if(location.hash==='#3d'&&viewport){setMode('3D');}
+  }
+  window.addEventListener('hashchange',openLinkedView);
+  openLinkedView();
   return {update};
 }
 
@@ -2903,6 +3127,7 @@ function createStationPresentation(parameters){
         }
       };
 
+      const COST_CONTINGENCY_RATE = 10 / 100;
       const COST_ITEMS = [
         { id: "c1", name: "إنشاء بيارة رفع خرسانية دائرية مسلحة (Ø 3.0 م × عمق 7.5 م) شاملة الحفر والنزح والعزل الإيبوكسي والربط مع خط P-75", unit: "عدد", qty: 1, price: 145000, checked: true },
         { id: "c2", name: "توريد وتركيب مصفاة سلة SS316 على قضبان توجيه + وحدة فلتر كربون نشط للروائح", unit: "عدد", qty: 1, price: 19000, checked: true },
@@ -3133,7 +3358,7 @@ function createStationPresentation(parameters){
         el("valInflow").textContent = state.inflowM3h.toFixed(1) + " م³/س";
       }
 
-      // Cost Table (5% Approved Contingency -> 427,455 SAR incl. 15% VAT)
+      // Cost table for the selected items and optional contingency.
       function renderCostTable() {
         const tbody = el("costTableBody");
         tbody.innerHTML = "";
@@ -3175,7 +3400,7 @@ function createStationPresentation(parameters){
 
       function updateCostTotals() {
         const sub = COST_ITEMS.reduce((acc, it) => acc + (it.checked ? it.qty * it.price : 0), 0);
-        const cont = el("chkContingency").checked ? sub * 0.05 : 0; // 5% Approved Contingency
+        const cont = el("chkContingency").checked ? sub * COST_CONTINGENCY_RATE : 0;
         const vat = (sub + cont) * 0.15;
         const grand = sub + cont + vat;
         el("sumSub").textContent = fmtNum(sub) + " ر.س";
@@ -3598,9 +3823,9 @@ function createStationPresentation(parameters){
         }
 
         el("kpiFlow").textContent = state.lastOpQ_Ls.toFixed(1) + " ل/ث";
-        el("svgFtReadout").textContent = state.lastOpQ_Ls.toFixed(1) + " L/s";
+        el("svgFtReadout").textContent = (state.lastActualPumpM3h / 3.6).toFixed(1) + " L/s";
         el("kpiVel").textContent = `${vel.toFixed(2)} م/ث (ID 123.4 مم)`;
-        el("svgRisingVel").textContent = `ID 123.4 مم | السرعة: ${vel.toFixed(2)} م/ث`;
+        el("svgRisingVel").textContent = `ID 123.4 مم | السرعة: ${(state.lastActualPumpM3h / 3600 / PIPE_AREA).toFixed(2)} م/ث`;
         el("kpiTdh").textContent = state.lastPumpHead_m.toFixed(1) + " م";
         el("kpiPressure").textContent = `فواقد فرع+خط: ${state.lastPipeLoss_m.toFixed(1)} م`;
 
@@ -3690,24 +3915,33 @@ function createStationPresentation(parameters){
           const n = i + 1;
           el(`p${n}Body`).setAttribute("fill", state.pFault[i] ? "#B4232F" : (state.pOn[i] ? (state.pDegraded[i] ? "#D97706" : pCols[i]) : "#64748B"));
           el(`p${n}Blade`).setAttribute("class", state.pOn[i] ? "spin-active" : "");
-          el(`p${n}PipeFlow`).setAttribute("opacity", state.pOn[i] ? "1" : "0");
-          el(`p${n}PipeDash`).setAttribute("opacity", state.pOn[i] ? "1" : "0");
+          el(`p${n}PipeFlow`).setAttribute("opacity", state.pOn[i] && state.lastActualPumpM3h > 0.000001 ? "1" : "0");
+          el(`p${n}PipeDash`).setAttribute("opacity", state.pOn[i] && state.lastActualPumpM3h > 0.000001 ? "1" : "0");
           el(`p${n}PipeDash`).setAttribute("class", state.pOn[i] ? "flow-active" : "");
           el(`nrv${n}`).setAttribute("fill", state.pOn[i] ? "#E0F2FE" : "#FFFFFF");
         }
 
-        const pumping = activePumps > 0;
+        const pumping = activePumps > 0 && state.lastActualPumpM3h > 0.000001;
+        function setPipeLeg(flowId, dashId, active) {
+          el(flowId).setAttribute("opacity",active ? "1" : "0");
+          el(dashId).setAttribute("opacity",active ? "1" : "0");
+          el(dashId).setAttribute("class",active ? "flow-active" : "");
+        }
+        setPipeLeg("pidHeader1Flow","pidHeader1Dash",pumping && state.pOn[0]);
+        setPipeLeg("pidHeader3Flow","pidHeader3Dash",pumping && state.pOn[2]);
+        setPipeLeg("pidCommonFlow","pidCommonDash",pumping);
+        const diagramSvg=el("comp-valves").ownerSVGElement;
+        if (diagramSvg.dataset.paused!==String(!state.running)) diagramSvg.dataset.paused=String(!state.running);
         el("risingMainFlow").setAttribute("opacity", pumping ? "1" : "0.18");
         el("risingMainDash").setAttribute("opacity", pumping ? "1" : "0");
         el("risingMainDash").setAttribute("class", pumping ? "flow-active" : "");
 
         // Animate Distribution Header inside Pre-GLS Chamber identically to active pipes!
-        el("distHeaderFlow").setAttribute("opacity", pumping ? "1" : "0.18");
-        el("distHeaderDash").setAttribute("opacity", pumping ? "1" : "0");
-        el("distHeaderDash").setAttribute("class", pumping ? "flow-active" : "");
 
         const feed1 = pumping && (state.tankMode === "both" || state.tankMode === "tk1");
         const feed2 = pumping && (state.tankMode === "both" || state.tankMode === "tk2");
+        setPipeLeg("distHeaderFlow","distHeaderDash",feed1);
+        setPipeLeg("pidDistLowerFlow","pidDistLowerDash",feed2);
         el("tk1InFlow").setAttribute("opacity", feed1 ? "1" : "0");
         el("tk1InDash").setAttribute("opacity", feed1 ? "1" : "0");
         el("tk1InDash").setAttribute("class", feed1 ? "flow-active" : "");
