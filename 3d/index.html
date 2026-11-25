@@ -643,21 +643,14 @@
 #stationLevelList bdi{margin-inline-start:auto;white-space:nowrap}
 
 #stationStudio .station-camera-row{display:flex;align-items:center;gap:6px 16px;flex-wrap:wrap;margin-top:6px;padding-top:7px;border-top:1px solid #cfddd8}
-#stationStudio .station-drag-modes{display:inline-flex;border:1px solid #bbcec8;border-radius:6px;overflow:hidden;background:#fff}
-#stationStudio .station-drag-modes button{display:inline-flex;align-items:center;justify-content:center;gap:5px;min-height:34px;border:0;border-radius:0;padding:.22rem .65rem;font:inherit;font-weight:700;font-size:.78rem;background:transparent;color:#304f50}
-#stationStudio .station-drag-modes button:focus-visible{outline-offset:-3px}
-#stationStudio .station-drag-modes button[aria-pressed=true]{color:white;background:#145d57}
-#stationStudio .station-drag-modes button span{font:1.12rem/1 Arial}
 #stationStudio .station-datum-choice{display:inline-flex;align-items:center;gap:6px;color:#385752;font-weight:650;font-size:.76rem}
 #stationStudio #stationLevelDatum{font:inherit;color:#254b46;border:1px solid #bbcec8;border-radius:5px;background:white;min-height:34px;padding:2px 4px}
-#stationStudio #stationCameraHelp{background:transparent;border:0;border-radius:4px;color:#175e59;margin-inline-start:auto;padding:.35rem .2rem;min-height:34px;font:inherit;font-size:.75rem;font-weight:700}
-#stationStudio #stationCameraHelp:hover,#stationStudio #stationCameraHelp[aria-expanded=true]{text-decoration:underline}
-#stationStudio .station-camera-guide{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr));gap:6px 15px;border-top:1px solid #d1ded8;margin-top:7px;padding-top:7px;color:#355355;font-size:.78rem;line-height:1.6}
-#stationStudio .station-camera-guide p{margin:0}
-#stationStudio .station-camera-guide strong{display:block;color:#1c4748}
-#stationStudio .touch-hint{display:none}
-@media(pointer:coarse){#stationStudio .touch-hint{display:inline}#stationStudio .mouse-hint{display:none}}
-@media(max-width:550px){#stationStudio .station-camera-row{gap:4px 7px}#stationStudio .station-drag-modes button{padding-inline:.45rem}#stationStudio .station-datum-choice{gap:3px}#stationStudio .station-camera-guide{grid-template-columns:1fr}}
+#stationStudio .station-mouse-guide,#stationStudio .station-touch-guide{margin:0;color:#405f60;font-size:.76rem;line-height:1.6}
+#stationStudio .station-mouse-guide{display:flex;flex-wrap:wrap;gap:2px 12px}
+#stationStudio .station-mouse-guide span{border-inline-start:2px solid #b9d0c8;padding-inline-start:8px}
+#stationStudio .station-touch-guide{display:none}
+@media(pointer:coarse) and (not (any-pointer:fine)){#stationStudio .station-touch-guide{display:block}#stationStudio .station-mouse-guide{display:none}}
+@media(max-width:550px){#stationStudio .station-camera-row{gap:4px 7px}#stationStudio .station-datum-choice{gap:3px}}
 
 
 </style>
@@ -874,32 +867,27 @@
         <button type="button" data-station-camera="outlet" aria-pressed="false"><i class="cam-icon icon-out" aria-hidden="true"></i><span>مخرجا الخزانات</span></button>
       </div>
       <div class="station-camera-row">
-        <div class="station-drag-modes" role="group" aria-label="وظيفة السحب على المجسّم">
-          <button type="button" id="stationOrbitMode" aria-pressed="true" aria-controls="stationViewCanvas"><span aria-hidden="true">⟳</span> تدوير</button>
-          <button type="button" id="stationPanMode" aria-pressed="false" aria-controls="stationViewCanvas"><span aria-hidden="true">✥</span> تحريك</button>
-        </div>
         <label class="station-datum-choice">المناسيب
           <select id="stationLevelDatum" aria-label="مرجع عرض المناسيب بالمتر">
             <option value="relative">من سطح الأرض</option><option value="survey">المنسوب المساحي</option>
           </select>
         </label>
-        <button type="button" id="stationCameraHelp" aria-expanded="false" aria-controls="cameraGuideKeys">دليل التحكم</button>
-      </div>
-      <div id="cameraGuideKeys" class="station-camera-guide" hidden>
-        <p><strong>الماوس</strong>اسحب بالزر الأيسر بالأداة المختارة. للتحريك مباشرةً، اضغط عجلة الماوس أو الزر الأيمن واسحب. لفّ العجلة للتكبير عند المؤشر.</p>
-        <p><strong>اللمس</strong>اسحب بإصبع واحد بالأداة المختارة. اسحب بإصبعين للتحريك، وباعد أو قرّب بينهما لتغيير التكبير.</p>
-        <p><strong>لوحة المفاتيح</strong>بعد تحديد الرسم، استخدم الأسهم للتدوير، و<span dir="ltr">Shift</span> مع الأسهم للتحريك، و<span dir="ltr">+ / −</span> للتكبير، و<span dir="ltr">Home</span> لاستعادة المشهد.</p>
+        <div id="stationMouseGuide" class="station-mouse-guide">
+          <span>اسحب بالزر الأيسر للتحريك</span>
+          <span>اضغط العجلة واسحب للتدوير</span>
+          <span>لفّ العجلة للتقريب والإبعاد</span>
+        </div>
+        <p id="stationTouchGuide" class="station-touch-guide">اسحب بإصبع للتدوير، وبإصبعين للتحريك أو التكبير.</p>
       </div>
     </nav>
     <div class="station-stage">
-      <canvas id="stationViewCanvas" role="img" tabindex="0" aria-label="مجسّم محطة الرفع. الأسهم للتدوير، وShift مع الأسهم للتحريك، وزر Home لاستعادة المشهد."></canvas>
+      <canvas id="stationViewCanvas" role="img" tabindex="0" aria-label="مجسّم محطة الرفع" aria-describedby="stationMouseGuide stationTouchGuide"></canvas>
       <div class="stage-top"><span class="studio-live"><b id="stationRunText">المحاكاة جارية</b></span><time id="studioClock" class="stage-clock" dir="ltr" aria-label="ساعة المحاكاة">08:00</time></div>
       <div class="stage-tools" role="group" aria-label="التحكم في الكاميرا">
         <button type="button" id="stationZoomIn" aria-label="تقريب المجسّم" title="تقريب">+</button>
         <button type="button" id="stationZoomOut" aria-label="إبعاد المجسّم" title="إبعاد">−</button>
-        <button type="button" id="stationHome" aria-label="استعادة زاوية العرض" title="استعادة زاوية العرض"><i aria-hidden="true"></i></button>
+        <button type="button" id="stationHome" aria-label="استعادة زاوية العرض" title="استعادة زاوية العرض · أو انقر مرتين داخل المشهد"><i aria-hidden="true"></i></button>
       </div>
-      <div class="stage-note"><span class="mouse-hint">اضغط العجلة واسحب للتحريك</span><span class="touch-hint">حرّك أو كبّر بإصبعين</span></div>
     </div>
     <aside class="studio-inspector" aria-label="تفاصيل المشهد وأدوات القطاع">
       <div class="studio-reading">
@@ -1476,7 +1464,6 @@ class StationViewport {
     this.colors = new Map();
     this.shades = new Map();
     this.pointerMap = new Map();
-    this.dragMode = 'orbit';
     this.lastState = null;
     this.frame = 0;
     this.life = new AbortController();
@@ -1534,16 +1521,15 @@ class StationViewport {
     this.pitch=f.pitch+(p.pitch-f.pitch)*u;
     if(t>=1) this.flight=null;
   }
-  setDragMode(mode) {
-    if(mode==='orbit' || mode==='pan') this.dragMode=mode;
-  }
   panBy(dx,dy) {
     if((dx===0 && dy===0) || !Number.isFinite(dx) || !Number.isFinite(dy)) return;
     this.flight=null;
     if(!this.setupCamera()) return;
     // Move the model with the pointer, regardless of orbit angle or zoom.
+    const limits=[28,14,22];
     for(let axis=0;axis<3;axis++) {
-      this.target[axis]+=(dy*this.up[axis]-dx*this.right[axis])/this.scale;
+      const target=this.target[axis]+(dy*this.up[axis]-dx*this.right[axis])/this.scale;
+      this.target[axis]=StationViewport.clamp(target,-limits[axis],limits[axis]);
     }
     this.invalidate();
   }
@@ -1551,7 +1537,7 @@ class StationViewport {
     if(!Number.isFinite(factor) || factor<=0) return;
     this.flight=null;
     const before=this.zoom;
-    this.zoom=StationViewport.clamp(before*factor,0.52,4.3);
+    this.zoom=StationViewport.clamp(before*factor,0.42,6);
     if(Number.isFinite(x) && Number.isFinite(y)) {
       const correction=1-this.zoom/before;
       this.panBy((x-this.canvas.clientWidth/2)*correction,(y-this.canvas.clientHeight/2)*correction);
@@ -1579,55 +1565,73 @@ class StationViewport {
       const [a,b]=this.pointerMap.values();
       return {x:(a.x+b.x)/2,y:(a.y+b.y)/2,distance:Math.hypot(a.x-b.x,a.y-b.y)};
     };
+    // Some browsers dispatch a double click even when a press involved a drag.
+    let previousClickWasStill=true, lastClickWasStill=true;
     c.addEventListener('pointerdown',e=>{
       if(e.button<0 || e.button>2) return;
       const active=this.pointerMap.values().next().value;
       if(active && active.type!==e.pointerType) return;
       e.preventDefault();
       this.flight=null;
-      this.pointerMap.set(e.pointerId,{...position(e),type:e.pointerType});
+      const {x,y}=position(e);
+      // Mouse: left/right translate; holding the wheel orbits. A single finger orbits.
+      const pan=e.pointerType==='mouse' && e.button!==1;
+      const contact={x,y,startX:x,startY:y,type:e.pointerType,button:e.button,pan,moved:false};
+      if(active){active.moved=true;contact.moved=true;}
+      this.pointerMap.set(e.pointerId,contact);
       try { c.setPointerCapture(e.pointerId) } catch {}
       if(c.focus) c.focus({preventScroll:true});
-      c.style.cursor='grabbing';
+      c.style.cursor=pan?'move':'grabbing';
     },opts);
     c.addEventListener('pointermove',e=>{
       const prev=this.pointerMap.get(e.pointerId);
       if(!prev) return;
       const before=this.pointerMap.size===2 ? touchPair() : null;
       const next=position(e);
-      this.pointerMap.set(e.pointerId,{...next,type:prev.type});
+      const dx=next.x-prev.x,dy=next.y-prev.y;
+      prev.x=next.x;prev.y=next.y;
+      if(Math.hypot(next.x-prev.startX,next.y-prev.startY)>5)prev.moved=true;
       if(before) {
         const after=touchPair();
         if(before.distance>2 && after.distance>2) this.zoomBy(after.distance/before.distance,before.x,before.y);
         this.panBy(after.x-before.x,after.y-before.y);
       } else if(this.pointerMap.size===1) {
-        const dx=next.x-prev.x,dy=next.y-prev.y;
-        if(this.dragMode==='pan' || e.shiftKey || (e.buttons & 6)) {
+        if(prev.pan) {
           this.panBy(dx,dy);
         } else {
-          this.yaw-=dx*.007;
-          this.pitch=StationViewport.clamp(this.pitch+dy*.0055,0.045,1.30);
+          this.yaw-=dx*.008;
+          this.pitch=StationViewport.clamp(this.pitch+dy*.006,-.22,1.42);
           this.invalidate();
         }
       }
     },opts);
     const end=e=>{
+      const contact=this.pointerMap.get(e.pointerId);
+      if(!contact)return;
+      if(contact.button===0){
+        const point=position(e);
+        previousClickWasStill=lastClickWasStill;
+        lastClickWasStill=e.type==='pointerup'&&!contact.moved&&Math.hypot(point.x-contact.startX,point.y-contact.startY)<=5;
+      }
       this.pointerMap.delete(e.pointerId);
       if(!this.pointerMap.size) c.style.cursor='grab';
     };
     for(const type of ['pointerup','pointercancel','lostpointercapture']) c.addEventListener(type,end,opts);
+    c.addEventListener('dblclick',e=>{
+      if(e.button!==0 || !previousClickWasStill || !lastClickWasStill)return;
+      e.preventDefault();
+      this.flyTo(this.viewName);
+    },opts);
+    c.addEventListener('mousedown',e=>{if(e.button===1)e.preventDefault();},opts);
     c.addEventListener('contextmenu',e=>e.preventDefault(),opts);
     c.addEventListener('auxclick',e=>{ if(e.button===1) e.preventDefault(); },opts);
     c.addEventListener('wheel',e=>{
-      if(e.deltaX===0 && e.deltaY===0) return;
+      const delta=e.deltaY || (e.shiftKey ? e.deltaX : 0);
+      if(!delta)return;
       e.preventDefault();
       const unit=e.deltaMode===1?16:e.deltaMode===2?c.clientHeight:1;
-      if(!e.ctrlKey && (e.shiftKey || e.deltaY===0)) {
-        this.panBy(-(e.deltaX || e.deltaY)*unit,e.deltaX?-e.deltaY*unit:0);
-        return;
-      }
-      const anchor=position(e),sensitivity=e.ctrlKey ? .009 : .0018;
-      this.zoomBy(Math.exp(-StationViewport.clamp(e.deltaY*unit,-240,240)*sensitivity),anchor.x,anchor.y);
+      const anchor=position(e);
+      this.zoomBy(Math.exp(-StationViewport.clamp(delta*unit,-240,240)*.0018),anchor.x,anchor.y);
     },{passive:false,signal:this.life.signal});
     c.addEventListener('keydown',e=>{
       if(e.ctrlKey || e.altKey || e.metaKey) return;
@@ -1637,7 +1641,7 @@ class StationViewport {
       else if(e.key==='ArrowRight') this.rotateBy(0.10);
       else if(e.key==='ArrowUp' || e.key==='ArrowDown') {
         this.flight=null;
-        this.pitch=StationViewport.clamp(this.pitch+(e.key==='ArrowUp'?0.065:-0.065),0.045,1.30); this.invalidate();
+        this.pitch=StationViewport.clamp(this.pitch+(e.key==='ArrowUp'?0.065:-0.065),-.22,1.42); this.invalidate();
       } else if(e.key==='+' || e.key==='=') this.zoomBy(1.15);
       else if(e.key==='-' || e.key==='_') this.zoomBy(1/1.15);
       else if(e.key==='Home') this.preset(this.viewName);
@@ -3158,7 +3162,11 @@ function createStationPresentation(parameters){
     if(cfg.mode!=='3D'||!viewport)return;
     const tankerActive=activeDraw(s);
     const model={...s,stage:cfg.view,section:cfg.section,levels:cfg.levels,levelOffset:cfg.levelOffset,view:cfg.view,actualPumpM3h:s.lastActualPumpM3h,tankerActive};
-    viewport.draw(model);
+    if(viewport.lastState){
+      // Camera input and simulation changes share a single paint per animation frame.
+      viewport.lastState=model;
+      viewport.invalidate();
+    }else viewport.draw(model);
     const clock=String(Math.floor(s.simSeconds/3600)%24).padStart(2,'0')+':'+String(Math.floor(s.simSeconds/60)%60).padStart(2,'0');
     text(refs.studioClock,clock);text(refs.stationRunText,s.running?'المحاكاة جارية':'المحاكاة متوقفة');
     refs.stationRunText.parentElement.classList.toggle('paused',!s.running);
@@ -3197,17 +3205,6 @@ function createStationPresentation(parameters){
   byId('stationPrev').addEventListener('click',()=>setCamera(stages[Math.max(0,stages.indexOf(cfg.view)-1)]));
   byId('stationNext').addEventListener('click',()=>setCamera(stages[stages.indexOf(cfg.view)+1]||'overview'));
   byId('stationHome').addEventListener('click',()=>setCamera(cfg.view,true));
-  const orbitButton=byId('stationOrbitMode'),panButton=byId('stationPanMode');
-  function setDragMode(mode){
-    viewport?.setDragMode(mode);
-    pressed(orbitButton,mode==='orbit');pressed(panButton,mode==='pan');
-  }
-  orbitButton.addEventListener('click',()=>setDragMode('orbit'));
-  panButton.addEventListener('click',()=>setDragMode('pan'));
-  byId('stationCameraHelp').addEventListener('click',e=>{
-    const guide=byId('cameraGuideKeys');
-    guide.hidden=!guide.hidden;e.currentTarget.setAttribute('aria-expanded',String(!guide.hidden));
-  });
   byId('stationLevelDatum').addEventListener('change',e=>{
     cfg.levelOffset=e.currentTarget.value==='survey'?parameters.ground:0;
     for(const row of byId('stationLevelList').children){
