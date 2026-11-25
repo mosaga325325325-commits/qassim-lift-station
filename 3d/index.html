@@ -307,440 +307,216 @@
     .sum-box.grand .sum-l { color: #bae6fd; }
     .sum-v { font-size: 0.96rem; font-weight: 800; margin-top: 0.12rem; direction: ltr; text-align: right; }
   
+/* Interactive presentation of the hydraulic model */
 #stationStudio {
-  --studio-ink: #122f3e;
-  --studio-muted: #526a70;
-  --studio-line: #d8e5e3;
-  --studio-accent: #08776f;
-  --studio-tint: #e3f3ee;
-  container-type: inline-size;
-  box-sizing: border-box;
-  width: 100%;
-  min-width: 0;
-  overflow: hidden;
-  isolation: isolate;
-  color: var(--studio-ink);
-  background: #fbfdfc;
-  border: 1px solid var(--studio-line);
-  border-radius: 19px;
-  box-shadow: 0 9px 28px rgba(22, 64, 66, .075);
+  --s-ink:#123742;
+  --s-muted:#49666c;
+  --s-edge:#d7e4e3;
+  --s-green:#00776e;
+  --s-tint:#e6f3ed;
+  width:100%;
+  min-width:0;
+  margin:0;
+  isolation:isolate;
+  overflow:hidden;
+  direction:rtl;
+  container:studio / inline-size;
+  color:var(--s-ink);
+  background:#fff;
+  border:1px solid #cddfdc;
+  border-radius:18px;
+  box-shadow:0 12px 34px #153f4a0d;
 }
-#stationStudio *, #stationStudio *::before, #stationStudio *::after {
-  box-sizing: border-box;
-}
-#stationStudio [hidden] {
-  display: none !important;
-}
-#stationStudio button {
-  font: inherit;
-  color: inherit;
-  cursor: pointer;
-}
-#stationStudio button:focus-visible, #stationStudio canvas:focus-visible {
-  outline: 3px solid #e6b54e;
-  outline-offset: 2px;
+#stationStudio *,#stationStudio *::before,#stationStudio *::after {box-sizing:border-box}
+#stationStudio [hidden] {display:none!important}
+#stationStudio button {font:inherit;cursor:pointer;color:inherit}
+#stationStudio button:focus-visible,#stationStudio canvas:focus-visible {outline:3px solid #ecb957;outline-offset:-3px}
+#stationStudio button:disabled {opacity:.5;cursor:default}
+#stationStudio .studio-header,#stationStudio .studio-actions,#stationStudio .studio-switch,
+#stationStudio .studio-footer,#stationStudio .studio-playback,#stationStudio .stage-top {
+  display:flex;align-items:center;
 }
 #stationStudio .studio-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  flex-wrap: wrap;
-  padding: 17px clamp(14px, 2.2cqw, 28px);
-  background: #fff;
-  border-bottom: 1px solid var(--studio-line);
+  justify-content:space-between;gap:12px 16px;flex-wrap:wrap;
+  padding:17px clamp(15px,2.15cqw,32px);
+  border-bottom:1px solid var(--s-edge);background:#fff;
 }
-#stationStudio .studio-loc {
-  display: block;
-  margin: 0 0 2px;
-  color: var(--studio-accent);
-  font-size: .78rem;
-  font-weight: 700;
-  line-height: 1.55;
+#stationStudio .studio-loc {display:flex;align-items:center;gap:8px;font-size:.8rem;color:#43666b;font-weight:650;line-height:1.6}
+#stationStudio .studio-loc::before {content:"";width:16px;height:3px;background:#0b9181;border-radius:2px}
+#stationStudio .studio-loc span {font-weight:400;color:#7d9f9f}
+#stationStudio .studio-header h2 {font-size:clamp(1.4rem,2.25cqw,1.9rem);line-height:1.34;letter-spacing:-.025em;margin:0;font-weight:800}
+#stationStudio .studio-actions {flex-wrap:wrap;gap:8px}
+#stationStudio .studio-switch {gap:2px;border:1px solid var(--s-edge);border-radius:9px;padding:3px;background:#f2f7f5}
+#stationStudio .studio-switch button,#stationStudio .station-tool,#stationStudio .studio-tour,
+#stationStudio .studio-pause,#stationStudio .studio-scenarios,#stationStudio .studio-tour-nav button {
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  min-height:35px;padding:5px 12px;border:1px solid var(--s-edge);border-radius:7px;
+  font-size:.84rem;font-weight:700;line-height:1.45;background:#fff;
 }
-#stationStudio .studio-header h2 {
-  margin: 0;
-  color: var(--studio-ink);
-  font-size: clamp(1.14rem, 2.2cqw, 1.65rem);
-  line-height: 1.4;
-  font-weight: 750;
+#stationStudio .studio-switch button {border:0;background:transparent;min-height:30px;color:#527076;padding:4px 10px}
+#stationStudio .studio-switch b {font:700 .72rem/1 Consolas,monospace}
+#stationStudio .studio-switch button[aria-pressed=true] {background:#163f49;color:white;box-shadow:0 1px 4px #153d4627}
+#stationStudio .studio-tour {
+  background:#e0f3eb;border-color:#b1d6c8;color:#0b6359;gap:9px;min-height:38px;
 }
-#stationStudio .studio-actions, #stationStudio .studio-switch,
-#stationStudio .studio-playback, #stationStudio .stage-top {
-  display: flex;
-  align-items: center;
-  gap: .5rem;
-}
-#stationStudio .studio-actions { flex-wrap: wrap; }
-#stationStudio .studio-switch {
-  gap: 3px;
-  padding: 3px;
-  background: #eef4f2;
-  border: 1px solid #dde8e5;
-  border-radius: 11px;
-}
-#stationStudio .studio-switch button, #stationStudio .station-tool,
-#stationStudio .studio-pause, #stationStudio .station-section {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-  min-height: 35px;
-  padding: 5px .8rem;
-  border: 1px solid var(--studio-line);
-  border-radius: 8px;
-  background: white;
-  line-height: 1.35;
-  font-size: .86rem;
-  font-weight: 650;
-}
-#stationStudio .studio-switch button {
-  min-height: 31px;
-  background: transparent;
-  color: #476369;
-  border-color: transparent;
-}
-#stationStudio .studio-switch button[aria-pressed="true"],
-#stationStudio .studio-switch button[aria-selected="true"] {
-  color: #fff;
-  background: #19474b;
-  box-shadow: 0 1px 3px rgba(21, 69, 65, .16);
-}
-#stationStudio .station-tool:hover, #stationStudio .studio-pause:hover,
-#stationStudio .station-section:hover { background: var(--studio-tint); }
-#stationStudio .station-model {
-  display: grid;
-  grid-template-columns: minmax(0,1fr) clamp(190px, 21cqw, 258px);
-  grid-template-areas: "stage inspector";
-  direction: ltr;
-  min-width: 0;
-  background: #f6f9f7;
-}
-#stationStudio .station-stage {
-  grid-area: stage;
-  position: relative;
-  direction: rtl;
-  min-width: 0;
-  min-height: clamp(420px, 43cqw, 545px);
-  overflow: hidden;
-  isolation: isolate;
-  color: #def4f0;
-  background-color: #102939;
-  background-image:
-    radial-gradient(ellipse at 48% 30%, rgba(61, 116, 123, .35), rgba(9, 30, 45, 0) 70%),
-    linear-gradient(rgba(178, 222, 213, .043) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(178, 222, 213, .043) 1px, transparent 1px),
-    linear-gradient(145deg, #193746, #0d2535 76%);
-  background-size: auto, 30px 30px, 30px 30px, auto;
-}
-#stationStudio #stationViewCanvas {
-  display: block;
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  max-width: none;
-  cursor: grab;
-  touch-action: none;
-  outline-offset: -4px;
-}
-#stationStudio #stationViewCanvas:active { cursor: grabbing; }
-#stationStudio .stage-top {
-  position: absolute;
-  top: 13px;
-  right: 15px;
-  left: 15px;
-  gap: 8px;
-  z-index: 1;
-  justify-content: space-between;
-  pointer-events: none;
-}
-#stationStudio .studio-live, #stationStudio .stage-clock {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  width: max-content;
-  max-width: 58%;
-  padding: 4px 9px;
-  color: #dbece9;
-  border: 1px solid rgba(160, 201, 194, .25);
-  border-radius: 6px;
-  background: rgba(12, 38, 50, .88);
-  font-size: .76rem;
-  line-height: 1.5;
-  font-variant-numeric: tabular-nums;
-}
-#stationStudio .studio-live::before {
-  content: "";
-  flex: 0 0 6px;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #68dfb3;
-}
-#stationStudio .studio-live.paused::before, #stationStudio .studio-live[data-running="false"]::before {
-  background: #e8b575;
-}
-#stationStudio .stage-tools {
-  position: absolute;
-  bottom: 12px;
-  left: 13px;
-  z-index: 1;
-  display: flex;
-  direction: ltr;
-  gap: 4px;
-  padding: 3px;
-  background: rgba(11,34,47,.88);
-  border: 1px solid rgba(170,204,197,.24);
-  border-radius: 9px;
-}
-#stationStudio .stage-tools button {
-  display: inline-grid;
-  place-items: center;
-  min-width: 32px;
-  height: 32px;
-  padding: 1px 5px;
-  border: 0;
-  border-radius: 5px;
-  background: transparent;
-  color: #e6f3ee;
-  font-size: 1rem;
-  line-height: 1;
-}
-#stationStudio .stage-tools button:hover { background: #375958; }
-#stationStudio .stage-note {
-  position: absolute;
-  inset-inline-start: 14px;
-  bottom: 16px;
-  max-width: 53%;
-  padding: 3px 7px;
-  margin: 0;
-  border-radius: 4px;
-  background: rgba(14,39,50,.84);
-  color: #c0d8d6;
-  font-size: .75rem;
-  line-height: 1.45;
-  pointer-events: none;
-}
-#stationStudio .studio-inspector {
-  grid-area: inspector;
-  min-width: 0;
-  direction: rtl;
-  padding: 18px clamp(11px, 1.5cqw, 22px);
-  border-inline-end: 1px solid var(--studio-line);
-  background: linear-gradient(140deg, #fff, #f3f8f5 95%);
-}
-#stationStudio .studio-inspector h3 {
-  margin: 0 0 10px;
-  font-size: .96rem;
-  line-height: 1.4;
-  font-weight: 750;
-}
-#stationStudio .studio-cameras {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 5px;
-  margin-bottom: 12px;
-}
+#stationStudio .studio-tour i {width:12px;height:12px;display:inline-block;clip-path:polygon(14% 0%,100% 50%,14% 100%);background:currentColor}
+#stationStudio .studio-tour[aria-pressed=true] {background:#0c645c;color:white;border-color:#0c645c}
+#stationStudio .studio-tour[aria-pressed=true] i {clip-path:none;border:3px double currentColor;background:none}
+#stationStudio .station-tool {width:38px;height:38px;padding:0}
+#stationStudio .station-tool i {width:15px;height:15px;background:
+  linear-gradient(currentColor 0 0) left top/6px 2px,linear-gradient(currentColor 0 0) left top/2px 6px,
+  linear-gradient(currentColor 0 0) right top/6px 2px,linear-gradient(currentColor 0 0) right top/2px 6px,
+  linear-gradient(currentColor 0 0) left bottom/6px 2px,linear-gradient(currentColor 0 0) left bottom/2px 6px,
+  linear-gradient(currentColor 0 0) right bottom/6px 2px,linear-gradient(currentColor 0 0) right bottom/2px 6px;background-repeat:no-repeat}
+#stationStudio .studio-scenarios:hover,#stationStudio .station-tool:hover,#stationStudio .studio-tour:hover,#stationStudio .studio-pause:hover {filter:brightness(.96)}
+#stationStudio .station-model {display:grid;direction:ltr;grid-template-columns:minmax(0,1fr) clamp(225px,22cqw,295px);grid-template-areas:"rail rail" "stage readings";min-width:0;background:#f5f8f6}
+#stationStudio .studio-rail {grid-area:rail;direction:rtl;min-width:0;padding:7px clamp(10px,1.6cqw,23px);background:#f5f8f6;border-bottom:1px solid #d5e2df}
+#stationStudio .studio-cameras {display:flex;align-items:stretch;flex-wrap:wrap;gap:4px}
 #stationStudio .studio-cameras button {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 9px;
-  width: 100%;
-  min-height: 34px;
-  padding: 5px 9px;
-  color: #495f65;
-  border: 1px solid transparent;
-  border-radius: 7px;
-  background: transparent;
-  font-size: .87rem;
-  font-weight: 600;
-  line-height: 1.5;
-  text-align: start;
+  flex:1;min-width:0;min-height:38px;padding:5px 7px;display:flex;align-items:center;justify-content:center;gap:9px;
+  color:#4e676c;background:transparent;border:1px solid transparent;border-radius:6px;
+  font-size:.85rem;font-weight:650;line-height:1.4;
 }
-#stationStudio .studio-cameras button:hover { background: #ebf3ef; }
-#stationStudio .studio-cameras button[aria-pressed="true"],
-#stationStudio .station-section[aria-pressed="true"] {
-  color: #075e58;
-  background: #dff1e9;
-  border-color: #b6d8cb;
+#stationStudio .studio-cameras button:first-child {margin-inline-end:7px}
+#stationStudio .studio-cameras button:hover {background:#e8f0ec;color:#184940}
+#stationStudio .studio-cameras button[aria-pressed=true] {color:#0a655a;background:#fff;border-color:#c2d8d0;box-shadow:0 1px 3px #193f4c0b}
+#stationStudio .cam-icon {position:relative;display:inline-block;flex:0 0 17px;width:17px;height:16px;color:inherit}
+#stationStudio .cam-icon::before,#stationStudio .cam-icon::after {content:"";position:absolute;display:block}
+#stationStudio .icon-site::before {inset:1px 3px;border:1.6px solid;border-radius:2px;transform:rotate(30deg) skew(-12deg)}
+#stationStudio .icon-inlet::before {inset:3px 1px;border:1.6px solid;border-radius:4px}
+#stationStudio .icon-inlet::after {top:8px;left:1px;width:14px;border-bottom:1.5px dashed}
+#stationStudio .icon-well::before {inset:1px 3px;border:1.5px solid;border-radius:2px 2px 5px 5px}
+#stationStudio .icon-well::after {bottom:4px;left:5px;width:7px;border-bottom:2px solid}
+#stationStudio .icon-force::before {width:8px;height:8px;right:1px;top:1px;border-right:2px solid;border-bottom:2px solid;border-radius:0 0 4px 0}
+#stationStudio .icon-force::after {width:8px;height:8px;left:1px;bottom:0;border-left:2px solid;border-top:2px solid;border-radius:4px 0 0 0}
+#stationStudio .icon-tank::before,#stationStudio .icon-tank::after {width:8px;height:12px;border:1.5px solid;border-radius:50%/18%}
+#stationStudio .icon-tank::before {left:0;top:1px}#stationStudio .icon-tank::after {right:0;bottom:0}
+#stationStudio .icon-out::before {width:12px;height:12px;top:2px;right:1px;border-left:2px solid;border-block:2px solid;border-radius:3px 0 0 3px}
+#stationStudio .icon-out::after {top:7px;left:0;width:6px;border-top:2px solid}
+#stationStudio .station-stage {
+  grid-area:stage;position:relative;direction:rtl;isolation:isolate;overflow:hidden;
+  min-width:0;min-height:clamp(435px,42cqw,595px);
+  color:#d9f1ef;background-color:#102a37;
+  background-image:radial-gradient(ellipse at 55% 28%,#35616a99,transparent 70%),
+    linear-gradient(#b8ece908 1px,transparent 1px),linear-gradient(90deg,#b8ece908 1px,transparent 1px),
+    linear-gradient(135deg,#213d4a,#0b2130 90%);
+  background-size:auto,32px 32px,32px 32px,auto;
 }
-#stationStudio .cam-icon {
-  display: inline-flex;
-  flex-shrink: 0;
-  position: relative;
-  align-items: center;
-  justify-content: center;
-  min-width: 22px;
-  height: 20px;
-  font-size: 1.02rem;
+#stationStudio #stationViewCanvas {display:block;position:absolute;inset:0;width:100%;height:100%;max-width:none;cursor:grab;touch-action:none;outline-offset:-4px}
+#stationStudio #stationViewCanvas:active {cursor:grabbing}
+#stationStudio .stage-top {pointer-events:none;position:absolute;top:14px;left:16px;right:16px;justify-content:space-between;gap:8px;z-index:1}
+#stationStudio .studio-live,#stationStudio .stage-clock {
+  display:inline-flex;align-items:center;gap:7px;width:max-content;padding:4px 9px;border-radius:6px;
+  color:#e5f3ee;background:#102a36e3;border:1px solid #b0daca3d;
+  font-size:.75rem;font-weight:650;line-height:1.55;
 }
-#stationStudio .cam-icon::before, #stationStudio .cam-icon::after { content: ""; position: absolute; }
-#stationStudio .site-icon::before {
-  width: 12px; height: 12px;
-  border: 1.5px solid currentColor;
-  border-radius: 3px;
-  transform: rotate(30deg) skew(-15deg);
+#stationStudio .stage-clock {color:#bddad9;font:600 .8rem/1.55 Consolas,monospace;letter-spacing:.06em}
+#stationStudio .studio-live::before {content:"";width:7px;height:7px;border-radius:50%;background:#62deb0;box-shadow:0 0 5px #71e5bc37}
+#stationStudio .studio-live.paused::before {background:#e9b46c;box-shadow:none}
+#stationStudio .stage-tools {
+  position:absolute;bottom:12px;left:13px;direction:ltr;display:flex;gap:3px;align-items:center;
+  padding:3px;border:1px solid #b0daca40;border-radius:7px;background:#0b2231e8;
 }
-#stationStudio .well-icon::before {
-  width: 11px; height: 14px; border: 1.5px solid currentColor; border-radius: 50% / 17%;
-}
-#stationStudio .well-icon::after { width: 7px; height: 1px; bottom: 5px; background: currentColor; }
-#stationStudio .tank-icon::before {
-  width: 8px; height: 12px; left: 3px; border: 1.5px solid currentColor; border-radius: 50% / 18%;
-}
-#stationStudio .tank-icon::after {
-  width: 8px; height: 12px; right: 2px; margin-top: 4px; border: 1.5px solid currentColor; border-radius: 50% / 18%;
-}
+#stationStudio .stage-tools button {border:0;border-radius:3px;display:grid;place-items:center;width:33px;height:32px;padding:0;background:none;color:#e0efea;font:1.1rem/1 Arial}
+#stationStudio .stage-tools button:hover {background:#294a52}
+#stationStudio #stationHome i {display:block;width:12px;height:12px;border:1px solid;border-radius:2px;transform:rotate(45deg)}
+#stationStudio #stationHome i:before {content:"";display:block;width:4px;height:4px;border:1px solid;margin:3px;border-radius:50%}
+#stationStudio .stage-note {position:absolute;bottom:18px;right:15px;padding:1px 6px;border-radius:4px;color:#b6d1d0;background:#122d38bd;font-size:.74rem;pointer-events:none}
+#stationStudio .studio-inspector {grid-area:readings;min-width:0;direction:rtl;display:flex;flex-direction:column;gap:0;padding:20px clamp(13px,1.55cqw,23px) 16px;background:#fafcfb;border-inline-end:1px solid var(--s-edge)}
+#stationStudio .studio-reading h3 {margin:0;font-size:clamp(1rem,1.35cqw,1.17rem);line-height:1.4;color:#143e46;font-weight:800}
+#stationStudio #sceneDetailNote {margin:.4rem 0 .65rem;font-size:.81rem;line-height:1.65;color:var(--s-muted)}
+#stationStudio #sceneDetailNote:empty {display:none}
+#stationStudio #sceneReadings {margin:0}
+#stationStudio .station-field {display:flex;gap:7px;align-items:baseline;justify-content:space-between;padding:.48rem 0;border-bottom:1px solid #dfebe6;line-height:1.35}
+#stationStudio .station-field dt {color:#4c696b;font-size:.79rem}
+#stationStudio .station-field dd {margin:0;font-size:.9rem;font-weight:750;text-align:end;font-variant-numeric:tabular-nums;color:#153e46}
+#stationStudio .studio-tour-nav {display:flex;align-items:center;flex-wrap:wrap;justify-content:space-between;gap:4px;margin:.65rem 0 0}
+#stationStudio .studio-tour-nav>span {display:inline-block;color:#096b60;font-size:.77rem;font-weight:700}
+#stationStudio .studio-tour-nav>div {display:flex;gap:4px}
+#stationStudio .studio-tour-nav button {padding:3px 8px;min-height:29px;font-size:.77rem}
+#stationStudio #stationNext {background:#e1f1e9;color:#0c6258;border-color:#bcdbcf}
+#stationStudio .studio-trend {padding:10px 10px 5px;border:1px solid #d5e7df;border-radius:8px;background:#eff7f2;margin:14px 0;overflow:hidden}
+#stationStudio #stationTrendName {display:block;font-size:.76rem;font-weight:700;color:#40645f;margin-bottom:4px}
+#stationStudio #sceneTrace {display:block;width:100%;height:44px;direction:ltr;overflow:visible;background-image:repeating-linear-gradient(0deg,#cedfd733,#cedfd733 1px,transparent 1px,transparent 13px)}
+#stationStudio #stationTracePath {fill:none;stroke:#0a8476;stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+#stationStudio .studio-layers {display:flex;flex-direction:column;gap:4px;margin-top:auto;padding-top:5px}
 #stationStudio .station-section {
-  width: 100%;
-  margin: 0 0 .9rem;
-  justify-content: space-between;
+  display:flex;align-items:center;justify-content:space-between;gap:7px;
+  width:100%;min-height:33px;padding:3px 0;border:0;background:transparent;font-size:.81rem;font-weight:650;text-align:start;color:#3f5a5f;
 }
-#stationStudio .station-section i {
-  position: relative;
-  display: inline-block;
-  flex: 0 0 29px;
-  height: 16px;
-  background: #c4d1cc;
-  border-radius: 12px;
+#stationStudio .station-section i {position:relative;flex:0 0 28px;height:15px;background:#9eaead;border-radius:10px}
+#stationStudio .station-section i::after {content:"";position:absolute;top:3px;left:3px;width:9px;height:9px;border-radius:50%;background:#fff}
+#stationStudio .station-section[aria-pressed=true] i {background:#0c8173}
+#stationStudio .station-section[aria-pressed=true] i::after {left:16px}
+#stationStudio .studio-key {display:flex;align-items:center;flex-wrap:wrap;gap:4px 11px;margin-top:12px;padding-top:12px;border-top:1px solid var(--s-edge);color:var(--s-muted);font-size:.72rem}
+#stationStudio .studio-key span {display:inline-flex;align-items:center;gap:4px}
+#stationStudio .studio-key i {display:inline-block;width:13px;height:3px;border-radius:3px}
+#stationStudio .studio-key .dirty {background:#a57a4c}#stationStudio .studio-key .lift {background:#278d92}#stationStudio .studio-key .tanker {background:#b77a3a}#stationStudio .studio-key .future {background:repeating-linear-gradient(90deg,#6d7388 0 4px,transparent 4px 6px)}
+#stationStudio #stationDiagram {min-width:0;max-width:100%;overflow-x:auto}
+#stationStudio .diagram-note {padding:8px 14px;background:#edf4f0;color:#40656a;font-size:.8rem}
+#stationStudio .studio-footer {justify-content:space-between;gap:6px 12px;flex-wrap:wrap;padding:9px clamp(13px,2cqw,27px);border-top:1px solid var(--s-edge);background:#fff}
+#stationStudio .studio-footer small {color:#526e72;font-size:.72rem}
+#stationStudio .studio-export {display:flex;align-items:center;flex-wrap:wrap;gap:9px}
+#stationStudio #stationSnapshot {background:#fff;border:1px solid var(--s-edge);border-radius:6px;min-height:31px;padding:4px 9px;color:#27565a;font-size:.78rem;font-weight:700}
+#stationStudio #stationSnapshot:enabled:hover {background:#edf5ef}
+#stationStudio .studio-playback {max-width:100%;gap:8px 13px;flex-wrap:wrap}
+#stationStudio .studio-playback .speed-group {max-width:100%;flex-wrap:wrap}
+#stationStudio .studio-playback .speed-group button {min-height:30px}
+#stationStudio .studio-pause,#stationStudio .studio-scenarios {color:#226459;font-size:.8rem;min-height:32px;padding:4px 9px}
+#stationStudio .studio-scenarios {background:#f2f7f4}
+#stationStudio:is(:fullscreen,.is-expanded) {display:flex;flex-direction:column;width:100%;height:100%;max-height:none;min-height:0;border-radius:0;overflow:auto}
+#stationStudio.is-expanded {position:fixed;inset:0;z-index:10000}
+#stationStudio:is(:fullscreen,.is-expanded) .station-model {flex:1 0 auto;grid-template-rows:auto 1fr}
+#stationStudio:is(:fullscreen,.is-expanded) .station-stage {min-height:max(300px,calc(100dvh - 195px))}
+#stationStudio:is(:fullscreen,.is-expanded) #stationDiagram {flex:1 1 auto}
+@container studio (max-width:870px) {
+  #stationStudio .station-model {grid-template-columns:minmax(0,1fr) 202px}
+  #stationStudio .studio-inspector {padding:14px 12px}
+  #stationStudio .studio-cameras button {gap:4px;font-size:.78rem}
+  #stationStudio .studio-cameras button:first-child {margin-inline-end:0}
 }
-#stationStudio .station-section i::after {
-  content: "";
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #fff;
-}
-#stationStudio .station-section[aria-pressed="true"] i { background: #1b7566; }
-#stationStudio .station-section[aria-pressed="true"] i::after { left: 16px; }
-#stationStudio .studio-reading {
-  padding-block: 11px 7px;
-  border-top: 1px solid var(--studio-line);
-}
-#stationStudio #sceneReadings { margin: 0; }
-#stationStudio .station-field {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 5px;
-  padding: 5px 0;
-  border-bottom: 1px solid #e4eeea;
-}
-#stationStudio .station-field:last-child { border-bottom: none; }
-#stationStudio .station-field dt { color: #4e6869; font-size: .79rem; }
-#stationStudio .station-field dd {
-  margin: 0;
-  color: #173c43;
-  font-size: .83rem;
-  line-height: 1.4;
-  font-variant-numeric: tabular-nums;
-  font-weight: 750;
-  text-align: end;
-}
-#stationStudio .studio-key {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 3px 9px;
-  padding-top: 7px;
-  color: var(--studio-muted);
-  font-size: .74rem;
-  line-height: 1.6;
-}
-#stationStudio .studio-key span { display: inline-flex; align-items: center; gap: 4px; }
-#stationStudio .studio-key .dirty, #stationStudio .studio-key .lift,
-#stationStudio .studio-key .tanker {
-  display: inline-block;
-  width: 13px;
-  height: 3px;
-  border-radius: 3px;
-}
-#stationStudio .studio-key .dirty { background: #b88b58; }
-#stationStudio .studio-key .lift { background: #248e91; }
-#stationStudio .studio-key .tanker { background: #b87d42; }
-#stationStudio #stationDiagram { min-width: 0; max-width: 100%; overflow-x: auto; }
-#stationStudio .diagram-note { padding: 8px 15px; font-size: .8rem; color: #46656a; background: #edf5f2; }
-#stationStudio .studio-footer {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: space-between;
-  gap: .6rem 1rem;
-  padding: 10px clamp(14px, 2.2cqw, 28px);
-  border-top: 1px solid var(--studio-line);
-  background: #fff;
-  color: #52666b;
-  font-size: .8rem;
-}
-#stationStudio .studio-playback { flex-wrap: wrap; }
-#stationStudio .studio-footer .speed-group { max-width: 100%; flex-wrap: wrap; }
-#stationStudio .studio-footer .speed-group button { min-height: 31px; }
-#stationStudio:is(:fullscreen,.is-expanded) {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  height: 100%;
-  min-height: 0;
-  border-radius: 0;
-  overflow: auto;
-}
-#stationStudio.is-expanded {
-  position: fixed;
-  inset: 0;
-  z-index: 10000;
-}
-#stationStudio:is(:fullscreen,.is-expanded) .station-model,
-#stationStudio:is(:fullscreen,.is-expanded) #stationDiagram { flex: 1 0 auto; }
-#stationStudio:is(:fullscreen,.is-expanded) .station-stage { min-height: max(335px,calc(100dvh - 145px)); }
-@container (max-width: 770px) {
-  #stationStudio .station-model { grid-template-columns: minmax(0,1fr) 175px; }
-  #stationStudio .studio-inspector { padding: 14px 11px; }
-  #stationStudio .stage-note { max-width: 42%; }
-}
-@container (max-width: 620px) {
-  #stationStudio .studio-header { align-items: flex-start; gap: 9px; padding: 12px; }
-  #stationStudio .studio-actions { gap: 5px; }
-  #stationStudio .station-model { grid-template-columns: minmax(0,1fr); grid-template-areas: "stage" "inspector"; }
-  #stationStudio .station-stage { min-height: clamp(270px, 69cqw, 330px); }
-  #stationStudio .stage-top { top: 9px; right: 9px; left: 9px; }
-  #stationStudio .stage-tools { bottom: 8px; left: 8px; }
-  #stationStudio .stage-note { bottom: 10px; inset-inline-start: 8px; max-width: 40%; font-size: .67rem; }
-  #stationStudio .studio-inspector {
-    display: grid;
-    grid-template-columns: minmax(0,1fr) auto;
-    gap: 5px 9px;
-    align-items: start;
-    padding: 11px 12px;
-    border-inline-end: 0;
-    border-top: 1px solid var(--studio-line);
-  }
-  #stationStudio .studio-inspector h3 { margin: 0 0 3px; }
-  #stationStudio .studio-inspector > h3, #stationStudio .studio-cameras,
-  #stationStudio .studio-reading, #stationStudio .studio-key { grid-column: 1 / -1; }
-  #stationStudio .studio-cameras {
-    grid-template-columns: repeat(3,minmax(0,1fr));
-    margin: 0 0 4px;
-    gap: 3px;
-  }
-  #stationStudio .studio-cameras button { justify-content: center; gap: 3px; padding: 4px; font-size: .78rem; min-height: 34px; }
-  #stationStudio .cam-icon { min-width: 13px; }
-  #stationStudio .station-section { width: max-content; max-width: 100%; margin: 0 0 3px; }
-  #stationStudio .studio-reading { padding: 6px 0 0; }
-  #stationStudio #sceneReadings { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); column-gap: 11px; }
-  #stationStudio .station-field { padding: 5px 0; }
-  #stationStudio .studio-key { padding-top: 2px; }
-  #stationStudio .studio-footer { padding: 8px 12px; }
-  #stationStudio:is(:fullscreen,.is-expanded) .station-stage { min-height: max(280px,55dvh); }
+@container studio (max-width:660px) {
+  #stationStudio .studio-header {gap:8px 12px;padding:12px}
+  #stationStudio .studio-header h2 {font-size:1.36rem}
+  #stationStudio .studio-actions {gap:4px}
+  #stationStudio .studio-tour {min-height:34px;padding:4px 8px}
+  #stationStudio .studio-switch button {padding:4px 6px;min-height:27px}
+  #stationStudio .station-tool {width:33px;height:33px;min-height:33px}
+  #stationStudio .station-model {display:grid;grid-template-columns:minmax(0,1fr);grid-template-areas:"rail" "stage" "readings"}
+  #stationStudio .studio-rail {padding:5px 7px}
+  #stationStudio .studio-cameras {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:2px}
+  #stationStudio .studio-cameras button {min-height:29px;padding:3px 2px;line-height:1.35;font-size:.76rem}
+  #stationStudio .cam-icon {transform:scale(.84)}
+  #stationStudio .station-stage {min-height:clamp(284px,66cqw,345px)}
+  #stationStudio .stage-top {top:8px;right:8px;left:8px}
+  #stationStudio .stage-tools {left:7px;bottom:7px}
+  #stationStudio .stage-note {bottom:12px;right:7px;max-width:45%;font-size:.66rem}
+  #stationStudio .studio-inspector {display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.72fr);gap:7px 14px;align-items:start;padding:11px 12px;border:0;border-top:1px solid var(--s-edge)}
+  #stationStudio .studio-reading {grid-column:1/-1}
+  #stationStudio #sceneDetailNote {margin:.2rem 0 .4rem;font-size:.77rem}
+  #stationStudio #sceneReadings {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+  #stationStudio .station-field {display:block;padding:1px 0 6px;border:0;min-width:0}
+  #stationStudio .station-field dt {font-size:.72rem}#stationStudio .station-field dd {font-size:.79rem;text-align:start;margin-top:2px}
+  #stationStudio .studio-tour-nav {grid-column:1/-1;margin:0 0 1px;border-block:1px solid var(--s-edge);padding:5px 0}
+  #stationStudio .studio-trend {margin:0;padding:4px 7px;min-width:0}
+  #stationStudio #stationTrendName {font-size:.69rem;margin-bottom:0}#stationStudio #sceneTrace {height:34px}
+  #stationStudio .studio-layers {gap:2px;padding:0;margin:0}
+  #stationStudio .station-section {min-height:24px;font-size:.72rem}
+  #stationStudio .station-section i {flex-basis:24px;height:14px}#stationStudio .station-section i::after {top:3px;width:8px;height:8px}#stationStudio .station-section[aria-pressed=true] i::after {left:13px}
+  #stationStudio .studio-key {grid-column:1/-1;gap:6px 13px;margin:0;padding-top:5px;font-size:.68rem}
+  #stationStudio .studio-footer {padding:7px 10px}
+  #stationStudio .studio-playback {gap:5px 8px}
+  #stationStudio .studio-footer small {font-size:.66rem}
+  #stationStudio:is(:fullscreen,.is-expanded) .station-model {grid-template-rows:auto minmax(47dvh,1fr) auto}
+  #stationStudio:is(:fullscreen,.is-expanded) .station-stage {min-height:47dvh}
 }
 @media print {
-  #stationStudio { box-shadow: none; break-inside: avoid; }
-  #stationStudio .stage-tools, #stationStudio .studio-actions, #stationStudio .studio-footer { display: none; }
-  #stationStudio .station-stage { print-color-adjust: exact; }
+  #stationStudio {box-shadow:none;break-inside:avoid}
+  #stationStudio .studio-actions,#stationStudio .studio-rail,#stationStudio .stage-tools,#stationStudio .stage-note,#stationStudio .studio-footer {display:none}
+  #stationStudio .station-stage {print-color-adjust:exact}
 }
+
+#stationStudio #stationTraceRange {display:block; color:#4c686a; font-size:.72rem; line-height:1.5; margin-top:3px;}
 
 </style>
 </head>
@@ -789,30 +565,67 @@
 
   <main class="main-wrap">
 <section id="stationStudio" class="studio" aria-labelledby="stationTitle">
-  <div class="studio-header">
-    <div><div class="studio-loc">مجمع كليات الطالبات · بريدة</div><h2 id="stationTitle">محطة رفع الصرف الصحي</h2></div>
-    <div class="studio-actions"><div class="studio-switch" role="group" aria-label="طريقة العرض">
-      <button type="button" id="stationTab3D" aria-pressed="true" aria-controls="stationModel"><b lang="en">3D</b> المجسّم</button>
-      <button type="button" id="stationTab2D" aria-pressed="false" aria-controls="stationDiagram"><b lang="en">2D</b> المخطط</button></div>
-      <button type="button" id="stationExpand" class="station-tool" aria-label="ملء الشاشة" title="ملء الشاشة">⛶</button></div>
-  </div>
-  <div id="stationModel" class="station-model">
-    <div class="station-stage">
-      <canvas id="stationViewCanvas" role="img" tabindex="0" aria-label="مجسّم تفاعلي لمحطة الرفع. الأسهم للدوران، وزرا الجمع والطرح للتقريب والإبعاد."></canvas>
-      <div class="stage-top"><span class="studio-live"><b id="stationRunText">المحاكاة جارية</b></span><b id="studioClock" class="stage-clock" dir="ltr">08:00</b></div>
-      <div class="stage-tools"><button type="button" id="stationZoomIn" aria-label="تقريب المجسّم" title="تقريب">+</button><button type="button" id="stationZoomOut" aria-label="إبعاد المجسّم" title="إبعاد">−</button><button type="button" id="stationHome" aria-label="استعادة زاوية العرض" title="استعادة زاوية العرض">⌖</button></div>
-      <div class="stage-note">اسحب للتدوير · قرّب لاستكشاف التفاصيل</div>
+  <header class="studio-header">
+    <div class="studio-heading">
+      <div class="studio-loc">مجمع كليات الطالبات <span aria-hidden="true">/</span> بريدة</div>
+      <h2 id="stationTitle">محطة رفع الصرف الصحي</h2>
     </div>
-    <aside class="studio-inspector"><h3>زاوية العرض</h3><div class="studio-cameras">
-      <button type="button" data-station-camera="overview" aria-pressed="true"><i class="cam-icon site-icon" aria-hidden="true"></i>المحطة بالكامل</button>
-      <button type="button" data-station-camera="well" aria-pressed="false"><i class="cam-icon well-icon" aria-hidden="true"></i>البيارة والمضخات</button>
-      <button type="button" data-station-camera="tanks" aria-pressed="false"><i class="cam-icon tank-icon" aria-hidden="true"></i>الخزانات والوايت</button></div>
-      <button type="button" id="stationSection" class="station-section" aria-pressed="true"><span>كشف القطاع الداخلي</span><i aria-hidden="true"></i></button>
-      <div class="studio-reading"><h3 id="sceneDetailTitle">قراءات المحطة</h3><dl id="sceneReadings"></dl></div>
-      <div class="studio-key"><span><i class="dirty"></i>وارد</span><span><i class="lift"></i>طرد</span><span><i class="tanker"></i>تفريغ</span></div>
+    <div class="studio-actions">
+      <button type="button" id="stationTour" class="studio-tour" aria-pressed="false" aria-controls="stationTourNav"><i aria-hidden="true"></i><span>جولة تشغيلية</span></button>
+      <div class="studio-switch" role="group" aria-label="طريقة العرض">
+        <button type="button" id="stationTab3D" aria-pressed="true" aria-controls="stationModel"><b lang="en">3D</b> المجسّم</button>
+        <button type="button" id="stationTab2D" aria-pressed="false" aria-controls="stationDiagram"><b lang="en">2D</b> المخطط</button>
+      </div>
+      <button type="button" id="stationExpand" class="station-tool" aria-label="ملء الشاشة" title="ملء الشاشة"><i aria-hidden="true"></i></button>
+    </div>
+  </header>
+  <div id="stationModel" class="station-model">
+    <nav class="studio-rail" aria-label="مشاهد المحطة ومسار الصرف">
+      <div class="studio-cameras">
+        <button type="button" data-station-camera="overview" aria-pressed="true"><i class="cam-icon icon-site" aria-hidden="true"></i><span>المحطة بالكامل</span></button>
+        <button type="button" data-station-camera="inlet" aria-pressed="false"><i class="cam-icon icon-inlet" aria-hidden="true"></i><span>الخط الوارد</span></button>
+        <button type="button" data-station-camera="well" aria-pressed="false"><i class="cam-icon icon-well" aria-hidden="true"></i><span>البيارة والمضخات</span></button>
+        <button type="button" data-station-camera="force" aria-pressed="false"><i class="cam-icon icon-force" aria-hidden="true"></i><span>خط الطرد</span></button>
+        <button type="button" data-station-camera="tanks" aria-pressed="false"><i class="cam-icon icon-tank" aria-hidden="true"></i><span>خزانات التجميع</span></button>
+        <button type="button" data-station-camera="outlet" aria-pressed="false"><i class="cam-icon icon-out" aria-hidden="true"></i><span>مخرجا الخزانات</span></button>
+      </div>
+    </nav>
+    <div class="station-stage">
+      <canvas id="stationViewCanvas" role="img" tabindex="0" aria-label="قطاع تفاعلي لمحطة الرفع. اسحب أو استخدم الأسهم للدوران وزري الجمع والطرح للتقريب والإبعاد."></canvas>
+      <div class="stage-top"><span class="studio-live"><b id="stationRunText">المحاكاة جارية</b></span><time id="studioClock" class="stage-clock" dir="ltr" aria-label="ساعة المحاكاة">08:00</time></div>
+      <div class="stage-tools" role="group" aria-label="التحكم في الكاميرا">
+        <button type="button" id="stationZoomIn" aria-label="تقريب المجسّم" title="تقريب">+</button>
+        <button type="button" id="stationZoomOut" aria-label="إبعاد المجسّم" title="إبعاد">−</button>
+        <button type="button" id="stationHome" aria-label="استعادة زاوية العرض" title="استعادة زاوية العرض"><i aria-hidden="true"></i></button>
+      </div>
+      <div class="stage-note">اسحب لتدوير المجسّم</div>
+    </div>
+    <aside class="studio-inspector" aria-label="تفاصيل المشهد وأدوات القطاع">
+      <div class="studio-reading">
+        <h3 id="sceneDetailTitle">قراءات المحطة</h3>
+        <p id="sceneDetailNote"></p>
+        <dl id="sceneReadings"></dl>
+      </div>
+      <div id="stationTourNav" class="studio-tour-nav" role="group" aria-label="التنقل في الجولة" hidden>
+        <span id="tourStepCount" aria-live="polite"></span>
+        <div><button type="button" id="stationPrev">السابق</button><button type="button" id="stationNext">التالي</button></div>
+      </div>
+      <div class="studio-trend">
+        <span id="stationTrendName">منسوب البيارة مؤخراً</span>
+        <svg id="sceneTrace" viewBox="0 0 220 44" preserveAspectRatio="none" role="img" aria-labelledby="stationTrendName stationTraceLabel">
+          <desc id="stationTraceLabel">تغير منسوب البيارة مع مرور وقت المحاكاة</desc>
+          <path id="stationTracePath" d="" vector-effect="non-scaling-stroke"/>
+        </svg>
+        <small id="stationTraceRange"></small>
+      </div>
+      <div class="studio-layers" role="group" aria-label="طبقات العرض">
+        <button type="button" id="stationSection" class="station-section" aria-pressed="true"><span>كشف القطاع الداخلي</span><i aria-hidden="true"></i></button>
+        <button type="button" id="stationLevels" class="station-section" aria-pressed="false"><span>إظهار المناسيب</span><i aria-hidden="true"></i></button>
+      </div>
+      <div class="studio-key" aria-label="ألوان الخطوط"><span><i class="dirty"></i>وارد</span><span><i class="lift"></i>طرد</span><span><i class="tanker"></i>تفريغ</span><span><i class="future"></i>مستقبلي</span></div>
     </aside>
   </div>
-  <div id="stationDiagram" hidden><div class="diagram-note">اتجاه التدفق من اليمين إلى اليسار. مرّر المؤشر فوق أي مكوّن لعرض بياناته.</div><div class="svg-box">
+  <div id="stationDiagram" hidden><div class="diagram-note">اتجاه التدفق من اليمين إلى اليسار. مرّر المؤشر فوق المكوّن لعرض بياناته.</div><div class="svg-box">
             <svg viewBox="0 0 1080 486" xmlns="http://www.w3.org/2000/svg">
               <defs>
                 <linearGradient id="wellWaterG" x1="0" y1="0" x2="0" y2="1">
@@ -1099,14 +912,17 @@
               </g>
             </svg>
           </div></div>
-  <div class="studio-footer"><div class="studio-playback"><button type="button" id="stationPause" class="studio-pause">إيقاف مؤقت</button><div class="speed-group">
+  <footer class="studio-footer">
+    <div class="studio-playback"><button type="button" id="stationPause" class="studio-pause">إيقاف مؤقت</button><div class="speed-group">
               <span style="color:var(--slate-500);font-weight:600;">السرعة:</span>
               <button type="button" data-speed="1" class="speed-btn">1x</button>
               <button type="button" data-speed="10" class="speed-btn">10x</button>
               <button type="button" data-speed="30" class="speed-btn">30x</button>
               <button type="button" data-speed="60" class="speed-btn active">60x</button>
               <button type="button" data-speed="240" class="speed-btn">240x</button>
-            </div></div><small>مجسّم توضيحي · المسافات الأفقية مختصرة</small></div>
+            </div><button type="button" id="stationScenarioJump" class="studio-scenarios">سيناريوهات التشغيل</button></div>
+    <div class="studio-export"><small>المسافات الأفقية مختصرة. طبقات التربة وتفاصيل السطح توضيحية.</small><button type="button" id="stationSnapshot" title="تحميل صورة PNG للمشهد الحالي">حفظ لقطة</button></div>
+  </footer>
 </section>
 
 
@@ -1452,9 +1268,12 @@ class StationViewport {
     this.ctx = canvas.getContext('2d', {alpha:true});
     this.drawScene = drawScene;
     this.presets = {
-      overview:{ target:[1,-0.85,0], width:37.8, height:18.4, yaw:-0.17, pitch:0.39 },
-      well:{ target:[-8.8,-3.15,0], width:13, height:11.7, yaw:-0.21, pitch:0.20 },
-      tanks:{ target:[8.3,1.65,0.7], width:23.5, height:12.1, yaw:-0.15, pitch:0.32 }
+      overview:{ target:[0.2,-0.90,0], width:38.8, height:20, yaw:-0.19, pitch:0.34 },
+      inlet:{ target:[-12.0,-3.65,0], width:13.0, height:11.9, yaw:0.18, pitch:0.18 },
+      well:{ target:[-8.65,-3.6,0], width:12.6, height:12.1, yaw:-0.27, pitch:0.19 },
+      force:{ target:[-2.7,-0.90,0.3], width:15.2, height:9.4, yaw:-0.34, pitch:0.36 },
+      tanks:{ target:[8.65,1.85,-1], width:21.2, height:11.9, yaw:-0.18, pitch:0.34 },
+      outlet:{ target:[7.7,1.40,3.1], width:22.2, height:10.5, yaw:0.16, pitch:0.26 }
     };
     this.meshes = new Map();
     this.colors = new Map();
@@ -1482,17 +1301,47 @@ class StationViewport {
   }
   static clamp(x,lo,hi) { return Math.max(lo,Math.min(hi,x)) }
   preset(name) {
+    this.flight=null;
     const p = this.presets[name] || this.presets.overview;
     this.viewName = this.presets[name] ? name : 'overview';
     this.target = p.target.slice(); this.spanX=p.width; this.spanY=p.height;
     this.yaw=p.yaw; this.pitch=p.pitch; this.zoom=1;
     this.invalidate();
   }
+  flyTo(name) {
+    const p=this.presets[name];
+    if(!p || !this.lastState || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      this.preset(name);
+      return;
+    }
+    const turn=Math.atan2(Math.sin(p.yaw-this.yaw), Math.cos(p.yaw-this.yaw));
+    this.viewName=name;
+    const spanX=this.spanX/this.zoom, spanY=this.spanY/this.zoom;
+    this.flight={start:performance.now(),from:this.target.slice(),to:p,spanX,spanY,
+      yaw:this.yaw,turn,pitch:this.pitch};
+    this.spanX=spanX; this.spanY=spanY;
+    this.zoom=1;
+    this.invalidate();
+  }
+  updateFlight(now) {
+    const f=this.flight;
+    if(!f) return;
+    const t=StationViewport.clamp((now-f.start)/650,0,1);
+    const u=t*t*(3-2*t), p=f.to;
+    this.target=f.from.map((v,i)=>v+(p.target[i]-v)*u);
+    this.spanX=f.spanX+(p.width-f.spanX)*u;
+    this.spanY=f.spanY+(p.height-f.spanY)*u;
+    this.yaw=f.yaw+f.turn*u;
+    this.pitch=f.pitch+(p.pitch-f.pitch)*u;
+    if(t>=1) this.flight=null;
+  }
   zoomBy(factor) {
+    this.flight=null;
     if(Number.isFinite(factor) && factor>0) this.zoom=StationViewport.clamp(this.zoom*factor,0.52,4.3);
     this.invalidate();
   }
   rotateBy(rad) {
+    this.flight=null;
     if(Number.isFinite(rad)) this.yaw+=rad;
     this.invalidate();
   }
@@ -1511,6 +1360,7 @@ class StationViewport {
     };
     c.addEventListener('pointerdown',e=>{
       if(e.pointerType==='mouse' && e.button!==0) return;
+      this.flight=null;
       this.pointerMap.set(e.pointerId,pos(e));
       try { c.setPointerCapture(e.pointerId) } catch {}
       if(c.focus) c.focus({preventScroll:true});
@@ -1545,6 +1395,7 @@ class StationViewport {
       if(e.key==='ArrowLeft') this.rotateBy(-0.10);
       else if(e.key==='ArrowRight') this.rotateBy(0.10);
       else if(e.key==='ArrowUp' || e.key==='ArrowDown') {
+        this.flight=null;
         this.pitch=StationViewport.clamp(this.pitch+(e.key==='ArrowUp'?0.065:-0.065),0.045,1.30); this.invalidate();
       } else if(e.key==='+' || e.key==='=') this.zoomBy(1.15);
       else if(e.key==='-' || e.key==='_') this.zoomBy(1/1.15);
@@ -1554,6 +1405,7 @@ class StationViewport {
     },opts);
   }
   destroy() {
+    this.flight=null;
     this.life.abort(); this.observer?.disconnect(); cancelAnimationFrame(this.raf||0);
     this.meshes.clear(); this.lastState=null;
   }
@@ -1567,9 +1419,15 @@ class StationViewport {
       c.width=Math.round(w*dpr); c.height=Math.round(h*dpr);
     }
     this.ctx.setTransform(c.width/w,0,0,c.height/h,0,0);
-    this.scale=Math.min(w/this.spanX,h/this.spanY)*this.zoom;
+    // Preserve the height of the below-grade section and use the full width
+    // of narrow screens; the side panels are outside the drawing surface.
+    const usefulHeight=h-(w<520?38:16);
+    this.scale=Math.min(w/this.spanX,Math.max(h*.65,usefulHeight)/this.spanY)*this.zoom;
     const sy=Math.sin(this.yaw), cy=Math.cos(this.yaw), sp=Math.sin(this.pitch), cp=Math.cos(this.pitch);
     this.right=[cy,0,-sy]; this.up=[-sy*sp,cp,-cy*sp]; this.eye=[sy*cp,sp,cy*cp];
+    const hx=this.eye[0]-.54,hy=this.eye[1]+.76,hz=this.eye[2]+.35;
+    const hlen=Math.hypot(hx,hy,hz)||1;
+    this.halfLight=[hx/hlen,hy/hlen,hz/hlen];
     const t=this.target;
     this.offsetX=w/2-this.scale*(t[0]*cy-t[2]*sy);
     this.offsetY=h*.50+this.scale*(t[0]*this.up[0]+t[1]*cp+t[2]*this.up[2]);
@@ -1587,6 +1445,7 @@ class StationViewport {
   }
   draw(state) {
     this.lastState=state;
+    this.updateFlight(performance.now());
     if(!this.ctx || !this.setupCamera()) return;
     this.frame++; this.queue=[]; this.captions=[];
     const ctx=this.ctx;
@@ -1612,18 +1471,51 @@ class StationViewport {
       }
     }
     if(this.captions.length) this.drawLabels();
+    if(this.flight) this.invalidate();
     if(this.frame%80===0) {
       for(const [key,mesh] of this.meshes) if(mesh.last<this.frame-4) this.meshes.delete(key);
     }
   }
   drawLabels() {
     const ctx=this.ctx;
-    ctx.save(); ctx.font='600 12px Tahoma, Arial, sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle';
-    for(const {p,str} of this.captions) {
-      const [x,y]=this.project(p), width=ctx.measureText(str).width+14;
+    ctx.save();
+    const compact=this.w<500, height=compact?22:26, offset=compact?14:24;
+    const pad=compact?7:10, top=compact?32:37, bottom=this.h-(compact?35:40);
+    ctx.font=(compact?'600 11px ':'600 12px ')+'Tahoma, Arial, sans-serif';
+    ctx.textAlign='center'; ctx.textBaseline='middle';
+    const placed=[];
+    for(const {p,str,key} of this.captions) {
+      const [x,y]=this.project(p);
       if(x<0||x>this.w||y<0||y>this.h) continue;
-      ctx.fillStyle='rgba(9,30,43,.90)'; ctx.fillRect(x-width/2,y-10,width,20);
-      ctx.fillStyle='#e0f5f7'; ctx.fillText(str,x,y+0.5);
+      const width=Math.min(this.w-2*pad,ctx.measureText(str).width+18);
+      if(width<12 || bottom<top+height) continue;
+      const options=key && typeof key==='object' ? key : {};
+      const side=options.side==='left'?-1:options.side==='right'?1:(x<this.w*.5?-1:1);
+      const stroke=options.color||'#76c8c8';
+      let rect;
+      // Pick a free rectangle near this anchor. All candidates are clamped
+      // before testing, so orbiting near an edge never stacks two captions.
+      for(const rise of [-1,1,-2,2,-3,3]){
+        for(const direction of [side,-side]){
+          const cx=StationViewport.clamp(x+direction*(width/2+offset),pad+width/2,this.w-pad-width/2);
+          const cy=StationViewport.clamp(y+rise*(height+6),top+height/2,bottom-height/2);
+          const left=cx-width/2,right=cx+width/2,y0=cy-height/2,y1=cy+height/2;
+          if(placed.some(o=>left<o.right+5 && right>o.left-5 && y0<o.y1+4 && y1>o.y0-4))continue;
+          rect={cx,cy,left,right,y0,y1};break;
+        }
+        if(rect)break;
+      }
+      if(!rect)continue;
+      placed.push(rect);
+      const tipX=StationViewport.clamp(x,rect.left+4,rect.right-4);
+      const tipY=y>rect.cy?rect.y1:rect.y0;
+      ctx.lineWidth=1; ctx.strokeStyle=stroke;
+      ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(tipX,tipY);ctx.stroke();
+      ctx.fillStyle=stroke;ctx.beginPath();ctx.arc(x,y,2.15,0,Math.PI*2);ctx.fill();
+      ctx.fillStyle='#102d3a';ctx.strokeStyle='#52747c';
+      ctx.beginPath();ctx.roundRect(rect.left,rect.y0,width,height,4);ctx.fill();ctx.stroke();
+      ctx.fillStyle='#edf9f9';ctx.direction=/[\u0600-\u06ff]/.test(str)?'rtl':'ltr';
+      ctx.fillText(str,rect.cx,rect.cy+.5,width-12);
     }
     ctx.restore();
   }
@@ -1644,17 +1536,20 @@ class StationViewport {
   material(c,nx,ny,nz) {
     const rgba=this.color(c);
     if(!rgba) return c;
-    // Studio key from high left, cool front fill, soft reflected light.
-    const main=Math.max(0,-.48*nx+.76*ny+.44*nz);
-    const fill=Math.max(0,.64*nx+.31*ny+.53*nz);
-    const level=Math.max(0,Math.min(42,Math.round(20*(.71+.37*main+.115*fill))));
-    const key=c+'|'+level;
+    // Warm overhead key, cool skylight and a restrained moving highlight.
+    const main=Math.max(0,-.54*nx+.76*ny+.35*nz);
+    const fill=Math.max(0,.60*nx+.30*ny+.56*nz);
+    const tone=Math.round(32*(.67+.44*main+.13*fill));
+    const v=this.halfLight;
+    const dot=Math.max(0,nx*v[0]+ny*v[1]+nz*v[2]);
+    const spec=rgba[3]>=.99?Math.round(12*dot**14):0;
+    const key=c+'|'+tone+'|'+spec;
     let mat=this.shades.get(key);
     if(!mat) {
-      const k=level/20;
-      const r=Math.min(255,Math.round(rgba[0]*k));
-      const g=Math.min(255,Math.round(rgba[1]*k));
-      const b=Math.min(255,Math.round(rgba[2]*k+(k<.87?2:0)));
+      const k=tone/32, sky=Math.max(0,1-k)*12;
+      const r=Math.min(255,Math.round(rgba[0]*k+(k-0.9)*4+spec));
+      const g=Math.min(255,Math.round(rgba[1]*k+sky*.30+spec));
+      const b=Math.min(255,Math.round(rgba[2]*k+sky+spec*.90));
       mat='rgba('+r+','+g+','+b+','+rgba[3]+')'; this.shades.set(key,mat);
     }
     return mat;
@@ -1821,8 +1716,182 @@ class StationViewport {
 }
 
 
+/* An illustrative site cut. Elevations and connected equipment come from the simulation. */
+function drawStationYard(g, state) {
+  const section = state.section;
+  const cutZ = -2.16, farZ = -6.06, grade = -0.035, bottom = -7.92;
+  const left = -16.45, split = -3.8, right = 15.9;
+  const paving = '#969f9c', joint = '#778581';
+  const tile = (x0, x1, z0, z1, y, color) =>
+    g.face([[x0,y,z0],[x0,y,z1],[x1,y,z1],[x1,y,z0]], color);
+  const strip = (x0,x1,z,y0,y1,color) =>
+    g.face([[x0,y0,z],[x1,y0,z],[x1,y1,z],[x0,y1,z]],color);
+
+  // Slightly uneven bed boundaries, continuous between neighbouring faces.
+  // These bands are graphical symbology; no ground-investigation strata are assumed.
+  const bed = (x,k) => {
+    const base = [grade,-.20,-.64,-2.05,-3.84,-5.58,-7.57,bottom][k];
+    return k<3 || k>5 ? base : base + .075*Math.sin(x*.61+k)+.045*Math.sin(x*1.42+k*.8);
+  };
+  const colors = ['#c2c3af','#777d72','#8d8372','#726959','#81725f','#695d4f','#4c514d'];
+  function exposedGround(x0,x1,z,lastBed) {
+    const bays=Math.ceil((x1-x0)/2.25);
+    for(let i=0;i<bays;i++){
+      const a=x0+(x1-x0)*i/bays, b=x0+(x1-x0)*(i+1)/bays;
+      for(let k=0;k<lastBed;k++){
+        g.face([[a,bed(a,k+1),z],[b,bed(b,k+1),z],[b,bed(b,k),z],[a,bed(a,k),z]], colors[k]);
+        // Sparse aggregate marks follow the section face even while orbiting.
+        if(k>0 && k<6){
+          const offset=((i*17+k*7)%11)/15;
+          const cx=a+(b-a)*(.10+.62*offset), depth=(bed(a,k+1)+bed(a,k))*.50;
+          g.line([[cx,depth,z+.016],[cx+.22+.12*offset,depth+.04,z+.016]],'#b1a28b',.7);
+          if(k===2 || k===4)g.line([[cx+.48,depth-.27,z+.018],[cx+.56,depth-.21,z+.018]],'#655c52',.8);
+        }
+      }
+    }
+  }
+  function endCap(x,z0,z1,lowest){
+    g.face([[x,lowest,z0],[x,lowest,z1],[x,grade,z1],[x,grade,z0]],'#746f5e');
+    g.face([[x,grade-.18,z0],[x,grade-.18,z1],[x,grade,z1],[x,grade,z0]],'#acb0a2');
+  }
+  function plate(x0,x1,z0,z1,y,col,verticalJoints=false){
+    // Smaller faces sort correctly at shallow camera angles.
+    const nx=Math.ceil((x1-x0)/2.4), nz=Math.ceil((z1-z0)/2.15);
+    for(let i=0;i<nx;i++){
+      const a=x0+(x1-x0)*i/nx,b=x0+(x1-x0)*(i+1)/nx;
+      for(let j=0;j<nz;j++)tile(a,b,z0+(z1-z0)*j/nz,z0+(z1-z0)*(j+1)/nz,y,col);
+      if(verticalJoints && i>0 && i%2===0)g.line([[a,y+.008,z0],[a,y+.008,z1]],joint,.63);
+    }
+  }
+  const outline = (x0,x1,z0,z1,y,col) =>
+    g.line([[x0,y,z0],[x1,y,z0],[x1,y,z1],[x0,y,z1],[x0,y,z0]],col,.9);
+
+  if(section){
+    // A deep face behind the sewer and wet well, with an open foreground.
+    plate(left,split,farZ,cutZ,grade,paving,true);
+    exposedGround(left,split,cutZ,7);
+    endCap(left,farZ,cutZ,bottom);endCap(split,farZ,cutZ,bottom);
+    // The bottom shelf holds both well foundations. It ends before the dry header run.
+    const shelfRight=-7.1;
+    plate(left,shelfRight,cutZ,1.85,bottom,'#837968');
+    strip(left,shelfRight,1.85,bottom-.17,bottom,'#555a52');
+    g.line([[left,bottom+.014,1.85],[shelfRight,bottom+.014,1.85]],'#a3987d',.72);
+    // The rising main runs in a shallow opening above the deep cut.
+    plate(split,1.78,farZ,cutZ,grade,paving,true);
+    exposedGround(split,1.78,cutZ,3);endCap(1.78,farZ,cutZ,-2.05);
+    plate(split,1.78,cutZ,1.72,-2.07,'#7a7360');
+    strip(split,1.78,1.72,-2.23,-2.07,'#5b6054');
+    g.line([[left,grade+.014,cutZ],[1.78,grade+.014,cutZ]],'#ded5b3',1.4);
+  }else{
+    plate(left,1.78,farZ,2.28,grade,paving,true);
+    strip(left,1.78,2.28,-.42,grade,'#858679');
+    endCap(left,farZ,2.28,-.42);
+    g.line([[left,grade+.015,2.28],[1.78,grade+.015,2.28]],'#d1d0b8',1.1);
+  }
+
+  // Slabs supporting the vessels stop behind their visible pipe chase.
+  const slabFront = section ? -.14 : 2.28;
+  plate(1.78,right,farZ,slabFront,grade,'#9ba09a',true);
+  strip(1.78,right,slabFront,section?-.35:-.42,grade,'#918e7b');
+  endCap(right,farZ,slabFront,-.35);
+  if(section){
+    plate(1.78,10.0,slabFront,1.72,-1.22,'#837862');
+    strip(1.78,10.0,1.72,-1.39,-1.22,'#5c6052');
+  }
+  // Concrete apron for the two outlet valves and hose coupling.
+  plate(.15,14.66,1.96,3.13,grade,'#b2b3a9',true);
+  strip(.15,14.66,3.13,-.23,grade,'#8b9083');
+  outline(.15,14.66,1.96,3.13,grade+.012,'#c5c6b6');
+  // Tanker loading lane; near-dark asphalt keeps the tanker silhouette distinct.
+  plate(.35,right,3.15,6.37,-.048,'#58696b');
+  strip(.35,right,6.37,-.34,-.048,'#495a5b');
+  endCap(right,3.15,6.37,-.34);
+  g.line([[.35,-.033,6.25],[right,-.033,6.25]],'#b1b3a3',1);
+  for(let a=.55;a<right-.9;a+=1.75){
+    g.line([[a,-.025,5.96],[a+.85,-.025,5.96]],'#e4cb82',1.35);
+  }
+  // Yellow hatching marks the coupling stand, clear of the tanker lane.
+  tile(2.65,4.67,3.18,3.72,-.018,'#657579');
+  for(let x=2.74;x<4.47;x+=.31){
+    g.line([[x,-.004,3.67],[x+.22,-.004,3.23]],'#dfbb71',1.2);
+  }
+  // Protective bollards define the end of the loading bay.
+  for(const [x,z] of [[.50,3.28],[2.52,3.32],[14.84,2.84]]){
+    g.cyl(x,0,z,.084,.57,'#c9a862',7);
+    g.cyl(x,.34,z,.086,.12,'#555e58',7);
+    g.cyl(x,.57,z,.086,.06,'#ddd0aa',7);
+  }
+  // Quiet rear edge marks the service hardstanding; no fictitious process lines.
+  // Above-ground control cubicle represented schematically beside access paving.
+  const panelX=-6.24, panelZ=-3.86, faceZ=panelZ+.35;
+  g.box(panelX,.075,panelZ,1.53,.15,.92,'#b8beb0');
+  g.box(panelX,.97,panelZ,1.35,1.65,.67,'#82928e');
+  g.box(panelX,1.82,panelZ,1.45,.08,.78,'#aab2a7');
+  g.face([[panelX-.59,.24,faceZ],[panelX+.59,.24,faceZ],[panelX+.59,1.71,faceZ],[panelX-.59,1.71,faceZ]],'#b5c0b6');
+  g.line([[panelX+.12,.26,faceZ+.009],[panelX+.12,1.67,faceZ+.009]],'#73867e',1);
+  g.box(panelX-.08,.93,faceZ+.03,.045,.19,.04,'#415958');
+  g.box(panelX-.29,1.39,faceZ+.025,.35,.22,.04,'#354e51');
+  for(let i=0;i<3;i++){
+    const lamp=state.pFault?.[i]?'#e68b76':state.pOn?.[i]?'#83dbb6':'#abafa1';
+    g.box(panelX-.405+i*.105,1.15,faceZ+.035,.066,.06,.035,lamp);
+  }
+  for(let i=0;i<4;i++)g.line([[panelX+.27,.52+i*.075,faceZ+.014],[panelX+.49,.52+i*.075,faceZ+.014]],'#798d84',.85);
+  g.line([[left+.12,grade+.015,farZ+.22],[right-.12,grade+.015,farZ+.22]],'#d5d1b7',1.0);
+  // Small recessed grated surface strips, drawn outside the cut.
+  for(const x of [-12.75,-2.80]){
+    tile(x-.13,x+.13,-5.15,-3.04,-.023,'#657171');
+    for(let z=-5.08;z<-3.06;z+=.22)g.line([[x-.11,-.016,z],[x+.11,-.016,z]],'#aab0a1',.78);
+  }
+}
+
+// Keep buried equipment invisible in the exterior mode, even below a low orbit
+// where a finite presentation slab alone would reveal outlying silhouettes.
+function stationSurfaceGeometry(g) {
+  const datum=-.045;
+  const cutSegment=(a,b)=>{
+    const hi=a[1]>=datum,hj=b[1]>=datum;
+    if(hi&&hj)return [a,b];
+    if(!hi&&!hj)return null;
+    const t=(datum-a[1])/(b[1]-a[1]);
+    const cross=[a[0]+t*(b[0]-a[0]),datum,a[2]+t*(b[2]-a[2])];
+    return hi?[a,cross]:[cross,b];
+  };
+  function clipPath(pts,fn){
+    let path=[];
+    function flush(){if(path.length>1)fn(path);path=[];}
+    for(let i=1;i<pts.length;i++){
+      const seg=cutSegment(pts[i-1],pts[i]);
+      if(seg){if(!path.length)path.push(seg[0]);path.push(seg[1]);if(pts[i][1]<datum)flush();}
+      else flush();
+    }
+    flush();
+  }
+  function face(points,color){
+    const out=[];
+    for(let i=0;i<points.length;i++){
+      const a=points[(i+points.length-1)%points.length],b=points[i];
+      const edge=cutSegment(a,b);
+      if(!edge)continue;
+      if(a[1]<datum)out.push(edge[0]);
+      out.push(edge[1]);
+    }
+    if(out.length>=3)g.face(out,color);
+  }
+  return {
+    ...g,face,
+    box(x,y,z,w,h,d,c){const top=y+h/2,base=Math.max(datum,y-h/2);if(top>base)g.box(x,(top+base)/2,z,w,top-base,d,c);},
+    cyl(x,y,z,r,h,c,n){const base=Math.max(y,datum);if(y+h>base)g.cyl(x,base,z,r,y+h-base,c,n);},
+    ring(x,y,z,r,t,c,n){if(y>=datum)g.ring(x,y,z,r,t,c,n);},
+    line(p,c,w){clipPath(p,q=>g.line(q,c,w));},
+    pipe(p,r,c,n){clipPath(p,q=>g.pipe(q,r,c,n));},
+    flowing(p,c){clipPath(p,q=>g.flowing(q,c));}
+  };
+}
+
+
 function drawWet(g, s) {
   const cut = s.section;
+  const nearWell = s.view==='well' || s.stage==='well' || s.stage==='inlet' || s.stage==='force';
   const floor = -7.50;
   const xWell = -9;
   const xChamber = -6.28;
@@ -1882,15 +1951,17 @@ function drawWet(g, s) {
   // MH-75 enters P-75 at invert -5.604 m. The 400 mm sewer
   // centerline is 0.20 m above each invert, reaching -5.532 m at the well.
   const inlet = [[-15,-5.404,0],[-10.25,-5.532,0]];
-  g.pipe(inlet,.20,"#b18c66",10);
-  for (const t of [.26,.53,.80]) {
-    const x = inlet[0][0]+(inlet[1][0]-inlet[0][0])*t;
-    const y = -5.404-.128*t;
-    g.pipe([[x-.05,y,0],[x+.05,y,0]],.235,"#bb9b78",10);
+  if(cut){
+    g.pipe(inlet,.20,"#b18c66",12);
+    for (const t of [.26,.53,.80]) {
+      const x = inlet[0][0]+(inlet[1][0]-inlet[0][0])*t;
+      const y = -5.404-.128*t;
+      g.pipe([[x-.05,y,0],[x+.05,y,0]],.235,"#bb9b78",10);
+    }
+    if (s.inflowM3h > .01) g.flowing(inlet, "#ffd797");
+    casing(-15,.54,.74,-5.87,-.13,12);
+    g.cyl(-15,-5.95,0,.78,.15,concrete,14);
   }
-  if (s.inflowM3h > .01) g.flowing(inlet, "#ffd797");
-  casing(-15, .54, .74, -5.87, -.13, cut ? 11 : 16);
-  g.cyl(-15,-5.95,0,.78,.15,concrete,14);
   if (!cut) {
     g.cyl(-15,-.13,0,.74,.14,concrete,14);
     g.cyl(-15,.01,0,.48,.07,steel,14);
@@ -1898,9 +1969,9 @@ function drawWet(g, s) {
   }
 
   // Monolithic base and the remaining section of the concrete wet well.
-  g.cyl(xWell, floor-.23, 0,1.72,.23,"#8e9ea2",24);
-  casing(xWell,1.5,1.68,floor,.07,cut ? 19 : 26);
   if (cut) {
+    g.cyl(xWell,floor-.23,0,1.72,.23,"#8e9ea2",24);
+    casing(xWell,1.5,1.68,floor,.07,22);
     const level = Math.min(.05, Math.max(floor+.025, s.wellLevel));
     // A translucent cut through the liquid leaves the submerged pumps visible.
     const surface = arc(xWell,1.47,level,Math.PI*.85,Math.PI*2.15,23);
@@ -1935,17 +2006,15 @@ function drawWet(g, s) {
 
   // The separate dry chamber carries three non-return and isolation valves
   // upstream of the common discharge header. A sectional front wall is removed.
-  g.box(xChamber,-1.62,0,2.31,.16,1.84,concrete);
-  g.box(xChamber,-.77,-.86,2.31,1.54,.13,concreteInside);
   if (cut) {
+    g.box(xChamber,-1.62,0,2.31,.16,1.84,concrete);
+    g.box(xChamber,-.77,-.86,2.31,1.54,.13,concreteInside);
     g.box(xChamber,-1.46,.85,2.31,.15,.13,cutEdge);
     g.box(-7.36,-1.43,0,.12,.21,1.72,cutEdge);
   } else {
-    g.box(xChamber,-.78,.85,2.31,1.55,.14,concrete);
-    g.box(-7.36,-.78,0,.12,1.55,1.72,concrete);
-    g.box(-5.19,-.78,0,.12,1.55,1.72,concrete);
     g.box(xChamber,.015,0,2.35,.13,1.88,concrete);
     accessCover(xChamber,0,.12,1.48,1.03);
+    return;
   }
   const branchZ=[.57,-.57,0];
   const pumpLocations=[[-9.8,.34],[-9.06,-.44],[-8.32,.27]];
@@ -1954,25 +2023,52 @@ function drawWet(g, s) {
     const fault=Boolean(s.pFault && s.pFault[i]);
     const worn=Boolean(s.pDegraded && s.pDegraded[i]);
     const operating=Boolean(s.pOn && s.pOn[i]) && !fault;
-    const color=fault?"#bd5b58":worn?"#d4a654":operating?"#37b9a6":"#567786";
+    const color=fault?"#bd5b58":worn?"#d4a654":operating?"#319c91":"#4e7283";
     const tag=fault?"#ff8e79":worn?"#ffd179":operating?"#8cf5d2":"#a2b9be";
     const yPipe=-1.0;
     const route=[[x+.04,-7.16,z],[x+.29,-7.16,z],[x+.29,-1.18,z],
       [x+.43,yPipe,zBranch],[-5.43,yPipe,zBranch]];
     g.pipe(route,.074,operating?pipeBlue:pipeMetal,7);
     if (cut) {
-      g.box(x,-7.43,z,.56,.14,.53,steel);
-      g.cyl(x,-7.36,z,.266,.27,color,10);
-      g.cyl(x,-7.09,z,.208,.39,color,10);
-      g.cyl(x,-6.70,z,.199,.055,trim,10);
-      g.cyl(x,-6.645,z,.165,.095,color,9);
-      g.line([[x-.095,-6.54,z],[x-.095,-6.44,z],[x+.095,-6.44,z],[x+.095,-6.54,z]],trim,1.6);
+      // Twin guide posts and a fixed discharge elbow let the removable pump lift vertically.
+      for(const dz of [-.14,.14]){
+        g.cyl(x+.22,-7.36,z+dz,.022,6.92,'#a5babb',6);
+        g.cyl(x+.22,-.47,z+dz,.04,.11,steel,6);
+      }
+      g.box(x+.22,-.38,z,.13,.08,.37,steel);
+      g.box(x+.25,-7.43,z,.35,.12,.53,steel);
+      for(const dz of [-.165,.165])g.box(x-.12,-7.43,z+dz,.36,.11,.11,steel);
+      g.cyl(x,-7.395,z,.168,.11,steel,12);
+      // Offset volute body joins the lateral discharge port at the base of the motor.
+      g.cyl(x-.033,-7.30,z+.015,.281,.205,color,14);
+      g.pipe([[x+.02,-7.21,z+.06],[x+.21,-7.18,z+.04],[x+.31,-7.14,z]],.115,color,9);
+      g.pipe([[x+.19,-7.17,z+.04],[x+.23,-7.16,z+.035]],.144,steel,9);
+      g.cyl(x-.033,-7.13,z+.015,.255,.039,trim,14);
+      g.cyl(x,-7.091,z,.204,.345,color,14);
+      g.cyl(x,-6.746,z,.216,.054,steel,14);
+      g.cyl(x,-6.692,z,.185,.078,color,12);
+      g.cyl(x,-6.615,z,.150,.079,color,10);
+      g.line([[x-.096,-6.53,z],[x-.096,-6.44,z],[x-.067,-6.405,z],[x+.067,-6.405,z],[x+.096,-6.44,z],[x+.096,-6.53,z]],trim,1.7);
       for(const a of [.18,.93,1.65,2.4]) {
         const px=x+.208*Math.cos(a), pz=z+.208*Math.sin(a);
         g.line([[px,-7.02,pz],[px,-6.75,pz]],trim,.7);
       }
       g.box(x,-6.62,z+.16,.13,.07,.04,tag);
-      g.line([[x-.13,-6.55,z-.09],[x-.13,-1.02,z-.12],[x-.13,-.26,z-.21]],"#647079",.8);
+      const cable=[[x-.14,-6.56,z-.09],[x-.23,-6.04,z-.16],[x-.20,-4.89,z-.19],[x-.16,-2.7,z-.22],[x-.13,-.65,z-.22],[x-.23,-.34,z-.29]];
+      g.line(cable,'#333e43',nearWell?1.45:.9);
+      if(nearWell){
+        for(let bolt=0;bolt<7;bolt++){
+          const a=twoPi*bolt/7,px=x-.033+.225*Math.cos(a),pz=z+.015+.225*Math.sin(a);
+          g.line([[px,-7.088,pz],[px,-7.070,pz]],'#d4d7c5',1.5);
+        }
+        for(const h of [-6.12,-4.15,-2.15]) {
+          g.cyl(x+.29,h,z,.103,.039,'#718895',9);
+          g.line([[x+.29,h+.02,z],[x+.20,h+.02,z+.14]],trim,.85);
+        }
+        // Manufactured elbow joint and vibration coupling at the top of each riser.
+        g.cyl(x+.29,-1.45,z,.105,.076,steel,8);
+        g.cyl(x+.29,-1.39,z,.095,.08,trim,8);
+      }
       if (operating && s.actualPumpM3h > .01) g.flowing(route,active);
 
       // NRV bulge, bolted flange pair and handwheel of the isolation valve.
@@ -1990,13 +2086,19 @@ function drawWet(g, s) {
   const header=[[-5.43,-1,-.59],[-5.43,-1,.60]];
   g.pipe(header,.115,steel,9);
   g.pipe([[-5.43,-1,0],[-5,-1,0]],.112,pipeBlue,9);
+  // Flow transmitter on the common discharge, downstream of all three pump check valves.
+  g.pipe([[-5.32,-1,0],[-5.04,-1,0]],.151,'#52848b',10);
+  for(const x of [-5.35,-5.06])g.pipe([[x,-1,0],[x+.045,-1,0]],.170,trim,10);
+  g.cyl(-5.19,-.86,0,.052,.20,steel,8);
+  g.box(-5.19,-.64,0,.24,.18,.16,'#4f696a');
+  g.box(-5.19,-.64,.084,.164,.090,.012,'#c5d6a9');
   if (cut && s.actualPumpM3h>.01) g.flowing([[-5.43,-1,0],[-5,-1,0]],active);
 }
 
 
 function drawTanks(g, s) {
   const tau = 2 * Math.PI;
-  const enamel = ['#397877', '#397b79', '#407e7c', '#407d79'];
+  const enamel = ['#226568', '#2e7272', '#317776', '#28696b'];
   const steel = '#9bb0ad';
   const edge = '#b8d2c8';
   const darkMetal = '#39535b';
@@ -2010,6 +2112,7 @@ function drawTanks(g, s) {
   const deck = 0.13;
   const shoulder = 4.68;
   const openFront = s.section;
+  const nearTanks = s.view === 'tanks' || s.view === 'outlet' || s.stage === 'tanks' || s.stage === 'outlet';
 
   function handwheel(x, y, z, color, diameter = 0.43) {
     const r = diameter / 2;
@@ -2020,7 +2123,7 @@ function drawTanks(g, s) {
     g.line([[x, y, z - r], [x, y, z + r]], color, 1.4);
   }
   function vessel(cx, vol, tankIndex) {
-    g.cyl(cx, 0.012, cZ, radius + 0.2, deck, '#b7bcb1', 27);
+    g.cyl(cx, 0.0, cZ, radius + 0.25, deck, '#c2bdac', 32);
     const sector = openFront ? Math.PI / 3 : 0;
     const panels = openFront ? 17 : 25;
     const angles = Array.from({length: panels + 1}, (_, i) => sector + (tau - 2 * sector) * i / panels);
@@ -2029,15 +2132,39 @@ function drawTanks(g, s) {
 
     for (let i = 0; i < panels; i++) {
       const a = angles[i], b = angles[i + 1];
-      g.face([p(radius, deck, a), p(radius, deck, b), p(radius, shoulder, b), p(radius, shoulder, a)], enamel[(i + tankIndex) % enamel.length]);
+      // Stagger the courses so the individual bolted enamel sheets stay legible.
+      const courses = [deck,1.64,3.16,shoulder];
+      for (let j=0;j<courses.length-1;j++) {
+        const y0=courses[j], y1=courses[j+1], mid=(a+b)/2;
+        const phase=(i+Math.floor(j/2)+tankIndex)%enamel.length;
+        if(j===1) {
+          g.face([p(radius,y0,a),p(radius,y0,mid),p(radius,y1,mid),p(radius,y1,a)],enamel[phase]);
+          g.face([p(radius,y0,mid),p(radius,y0,b),p(radius,y1,b),p(radius,y1,mid)],enamel[(phase+1)%4]);
+          if(i%2===0)g.line([p(radius+.018,y0,mid),p(radius+.018,y1,mid)],'#83aaa1',.75);
+        } else {
+          g.face([p(radius,y0,a),p(radius,y0,b),p(radius,y1,b),p(radius,y1,a)],enamel[phase]);
+        }
+      }
       g.face([p(radius + 0.055, shoulder, a), p(radius + 0.055, shoulder, b), p(0.68, 4.97, b), p(0.68, 4.97, a)], i % 3 === 0 ? '#91a9a2' : '#a4b7af');
       g.face([p(0.68, 4.97, a), p(0.68, 4.97, b), [cx, 5.0, cZ]], '#b9c6bb');
       // Overlapping vertical sheet joints and riveted circumferential seams.
       if (i % 2 === 0) {
-        g.line([p(radius + 0.014, deck + 0.03, a), p(radius + 0.014, shoulder - 0.03, a)], '#5e9390', 0.75);
-        g.line([p(radius + 0.035, shoulder + 0.015, a), p(0.55, 4.985, a)], '#829d96', 0.7);
+        for(const [y0,y1] of [[deck+.03,1.64],[3.16,shoulder-.03]])g.line([p(radius+.018,y0,a),p(radius+.018,y1,a)],'#84a9a1',.75);
+        const rEdge=radius+.035;
+        g.line([p(rEdge,shoulder+.025,a),p(.68,4.984,a)],'#d5dbc5',1);
+        if(nearTanks) {
+          // Small bolt heads stand proud of the sheet along the joints.
+          for(const h of [.46,.84,1.26,1.66,3.19,3.55,3.94,4.30]) {
+            const bolt=p(radius+.035,h,a);
+            g.line([bolt,[bolt[0],bolt[1]+.025,bolt[2]]],'#d5dfce',1.6);
+          }
+          for(const h of [1.62,3.14]) {
+            g.line([p(radius+.025,h,a+.065),p(radius+.028,h+.012,a+.075)],'#dbe3d2',1.5);
+          }
+        }
       }
     }
+    for(const [r,h] of [[1.78,4.823],[.7,4.974]])g.line(arc(r,h), '#b5c6b5', 1);
     for (const y of [deck + 0.045, 1.64, 3.16, shoulder]) {
       g.line(arc(radius + 0.015, y), y === shoulder ? edge : '#6f9d96', y === shoulder ? 1.8 : 1.15);
     }
@@ -2068,6 +2195,12 @@ function drawTanks(g, s) {
     const step = (y, sign) => [foot[0] + sign * 0.19 * tangent[0], y, foot[2] + sign * 0.19 * tangent[1]];
     for (const sign of [-1, 1]) g.line([step(deck + 0.12, sign), step(shoulder + 0.47, sign)], '#c2c9b8', 1.9);
     for (let y = deck + 0.34; y <= shoulder + 0.22; y += 0.37) g.line([step(y, -1), step(y, 1)], '#c2c9b8', 1.55);
+    if(nearTanks){
+      const radial=[Math.sin(ladderA),Math.cos(ladderA)];
+      const cagePoint=(y,q)=>[foot[0]+radial[0]*.32*Math.cos(q)+tangent[0]*.29*Math.sin(q),y,foot[2]+radial[1]*.32*Math.cos(q)+tangent[1]*.29*Math.sin(q)];
+      for(const y of [2.35,3.0,3.65,4.28,4.93])g.line(Array.from({length:8},(_,j)=>cagePoint(y,-Math.PI/2+j*Math.PI/7)),'#ced4bf',1.05);
+      for(const q of [-.76,0,.76])g.line([cagePoint(2.35,q),cagePoint(4.93,q)],'#a9b8ab',.85);
+    }
     const hatch = p(1.2, 4.89, Math.PI);
     g.cyl(hatch[0], hatch[1], hatch[2], 0.35, 0.075, '#708b84', 12);
     g.cyl(cx, 4.98, cZ - 0.42, 0.095, 0.19, '#6c847e', 8);
@@ -2078,25 +2211,41 @@ function drawTanks(g, s) {
 
   // The trunk length is compressed along x in the overview. The branches
   // leave the distribution chamber and feed the top of each vessel.
-  const trunk = [[-5,-1,0],[-1.0,-1,0],[0.2,-1,0.77],[1.1,-1,0.77]];
-  g.pipe(trunk, 0.115, feed, 7);
-  if (s.actualPumpM3h > 0.01) g.flowing(trunk, '#60ece3');
-  g.box(0.65, 0.006, 0.77, 2.13, 0.075, 1.16, '#b0b8ac');
-  g.box(0.65, 0.060, 0.77, 1.78, 0.06, 0.89, '#6c7f7b');
-  for (const x of [0.16,1.08]) {
-    g.box(x, 0.104, 0.77, 0.72, 0.045, 0.65, darkMetal);
-    g.line([[x - 0.205,0.129,0.77],[x + 0.205,0.129,0.77]], steel, 1.3);
+  const trunk = [[-5,-1,0],[-1.1,-1,0],[-.15,-1,.50],[.12,-1,.77]];
+  if(s.section){
+    g.pipe(trunk,.092,feed,9);
+    for(const x of [-4.60,-2.85])g.pipe([[x-.045,-1,0],[x+.045,-1,0]],.107,'#669c9d',8);
+    if(s.actualPumpM3h>.01)g.flowing(trunk,'#60ece3');
+    g.box(.65,-1.36,.78,2.17,.12,1.46,'#a6aeaa');
+    g.box(.65,-.66,.085,2.17,1.32,.13,'#9ca8a5');
+    g.box(.65,-1.26,1.45,2.17,.15,.12,'#d4cdaf');
+    g.pipe([[.12,-1,.46],[.12,-1,1.14]],.104,feed,8);
+  }else{
+    g.box(.65,.006,.77,2.13,.075,1.46,'#b0b8ac');
+    g.box(.65,.060,.77,1.78,.06,1.09,'#6c7f7b');
+    for(const x of [.16,1.08]){
+      g.box(x,.104,.77,.72,.045,.85,darkMetal);
+      for(const dz of [-.24,-.06,.12,.30])g.line([[x-.29,.129,.77+dz],[x+.29,.129,.77+dz]],steel,.9);
+    }
   }
   for (const [i, cx] of [5,12].entries()) {
     const open = s.tankMode === 'both' || s.tankMode === 'tk' + (i + 1);
-    const x = cx - 2.66, z = cZ + 1.0;
-    const branch = [[1.1,-1,0.77],[1.4,-0.88,0.81 + i * 0.5],[x,-0.88,0.81 + i * 0.5],[x,-0.8,z],[x,4.43,z],[x + 0.20,4.63,z],[cx - 2.42,4.63,z]];
-    g.pipe(branch, 0.071, open ? feed : '#728483', 7);
+    const x=cx-2.79,z=cZ+.98,bz=i===0?.46:1.14,nozzleX=cx-1.72;
+    const branch=[[.12,-1,bz],[1.53,-1,bz],[x,-1,bz],[x,-1,z],[x,0,z],
+      [x,4.80,z],[x+.09,4.95,z],[x+.23,5,z],[nozzleX-.14,5,z],[nozzleX,4.91,z],[nozzleX,4.69,z]];
+    g.pipe(s.section?branch:branch.slice(4),.070,open?feed:'#689397',8);
+    if(s.section){
+      g.pipe([[.72,-1,bz],[1.01,-1,bz]],.122,'#527f85',8);
+      for(const xx of [.66,1.02])g.pipe([[xx,-1,bz],[xx+.047,-1,bz]],.136,steel,8);
+      g.box(.875,-.87,bz,.14,.15,.13,steel);handwheel(.875,-.57,bz,open?'#6fcdaa':'#c77b65',.36);
+    }
+    g.cyl(nozzleX,4.735,z,.134,.10,'#9fb3a9',12);
+    const carrying = open && s.actualPumpM3h>.01 && (i===0?s.tank1Vol:s.tank2Vol)<99.999;
     for (const y of [1.25,2.83,4.19]) {
       g.cyl(x,y,z,0.102,0.055,'#9aafa7',8);
-      g.line([[x,y,z],[x + 0.22,y,z]], steel, 1.4);
+      g.line([[x,y,z],[x+.31,y,z]],steel,1.4);
     }
-    if (open && s.actualPumpM3h > 0.01 && (i === 0 ? s.tank1Vol : s.tank2Vol) < 99.999) g.flowing(branch, '#9cf5dd');
+    if (carrying)g.flowing(s.section?branch:branch.slice(4),'#9cf5dd');
   }
 
   const eq = [[7.64,0.48,cZ],[9.36,0.48,cZ]];
@@ -2111,10 +2260,15 @@ function drawTanks(g, s) {
   // treatment take-off terminates in a blind flange beyond its closed valve.
   const drawBoth = s.balanceOpen || s.drawMode === 'both';
   for (const [i, cx] of [5,12].entries()) {
-    const route = [[cx,0.45,cZ + radius - 0.12],[cx,0.45,1.30],[cx,0.50,1.56],[3.72,0.50,1.56]];
+    // Keep the branch nozzle connected to liquid visible at the section plane.
+    const route=[[cx,.45,openFront?cZ+(radius-.045)*.5-.03:cZ+radius-.09],[cx,.45,1.30],[cx,.50,1.56]];
     const selected = drawBoth || s.drawMode === 'tk' + (i + 1);
-    g.pipe(route.slice(0,3),0.086,withdraw,7);
-    if (s.tankerActive && selected && (i === 0 ? s.tank1Vol : s.tank2Vol) > 0) g.flowing(route,'#ffcd7d');
+    g.pipe(route,.086,withdraw,8);
+    for(const zz of [.57,.85])g.pipe([[cx,.45,zz],[cx,.45,zz+.04]],.126,steel,8);
+    g.box(cx,.51,.71,.19,.18,.21,darkMetal);
+    const valveOpen=s.drawMode==='both'||s.drawMode==='tk'+(i+1);
+    handwheel(cx,.91,.71,valveOpen?'#ccae70':'#ad7361',.35);
+    if(s.tankerActive&&selected&&(i===0?s.tank1Vol:s.tank2Vol)>0)g.flowing(route,'#ffcd7d');
   }
   g.pipe([[12,0.50,1.56],[3.72,0.50,1.56],[3.44,0.5,1.83],[3.44,0.5,2.39]],0.096,withdraw,8);
   for (const x of [4.65,8.66,11.42]) {
@@ -2126,28 +2280,36 @@ function drawTanks(g, s) {
   g.box(1.56,0.51,2.39,0.30,0.33,0.30,'#67717a');
   handwheel(1.56,1.00,2.39,'#d3a06b',0.51);
   g.pipe([[0.50,0.50,2.39],[0.39,0.50,2.39]],0.185,'#aeb1ad',12);
+  for(let i=0;i<6;i++){const a=i*tau/6;const tip=[.382,.5+.139*Math.sin(a),2.39+.139*Math.cos(a)];g.line([tip,[.35,tip[1],tip[2]]],'#4e5759',1.5);}
+  g.box(1.56,.84,2.51,.105,.11,.04,'#c86859');
   const toTruck = [[3.44,0.5,2.39],[3.44,0.5,3.13],[3.75,0.5,3.43],[4.30,0.5,3.43],[4.30,0.90,3.43]];
   g.pipe(toTruck,0.092,withdraw,8);
   g.box(3.44,0.53,2.79,0.28,0.38,0.28,darkMetal);
   handwheel(3.44,1.02,2.79,s.outMode === 'tanker' ? '#d4a05e' : '#777c72');
   g.cyl(4.30,0.83,3.43,0.14,0.13,'#b8b6a4',10);
   if (s.tankerActive) {
-    g.flowing([[3.72,0.50,1.56],[3.44,0.5,1.83],[3.44,0.5,2.39]],'#ffd394');
+    const fromX=(drawBoth||s.drawMode==='tk2')&&s.tank2Vol>.001?12:5;
+    g.flowing([[fromX,.50,1.56],[3.72,.50,1.56],[3.44,.5,1.83],[3.44,.5,2.39]],'#ffd394');
     g.flowing(toTruck,'#ffd394');
     const hose = [[4.30,0.93,3.43],[4.53,0.98,3.47],[4.76,0.60,3.65],[5.1,0.30,3.90],[5.65,0.30,4.08],[5.98,0.70,4.28],[6.09,0.91,4.42]];
-    g.pipe(hose,0.075,'#384d51',8);
+    g.pipe(hose,0.085,'#30464c',9);
+    for(const ix of [0,5]){const a=hose[ix],b=hose[ix+1],t=ix===0?.26:.73;const q=[0,1,2].map(i=>a[i]+(b[i]-a[i])*t);g.pipe(ix===0?[a,q]:[q,b],.12,'#b4c1aa',9);}
     g.flowing(hose,'#f5c16a');
   }
 
   // Vacuum tanker; wheels rotate about z and the barrel is oriented along x.
   const zc = 4.52;
-  const rubber = '#334047', frame = '#45535a', cab = '#e9dfbc';
+  const rubber = '#283238', frame = '#465359', cab = '#eee5cf';
   const glass = '#42636b', windowEdge = '#92a7a6';
   const wheel = (x,z,side) => {
     g.pipe([[x,0.56,z - 0.14],[x,0.56,z + 0.14]],0.53,rubber,12);
     const zo = z + side * 0.15;
     g.pipe([[x,0.56,zo],[x,0.56,zo + side * 0.04]],0.285,'#8b9b98',10);
     g.pipe([[x,0.56,zo + side * 0.04],[x,0.56,zo + side * 0.07]],0.113,'#515f63',8);
+    if(nearTanks){
+      const faceZ=zo+side*.052;
+      for(let n=0;n<6;n++) {const a=tau*n/6,px=x+.196*Math.cos(a),py=.56+.196*Math.sin(a);g.line([[px,py,faceZ],[px+.009,py+.014,faceZ]],'#474f50',1.55);}
+    }
   };
   g.box(9.79,0.81,zc,7.40,0.35,1.48,frame);
   for (const x of [7.26,8.45,12.80]) for (const sign of [-1,1]) wheel(x,zc + sign * 0.85,sign);
@@ -2172,13 +2334,32 @@ function drawTanks(g, s) {
     g.line(band,'#81978c',2.2);
   }
   for (const sign of [-1,1]) {
-    g.box(8.68,1.98,zc + sign*barrelR,3.51,0.17,0.035,'#4c8380');
+    g.box(8.68,1.98,zc + sign*barrelR,3.51,0.17,0.035,'#397773');
     g.box(8.68,1.83,zc + sign*(barrelR-0.012),3.51,0.06,0.028,'#cf9d5b');
   }
+  for(const x of [7.03,8.02,9.69,10.45]){
+    const band=Array.from({length:23},(_,j)=>bp(x,barrelR+.014,tau*j/22));
+    g.line(band,'#7c918a',1.2);
+  }
+  for(const x of [6.83,10.61])g.box(x,1.04,zc,0.19,.32,1.69,'#5b726d');
   g.box(6.07,0.71,zc,0.29,0.19,1.89,'#778386');
   for (const dz of [-0.72,0.72]) g.box(5.915,0.75,zc+dz,0.055,0.11,0.23,'#c97567');
-  g.pipe([[6.11,1.76,zc],[6.02,1.30,zc],[6.09,0.91,4.42]],0.075,darkMetal,8);
+  g.pipe([[6.28,1.68,zc],[6.02,1.63,zc],[6.02,1.12,zc],[6.09,.91,4.42]],.09,darkMetal,8);
+  g.cyl(6.07,.89,4.42,.137,.11,'#afb6a7',9);
   g.cyl(8.61,2.95,zc,0.28,0.14,'#abb7aa',10);
+  g.cyl(8.61,3.065,zc,.31,.037,'#687f7b',12);
+  g.line([[8.49,3.10,zc],[8.49,3.18,zc],[8.72,3.18,zc],[8.72,3.10,zc]],'#c1c9bb',1.5);
+  // Roof catwalk, rear ladder and vacuum hose supports are shown at presentation scale.
+  g.box(8.22,2.99,zc-.34,3.21,.055,.26,'#94a39b');
+  for(const x of [6.70,7.62,8.53,9.62])g.line([[x,3,zc-.44],[x,3.28,zc-.44]],steel,1.15);
+  g.line([[6.70,3.28,zc-.44],[9.62,3.28,zc-.44]],'#d3d5c3',1.35);
+  for(const x of [6.72,7.02])g.line([[x,1.21,zc+.86],[x,2.27,zc+1],[x,2.95,zc+.54],[x,3.06,zc+.37]],'#9daea4',1.4);
+  for(const [h,off] of [[1.41,.90],[1.68,.94],[1.95,.97],[2.21,.99],[2.47,.87],[2.71,.71]])g.line([[6.72,h,zc+off],[7.02,h,zc+off]],'#c6cdbb',1.3);
+  if(nearTanks){
+    for(let i=0;i<5;i++)g.box(9.55+i*.18,1.52,zc+.88,.095,.073,.04,i%2===0?'#f2d098':'#d77759');
+    for(const zOff of [-.5,.5])g.line([[12.97,2.15,zc+zOff],[13.14,2.3,zc+zOff+.22]],darkMetal,1.0);
+    for(let j=0;j<4;j++)g.line([[11.67+j*.29,.99,zc+1.01],[11.67+j*.29,.99,zc+1.09]],'#556561',1);
+  }
   g.box(12.36,1.41,zc,1.98,0.9,1.97,cab);
   g.box(12.30,1.89,zc,1.85,0.20,1.96,'#b29262');
   const cabBottom = [[11.41,1.84,zc-0.93],[13.34,1.84,zc-0.93],[13.34,1.84,zc+0.93],[11.41,1.84,zc+0.93]];
@@ -2197,6 +2378,7 @@ function drawTanks(g, s) {
     g.box(12.98,2.27,zc+sign*1.17,0.14,0.25,0.12,frame);
   }
   g.box(12.24,2.86,zc,1.71,0.105,1.88,'#e8e1c7');
+  g.cyl(11.69,2.92,zc+.47,.085,.10,'#d49b44',8);
   g.box(13.366,1.46,zc,0.055,0.30,1.10,frame);
   for (const dy of [1.39,1.47,1.55]) g.line([[13.398,dy,zc-0.48],[13.398,dy,zc+0.48]],steel,0.85);
   for (const dz of [-0.75,0.75]) g.box(13.36,1.37,zc+dz,0.07,0.16,0.31,'#efe3aa');
@@ -2204,111 +2386,349 @@ function drawTanks(g, s) {
 }
 
 
-function createStationPresentation(){
+/* Offline landscape drawing sheet captured from the selected simulation view. */
+async function saveStationSnapshot(viewport, model, info) {
+  if (!viewport || !model) throw new Error('المشهد غير جاهز للتصدير');
+  const sheet = document.createElement('canvas');
+  const width = 1800, height = 1160, pad = 52;
+  sheet.width = width;
+  sheet.height = height;
+  const ctx = sheet.getContext('2d');
+  if (!ctx) throw new Error('تعذّر إنشاء صورة المشهد');
+  const paper = '#f3f7f5', ink = '#163a42', mute = '#47656b', accent = '#08766d';
+  const font = getComputedStyle(document.body).fontFamily || 'Tahoma, Arial, sans-serif';
+
+  function rect(x, y, w, h, color, radius = 0) {
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    if (radius && ctx.roundRect) ctx.roundRect(x, y, w, h, radius);
+    else ctx.rect(x, y, w, h);
+    ctx.fill();
+  }
+  function text(value, x, y, size, color, weight = 500, align = 'right', limit = width) {
+    ctx.direction = 'rtl';
+    ctx.textAlign = align;
+    ctx.textBaseline = 'middle';
+    ctx.font = weight + ' ' + size + 'px ' + font;
+    ctx.fillStyle = color;
+    ctx.fillText(String(value || ''), x, y, limit);
+  }
+  function noteLines(value, maxWidth) {
+    ctx.font = '500 24px ' + font;
+    const lines = [];
+    let current = '';
+    for (const word of String(value || '').split(/\s+/)) {
+      const next = current ? current + ' ' + word : word;
+      if (current && ctx.measureText(next).width > maxWidth) {
+        lines.push(current); current = word;
+      } else current = next;
+    }
+    if (current) lines.push(current);
+    return lines;
+  }
+
+  rect(0, 0, width, height, paper);
+  rect(0, 0, width, 10, accent);
+  const right = width - pad;
+  text('جامعة القصيم  /  الإدارة العامة للمشاريع', right, 47, 25, accent, 650);
+  text('محطة رفع الصرف الصحي', right, 105, 51, ink, 750);
+  text('مجمع كليات الطالبات بالفروسية · بريدة', right, 155, 25, mute);
+  const logos = [...document.querySelectorAll('header .logo-box img')].filter(img =>
+    img.complete && img.naturalWidth && img.src.startsWith('data:image/'));
+  if (logos.length) {
+    const logoPanelWidth = Math.min(386, logos.length * 188);
+    rect(pad, 37, logoPanelWidth, 104, '#ffffff', 14);
+    const logoWidth = (logoPanelWidth - 32) / logos.length;
+    logos.forEach((img, i) => {
+      const scale = Math.min((logoWidth - 14) / img.naturalWidth, 69 / img.naturalHeight);
+      const w = img.naturalWidth * scale, h = img.naturalHeight * scale;
+      ctx.drawImage(img, pad + 16 + i * logoWidth + (logoWidth - w) / 2, 89 - h / 2, w, h);
+    });
+  }
+  const box = {x: pad, y: 188, w: width - 2 * pad, h: 616};
+  const dark = ctx.createRadialGradient(width * .48, box.y + box.h * .47, 3, width * .48, box.y + box.h * .47, box.w * .66);
+  dark.addColorStop(0, '#24454d'); dark.addColorStop(.64, '#102d37'); dark.addColorStop(1, '#0a222d');
+  rect(box.x, box.y, box.w, box.h, dark, 12);
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(box.x + 3, box.y + 3, box.w - 6, box.h - 6); ctx.clip();
+  ctx.strokeStyle = 'rgba(155,205,209,.065)'; ctx.lineWidth = 1;
+  ctx.beginPath();
+  for (let x = box.x + 32; x < box.x + box.w; x += 32) { ctx.moveTo(x,box.y); ctx.lineTo(x,box.y+box.h); }
+  for (let y = box.y + 32; y < box.y + box.h; y += 32) { ctx.moveTo(box.x,y); ctx.lineTo(box.x+box.w,y); }
+  ctx.stroke();
+  // Render immediately against the same camera and immutable frame; awaiting PNG encoding happens afterward.
+  const virtual = document.createElement('canvas');
+  const virtualW = 1080, virtualH = Math.round(virtualW * box.h / box.w);
+  virtual.setAttribute('aria-hidden','true'); virtual.tabIndex = -1;
+  virtual.style.cssText = 'position:fixed;left:0;top:0;opacity:0;pointer-events:none;z-index:-1;max-width:none;width:' + virtualW + 'px;height:' + virtualH + 'px';
+  document.body.appendChild(virtual);
+  let clone;
+  try {
+    clone = new StationViewport(virtual, viewport.drawScene);
+    clone.target = viewport.target.slice();
+    for (const key of ['viewName','yaw','pitch','spanX','spanY','zoom']) clone[key] = viewport[key];
+    const setup = clone.setupCamera.bind(clone);
+    clone.setupCamera = () => {
+      if (!setup()) return false;
+      virtual.width = box.w; virtual.height = box.h;
+      clone.ctx.setTransform(box.w / clone.w, 0, 0, box.h / clone.h, 0, 0);
+      return true;
+    };
+    clone.draw(model);
+    ctx.drawImage(virtual, box.x, box.y, box.w, box.h);
+  } finally {
+    clone?.destroy(); virtual.remove(); ctx.restore();
+  }
+
+  const heading = info.viewLabel || info.title || 'المحطة بالكامل';
+  text(heading, right, 848, 36, ink, 750);
+  const clock = info.clock || '—';
+  text('وقت المحاكاة  ' + clock + '  ·  ' + (info.running ? 'جارية' : 'متوقفة'), pad, 848, 22, mute, 600, 'left', 660);
+  const lines = noteLines(info.note, width - 2 * pad);
+  if (lines.length) text(lines[0], right, 892, 24, mute);
+  if (lines.length > 1) text(lines.slice(1).join(' '), right, 921, 22, mute, 500, 'right', width - 2 * pad);
+
+  const readings = Array.isArray(info.readings) ? info.readings : [];
+  const gap = 18, count = Math.min(4, readings.length), cy = 952;
+  if (count) {
+    const cardW = (width - 2 * pad - (count - 1) * gap) / count;
+    readings.slice(0,count).forEach(([label, value], i) => {
+      const x = right - (i + 1) * cardW - i * gap;
+      rect(x, cy, cardW, 101, '#ffffff', 10);
+      rect(x + cardW - 6, cy + 17, 3, 65, '#77b7a9');
+      text(label, x + cardW - 25, cy + 27, 23, mute, 550, 'right', cardW - 45);
+      text(value, x + cardW - 25, cy + 70, 31, ink, 750, 'right', cardW - 45);
+    });
+  }
+  rect(pad, 1076, box.w, 1, '#c8d7d5');
+  let pen = right;
+  for (const [label, color] of [['وارد','#be914e'],['طرد','#198a91'],['تفريغ الوايت','#b78542'],['معالجة مستقبلية · مغلق','#89809b']]) {
+    ctx.font = '600 20px ' + font;
+    rect(pen - 24, 1108, 24, 5, color, 2);
+    text(label, pen - 34, 1110, 20, mute, 600);
+    pen -= 65 + ctx.measureText(label).width;
+  }
+  text('المسافات الأفقية مختصرة وطبقات التربة توضيحية', pad, 1110, 19, mute, 500, 'left', 500);
+  const blob = await new Promise((resolve, reject) => sheet.toBlob(
+    value => value ? resolve(value) : reject(new Error('تعذّر ترميز الصورة')), 'image/png'));
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  const view = String(model.view || 'overview').replace(/[^a-z]/g, '') || 'overview';
+  const time = String(clock).replace(/[^0-9]/g, '') || 'view';
+  link.href = url; link.download = 'Qassim_Station_' + view + '_' + time + '.png';
+  document.body.appendChild(link); link.click(); link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 15000);
+  return true;
+}
+
+
+function createStationPresentation(parameters){
   const root = document.getElementById('stationStudio');
   const byId = id => document.getElementById(id);
+  const find = selector => root.querySelector(selector);
   const canvas = byId('stationViewCanvas');
-  const mobile = () => canvas.clientWidth < 550;
-  const cfg = {view:'overview',section:true,mode:'3D'};
-  let previousState, latest, lastDraw = -1e6, lastValues = '', visible = true;
-  const icons = root.querySelectorAll('[data-station-camera]');
-  const rows = byId('sceneReadings');
-  const fields = [];
-  for(let i=0;i<3;i++){
-    const row=document.createElement('div'), term=document.createElement('dt'), value=document.createElement('dd');
-    row.className='station-field';row.append(term,value);rows.appendChild(row);fields.push([term,value]);
-  }
-  // Segmented surface pads leave a visible cut through the buried suction and discharge runs.
-  function yard(g,s){
-    const top = s.section ? '#4c6267' : '#596b6b';
-    function paving(x0,x1,z0,z1){for(let x=x0;x<x1-.01;x+=2){for(let z=z0;z<z1-.01;z+=2){const xx=Math.min(x+2,x1),zz=Math.min(z+2,z1);g.face([[x,-.11,z],[x,-.11,zz],[xx,-.11,zz],[xx,-.11,z]],top);g.line([[x,-.1,z],[xx,-.1,z]],'#526c70',.6);}}}
-    paving(2.0,15.8,-5.7,-.4);paving(4,15.4,3.25,5.85);
-    for(let x=4.35;x<15;x+=1.5)g.line([[x,-.075,5.68],[x+.74,-.075,5.68]],'#d5bf80',1.45);
-    for(let x=-16;x<2;x+=1.05)g.line([[x,.004,-2.10],[x+.68,.004,-2.10]],'#729195',.85);
-    if(!s.section){paving(-16.25,1.9,-2.12,1.8);}
-  }
-  function scene(g,s){
-    yard(g,s);drawWet(g,s);drawTanks(g,s);
-    if(s.view==='overview'){
-      g.label(-9,1.25,0,'بيارة الرفع');
-      if(!mobile()){g.label(5,5.95,-2.6,'TK-01');g.label(12,5.95,-2.6,'TK-02');}
-    }else if(s.view==='well'){
-      if(s.section){
-        g.label(-12.6,-4.4,0,'الخط الوارد');
-        g.label(-5.8,1.0,0,'مجمع الطرد');
+  const controls = document.querySelector('.sidebar .ctrl-card');
+  const controlTitle = controls.querySelector('.ctrl-heading');
+  controlTitle.tabIndex=-1;
+  const stages = ['inlet','well','force','tanks','outlet'];
+  const titles = {
+    overview:'قراءات المحطة', inlet:'الدخول بالجاذبية', well:'المضخات الغاطسة',
+    force:'خط الطرد المشترك', tanks:'خزانا التجميع', outlet:'التفريغ بعد الخزانات'
+  };
+  const notes = {
+    overview:'يتجمع صرف الكليات في البيارة، ثم ترفعه المضخات إلى خزاني التجميع.',
+    inlet:'يصل الصرف من المنهول MH-75 إلى البيارة عبر خط P-75 بقطر 400 مم.',
+    well:'يبدأ الضخ عند منسوب −6.30 م، وتدخل المضخة المساندة عند −6.05 م. تعمل مضختان كحد أقصى.',
+    force:'يجمع الخط تصرف المضخات العاملة، ثم يتفرع لتغذية الخزانين من أعلى. طول خط الطرد في النموذج 50 م.',
+    tanks:'سعة كل خزان 100 م³. محبس التوازن السفلي يتيح انتقال المياه بينهما عند اختلاف المنسوب.',
+    outlet:'خروج الصرف حاليًا بالوايتات. المخرج الثاني مخصص لمحطة المعالجة المستقبلية ومغلق في النموذج.'
+  };
+  const cfg={view:'overview',section:true,levels:false,mode:'3D',tour:false};
+  const icons=[...root.querySelectorAll('[data-station-camera]')];
+  const refs=Object.fromEntries(['stationPause','stationRunText','studioClock','sceneDetailTitle','sceneDetailNote','stationTracePath','stationTraceLabel','stationTrendName','stationSnapshot'].map(k=>[k,byId(k)]));
+  const fields=Array.from({length:3},()=>{
+    const row=document.createElement('div'),term=document.createElement('dt'),value=document.createElement('dd');
+    row.className='station-field';row.append(term,value);byId('sceneReadings').appendChild(row);return [term,value];
+  });
+  const signed=(n,digits=2)=>'\u2066'+(n>0?'+':'')+n.toFixed(digits).replace('-','−')+'\u2069';
+  const units=(n,s,digits=1)=>n.toFixed(digits)+' '+s;
+  function text(node,value){if(node.textContent!==value)node.textContent=value;}
+  let latest=null,latestAvailability=null,visible=true,lastPaint=-Infinity,lastPausedKey='',lastPaintState=null;
+  let drawnModel=null,drawnInfo=null;
+  let history=[],preceding=null,sampleState=null,nextSample=0,chartVersion=0,paintedChart=-1;
+  function record(s){
+    const t=s.simSeconds,v=s.wellLevel;
+    if(sampleState!==s||!preceding||t<preceding.t){
+      history=[{t,v}];nextSample=t+15;sampleState=s;chartVersion++;
+    }else if(t>preceding.t && t>=nextSample){
+      if(nextSample<t-600)nextSample=t-600;
+      while(nextSample<=t){
+        const mix=(nextSample-preceding.t)/(t-preceding.t);
+        history.push({t:nextSample,v:preceding.v+(v-preceding.v)*Math.min(1,Math.max(0,mix))});
+        nextSample+=15;
       }
-      g.label(-9,1.05,0,'بيارة الرفع');
-    }else{
-      g.label(5,5.65,-2.6,'TK-01');g.label(12,5.65,-2.6,'TK-02');
-      if(!mobile()){g.label(1.6,.25,3.95,'المعالجة المستقبلية · مغلق');g.label(10,-.15,6.9,'وايت الصرف');}
+      history=history.filter(p=>p.t>=t-600);
+      chartVersion++;
+    }
+    preceding={t,v};
+  }
+  function chart(){
+    if(paintedChart===chartVersion)return;
+    paintedChart=chartVersion;
+    const current=history[history.length-1],start=current.t-600;
+    const y=v=>41-38*(Math.max(parameters.floor,Math.min(parameters.invert,v))-parameters.floor)/(parameters.invert-parameters.floor);
+    const pts=history.map(p=>[(3+(p.t-start)*214/600).toFixed(2),y(p.v).toFixed(2)]);
+    refs.stationTracePath.setAttribute('d',pts.length===1?'M '+pts[0].join(' ')+' l .01 0':pts.map((p,i)=>(i?'L ':'M ')+p.join(' ')).join(' '));
+    text(refs.stationTrendName,'منسوب البيارة · آخر 10 دقائق');
+    const values=history.map(p=>p.v),minimum=Math.min(...values),maximum=Math.max(...values);
+    text(byId('stationTraceRange'),history.length<2?'تبدأ القراءات من لحظة التشغيل':'أدنى '+signed(minimum)+' م  ·  أعلى '+signed(maximum)+' م');
+    text(refs.stationTraceLabel,'منسوب مياه البيارة بالمتر نسبةً إلى سطح الأرض. آخر قراءة '+current.v.toFixed(2)+' م.');
+  }
+  function levelMarks(g,s){
+    const light='#dfad62';
+    function mark(x,y,z,caption,end=0.90){g.line([[x,y,z],[x+end,y,z]],light,1.7);g.label(x+end,y,z,caption,'datum');}
+    if(s.view==='tanks'||s.view==='outlet'){
+      mark(4.05,0,2.18,'أرض الموقع 0.00 م');
+      if(s.view==='tanks')mark(12.1,5,-2.2,'التغذية +5.00 م');
+      return;
+    }
+    mark(-10.8,0,1.1,'أرض الموقع 0.00 م');
+    if(!s.section)return;
+    if(s.view==='inlet'||s.view==='overview')mark(-10.8,parameters.invert,.65,'قاع المدخل '+signed(parameters.invert,3)+' م',.4);
+    if(s.view==='well'){
+      mark(-11.15,parameters.start1,1.05,'التشغيل '+signed(parameters.start1)+' م',.73);
+      mark(-8.7,parameters.stop,1.24,'الإيقاف '+signed(parameters.stop)+' م',1.04);
+      mark(-10.1,parameters.floor,.35,'القاع '+signed(parameters.floor)+' م',.48);
     }
   }
-  const viewport = canvas.getContext('2d') ? new StationViewport(canvas,scene) : null;
-  if('IntersectionObserver' in window){
-    const observer=new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;if(visible&&latest)refresh(latest,true);},{rootMargin:'150px'});
-    observer.observe(root);
+  function drawScene(g,s){
+    drawStationYard(g,s);
+    const plant=s.section?g:stationSurfaceGeometry(g);
+    drawWet(plant,s);drawTanks(plant,s);
+    if(s.levels)levelMarks(g,s);
+    const phone=canvas.clientWidth<540;
+    switch(s.view){
+      case 'overview':
+        g.label(-9,.22,.2,'بيارة الرفع','well');
+        if(!phone){g.label(5,4.9,-2.6,'TK-01','tank');g.label(12,4.9,-2.6,'TK-02','tank');}
+        break;
+      case 'inlet':
+        g.label(-15,.14,0,'المنهول MH-75','inlet');
+        if(s.section&&!s.levels)g.label(-12.6,-5.45,0,'خط الجاذبية P-75','inlet');
+        break;
+      case 'well':
+        if(!s.levels){g.label(-9.05,s.section?-6.92:.1,0,s.section?'مجموعة المضخات':'غطاء البيارة','well');
+          g.label(-5.7,-.1,0,'غرفة المحابس','force');}
+        break;
+      case 'force':
+        g.label(-5.5,s.section?-.85:.1,0,'غرفة المحابس','force');
+        g.label(.65,s.section?-.73:.15,.77,'توزيع إلى الخزانين','force');break;
+      case 'tanks':
+        g.label(5,4.8,-2.6,'TK-01','tank');g.label(12,4.8,-2.6,'TK-02','tank');break;
+      case 'outlet':
+        g.label(.40,.55,2.39,'المعالجة المستقبلية · مغلق','future');
+        g.label(4.30,.93,3.43,'وصلة تحميل الوايت','outlet');break;
+    }
   }
-  function textIf(node,value){if(node.textContent!==value)node.textContent=value;}
-  function refresh(s,force){
-    latest=s;
+  const viewport=canvas.getContext('2d')?new StationViewport(canvas,drawScene):null;
+  const activeDraw=s=>s.outMode==='tanker'&&s.tankerRemainingM3>.05&&latestAvailability>.05;
+  const tankName={tk1:'الخزان الأول',tk2:'الخزان الثاني',both:'الخزانان'};
+  function readings(s,tankerActive){
+    switch(cfg.view){
+      case 'inlet':return [['الوارد الحالي',units(s.inflowM3h,'م³/ساعة')],['قاع مدخل البيارة',signed(parameters.invert,3)+' م'],['التراكم قبل البيارة',units(s.upstreamStoredM3,'م³')]];
+      case 'well':return s.pOn.map((on,i)=>['P-0'+(i+1),s.pFault[i]?'عطل':on?(s.pDegraded[i]?'تعمل بأداء منخفض':'تعمل'):(s.pDegraded[i]?'جاهزة بأداء منخفض':'جاهزة')]);
+      case 'force':return [['التصرف المضخوخ',units(s.lastActualPumpM3h,'م³/ساعة')],['سرعة المياه',units(s.lastActualPumpM3h/3600/parameters.pipeArea,'م/ث',2)],['وجهة التعبئة',tankName[s.tankMode]]];
+      case 'tanks':return [['الخزان الأول',units(s.tank1Vol,'م³')],['الخزان الثاني',units(s.tank2Vol,'م³')],['محبس التوازن',s.balanceOpen?'مفتوح':'مغلق']];
+      case 'outlet':return [['حالة خط الوايت',s.outMode==='closed'?'مغلق':tankerActive?'جارٍ التحميل':'بانتظار وايت'],[tankerActive?'حمولة الرحلة':'المنقول تراكميًا',units(tankerActive?s.tankerLoadedThisTrip:s.totalOutM3,'م³')],['مخرج المعالجة','مغلق · مستقبلي']];
+      default:return [['منسوب البيارة',signed(s.wellLevel)+' م'],['مضخات تعمل',s.pOn.filter(Boolean).length+' من 3'],['مخزون الخزانين',units(s.tank1Vol+s.tank2Vol,'م³')]];
+    }
+  }
+  function update(s,available,force=false){
+    latest=s;latestAvailability=available;record(s);
     if(!visible&&!force)return;
     const now=performance.now();
-    if(!force && now-lastDraw < 54)return;
-    if(!force && !s.running && s===previousState && lastValues===pauseKey(s))return;
-    lastDraw=now;previousState=s;lastValues=s.running?'':pauseKey(s);
-    textIf(byId('stationPause'),s.running?'إيقاف مؤقت':'استئناف التشغيل');
+    if(!force&&now-lastPaint<65)return;
+    const pausedKey=s.running?'':JSON.stringify([s.simSeconds,s.inflowM3h,s.pOn,s.pFault,s.pDegraded,s.tankMode,s.drawMode,s.outMode,s.balanceOpen,s.tankerRemainingM3]);
+    if(!force&&!s.running&&lastPaintState===s&&pausedKey===lastPausedKey)return;
+    lastPaint=now;lastPaintState=s;lastPausedKey=pausedKey;
+    text(refs.stationPause,s.running?'إيقاف مؤقت':'استئناف التشغيل');
     if(cfg.mode!=='3D'||!viewport)return;
-    const tankerActive=s.outMode==='tanker'&&s.tankerRemainingM3>.05&&
-      (s.balanceOpen||s.drawMode==='both'?s.tank1Vol+s.tank2Vol:s.drawMode==='tk1'?s.tank1Vol:s.tank2Vol)>.05;
-    viewport.draw({...s,section:cfg.section,view:cfg.view,actualPumpM3h:s.lastActualPumpM3h,tankerActive});
-    textIf(byId('stationRunText'),s.running?'المحاكاة جارية':'المحاكاة متوقفة');
-    byId('stationRunText').parentElement.classList.toggle('paused',!s.running);
-    const hour=Math.floor(s.simSeconds/3600)%24,minute=Math.floor(s.simSeconds/60)%60;
-    textIf(byId('studioClock'),String(hour).padStart(2,'0')+':'+String(minute).padStart(2,'0'));
-    const level='\u2066'+s.wellLevel.toFixed(2)+'\u2069 م';
-    const active=s.pOn.reduce((a,b)=>a+Number(b),0);
-    let details;
-    if(cfg.view==='well'){
-      textIf(byId('sceneDetailTitle'),'حالة مضخات البيارة');
-      details=s.pOn.map((on,i)=>['P-0'+(i+1),s.pFault[i]?'عطل':s.pDegraded[i]?'أداء منخفض':on?'تعمل':'جاهزة']);
-    }else if(cfg.view==='tanks'){
-      textIf(byId('sceneDetailTitle'),'الخزانات والمخارج');
-      details=[['الخزان الأول',s.tank1Vol.toFixed(1)+' م³'],['الخزان الثاني',s.tank2Vol.toFixed(1)+' م³'],['خط الوايت',s.outMode==='closed'?'مغلق':tankerActive?'جارٍ التحميل':'بانتظار وايت']];
-    }else{
-      textIf(byId('sceneDetailTitle'),'قراءات المحطة');
-      details=[['منسوب البيارة',level],['مضخات تعمل',active+' من 3'],['مخزون الخزانين',(s.tank1Vol+s.tank2Vol).toFixed(1)+' م³']];
-    }
-    details.forEach((a,i)=>{textIf(fields[i][0],a[0]);textIf(fields[i][1],a[1]);});
+    const tankerActive=activeDraw(s);
+    const model={...s,stage:cfg.view,section:cfg.section,levels:cfg.levels,view:cfg.view,actualPumpM3h:s.lastActualPumpM3h,tankerActive};
+    viewport.draw(model);
+    const clock=String(Math.floor(s.simSeconds/3600)%24).padStart(2,'0')+':'+String(Math.floor(s.simSeconds/60)%60).padStart(2,'0');
+    text(refs.studioClock,clock);text(refs.stationRunText,s.running?'المحاكاة جارية':'المحاكاة متوقفة');
+    refs.stationRunText.parentElement.classList.toggle('paused',!s.running);
+    const details=readings(s,tankerActive);
+    text(refs.sceneDetailTitle,titles[cfg.view]);text(refs.sceneDetailNote,notes[cfg.view]);
+    details.forEach(([k,v],i)=>{text(fields[i][0],k);text(fields[i][1],v);});
+    chart();drawnModel=model;drawnInfo={title:'محطة رفع الصرف الصحي',viewLabel:titles[cfg.view],note:notes[cfg.view],clock,readings:details,running:s.running};
   }
-  function pauseKey(s){return [s.simSeconds,s.inflowM3h,s.tankMode,s.drawMode,s.outMode,s.balanceOpen,s.pFault,s.pDegraded,s.tankerRemainingM3].join('|');}
-  function redraw(){if(latest)refresh(latest,true);}
-  function setCamera(name){
-    cfg.view=name;icons.forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.stationCamera===name)));viewport?.preset(name);redraw();
+  const redraw=()=>{if(latest)update(latest,latestAvailability,true);};
+  const pressed=(node,flag)=>node.setAttribute('aria-pressed',String(flag));
+  function syncTour(){
+    pressed(byId('stationTour'),cfg.tour);byId('stationTourNav').hidden=!cfg.tour;
+    const label=byId('stationTour').querySelector('span');text(label,cfg.tour?'إنهاء الجولة':'جولة تشغيلية');
+    if(cfg.tour){const index=stages.indexOf(cfg.view);byId('stationPrev').disabled=index<=0;
+      text(byId('stationNext'),index===stages.length-1?'إنهاء الجولة':'التالي');text(byId('tourStepCount'),'مرحلة '+(index+1)+' من '+stages.length);}
+  }
+  function setCamera(name,instant=false){
+    cfg.view=name;if(name==='overview')cfg.tour=false;
+    icons.forEach(b=>pressed(b,b.dataset.stationCamera===name));syncTour();
+    if(viewport)instant?viewport.preset(name):viewport.flyTo(name);
+    redraw();
   }
   function setMode(mode){
     cfg.mode=mode;byId('stationModel').hidden=mode!=='3D';byId('stationDiagram').hidden=mode!=='2D';
-    for(const key of ['2D','3D'])byId('stationTab'+key).setAttribute('aria-pressed',String(key===mode));
+    for(const key of ['2D','3D'])pressed(byId('stationTab'+key),key===mode);
+    refs.stationSnapshot.disabled=mode!=='3D'||!viewport;
+    if(mode==='2D'){cfg.tour=false;syncTour();}
     redraw();
   }
   icons.forEach(b=>b.addEventListener('click',()=>setCamera(b.dataset.stationCamera)));
-  byId('stationHome').addEventListener('click',()=>setCamera(cfg.view));
+  byId('stationTour').addEventListener('click',()=>{
+    if(cfg.tour){setCamera('overview');return;}
+    if(cfg.mode!=='3D')setMode('3D');cfg.tour=true;
+    cfg.section=true;pressed(byId('stationSection'),true);setCamera('inlet');
+  });
+  byId('stationPrev').addEventListener('click',()=>setCamera(stages[Math.max(0,stages.indexOf(cfg.view)-1)]));
+  byId('stationNext').addEventListener('click',()=>setCamera(stages[stages.indexOf(cfg.view)+1]||'overview'));
+  byId('stationHome').addEventListener('click',()=>setCamera(cfg.view,true));
   byId('stationTab3D').addEventListener('click',()=>setMode('3D'));
   byId('stationTab2D').addEventListener('click',()=>setMode('2D'));
   byId('stationZoomIn').addEventListener('click',()=>viewport?.zoomBy(1.2));
   byId('stationZoomOut').addEventListener('click',()=>viewport?.zoomBy(1/1.2));
-  byId('stationSection').addEventListener('click',e=>{cfg.section=!cfg.section;e.currentTarget.setAttribute('aria-pressed',String(cfg.section));redraw();});
+  for(const [id,k] of [['stationSection','section'],['stationLevels','levels']]){
+    byId(id).addEventListener('click',e=>{cfg[k]=!cfg[k];pressed(e.currentTarget,cfg[k]);redraw();});
+  }
   byId('stationPause').addEventListener('click',()=>{byId('btnPlayPause').click();redraw();});
-  function expanded(){return document.fullscreenElement===root||root.classList.contains('is-expanded');}
-  function syncExpand(){const b=byId('stationExpand'),label=expanded()?'إنهاء ملء الشاشة':'ملء الشاشة';b.setAttribute('aria-label',label);b.title=label;b.setAttribute('aria-pressed',String(expanded()));viewport?.invalidate();}
+  const expanded=()=>document.fullscreenElement===root||root.classList.contains('is-expanded');
+  function syncExpand(){const b=byId('stationExpand'),label=expanded()?'إنهاء ملء الشاشة':'ملء الشاشة';b.setAttribute('aria-label',label);b.title=label;pressed(b,expanded());viewport?.invalidate();}
+  async function leaveFull(){
+    if(document.fullscreenElement===root)await document.exitFullscreen();
+    root.classList.remove('is-expanded');syncExpand();
+  }
   byId('stationExpand').addEventListener('click',async()=>{
-    if(document.fullscreenElement===root)await document.exitFullscreen();else if(root.classList.contains('is-expanded'))root.classList.remove('is-expanded');
-    else{try{if(!root.requestFullscreen)throw Error();await root.requestFullscreen();}catch{root.classList.add('is-expanded');}}
-    syncExpand();
+    if(expanded())await leaveFull();
+    else{try{if(!root.requestFullscreen)throw Error();await root.requestFullscreen();}catch{root.classList.add('is-expanded');}syncExpand();}
+  });
+  byId('stationScenarioJump').addEventListener('click',async()=>{
+    if(expanded())await leaveFull();
+    controlTitle.focus({preventScroll:true});controls.scrollIntoView({block:'start',behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'instant':'smooth'});
+  });
+  refs.stationSnapshot.addEventListener('click',async()=>{
+    if(!drawnModel||cfg.mode!=='3D'||refs.stationSnapshot.disabled)return;
+    refs.stationSnapshot.disabled=true;
+    try{await saveStationSnapshot(viewport,drawnModel,drawnInfo);}
+    catch{const msg=document.createElement('p');msg.setAttribute('role','alert');msg.textContent='تعذر حفظ الصورة في هذا المتصفح.';refs.stationSnapshot.after(msg);setTimeout(()=>msg.remove(),6000);}
+    finally{refs.stationSnapshot.disabled=cfg.mode!=='3D';}
   });
   document.addEventListener('fullscreenchange',syncExpand);
-  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&root.classList.contains('is-expanded')){root.classList.remove('is-expanded');syncExpand();byId('stationExpand').focus();}});
-  if(!viewport){byId('stationTab3D').disabled=true;setMode('2D');}
-  return {update:refresh};
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&root.classList.contains('is-expanded')){leaveFull();byId('stationExpand').focus();}});
+  if('IntersectionObserver' in window)new IntersectionObserver(entries=>{visible=entries[0].isIntersecting;if(visible)redraw();},{rootMargin:'160px'}).observe(root);
+  if(!viewport){byId('stationTab3D').disabled=true;byId('stationTour').disabled=true;setMode('2D');}
+  return {update};
 }
 
   </script>
@@ -3332,7 +3752,7 @@ function createStationPresentation(){
         el("outletTankerDash").setAttribute("class", tankerActive ? "flow-active" : "");
 
         el("svgPanelTimer").textContent = `مؤقت التعفن: ${String(Math.floor(state.idleMinutes)).padStart(2, "0")}/60 د`;
-      stationPresentation.update(state);
+      stationPresentation.update(state,getDrawableTankVol());
       }
 
       // Bind Hover Tooltip to all P&ID Components
@@ -3485,7 +3905,7 @@ function createStationPresentation(){
       el("btnClearAllCost").addEventListener("click", () => { COST_ITEMS.forEach((i) => { i.checked = false; }); renderCostTable(); });
       el("chkContingency").addEventListener("change", updateCostTotals);
 
-      const stationPresentation = createStationPresentation();
+      const stationPresentation = createStationPresentation({floor:LEVEL_FLOOR,invert:LEVEL_INVERT,start1:LEVEL_START1,stop:LEVEL_STOP,pipeArea:PIPE_AREA});
       // Init
       buildHydrograph();
       syncControlButtons();
