@@ -690,11 +690,11 @@
       to   { opacity: 1; transform: translateY(var(--opening-shift)); }
     }
     #openingSplash .opening-logos {
-      width: min(100%, 37rem);
+      width: min(100%, 42rem);
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: clamp(0.45rem, 2.5vw, 1.9rem);
+      gap: clamp(0.6rem, 3.3vw, 3rem);
     }
     #openingSplash .opening-logos img {
       display: block;
@@ -716,7 +716,7 @@
       height: 3px;
       flex: none;
       border-radius: 3px;
-      margin: clamp(1.3rem, 3.6vh, 2rem) 0 clamp(1.06rem, 2.7vh, 1.6rem);
+      margin: clamp(1.55rem, 4.5vh, 2.5rem) 0 clamp(1.3rem, 3.2vh, 2rem);
       background: linear-gradient(90deg, #064673 0%, #0a9ba9 100%);
     }
     #openingSplash h2 {
@@ -724,26 +724,65 @@
       max-width: 100%;
       font-size: clamp(1.47rem, 3.18vw, 2.95rem);
       font-weight: 750;
-      line-height: 1.52;
+      line-height: 1.64;
       letter-spacing: -0.015em;
       text-wrap: balance;
     }
     #openingSplash .opening-location {
-      margin: clamp(0.5rem, 1.8vh, 0.95rem) 0 0;
+      margin: clamp(0.85rem, 2.4vh, 1.4rem) 0 0;
       font-size: clamp(1rem, 1.62vw, 1.54rem);
       font-weight: 650;
       line-height: 1.65;
       color: #147684;
       text-wrap: balance;
     }
+    #openingSplash .opening-entry {
+      display: grid;
+      place-items: center;
+      width: min(268px, 84%);
+      min-height: 64px;
+      margin-top: clamp(2.05rem, 5.15vh, 3.2rem);
+    }
     #openingSplash .opening-loading {
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 0.82rem;
-      margin-top: clamp(1.7rem, 4.4vh, 2.8rem);
-      width: min(244px, 74%);
+      width: 100%;
     }
+    #openingSplash .opening-loading[hidden],
+    #openingSplash #openingEnter[hidden] { display: none !important; }
+    #openingSplash #openingEnter {
+      border: 0;
+      border-radius: 8px;
+      background: linear-gradient(105deg, #075579 0%, #087f92 100%);
+      color: white;
+      font-family: inherit;
+      font-size: 1.06rem;
+      font-weight: 750;
+      min-height: 52px;
+      width: min(220px, 100%);
+      padding: 0.7rem 1.8rem;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.9rem;
+      cursor: pointer;
+      box-shadow: 0 5px 15px rgba(5,75,124,.15);
+      transition: box-shadow .18s ease, filter .18s ease;
+      animation: opening-enter-appear 240ms ease-out both;
+    }
+    #openingSplash #openingEnter:hover {
+      filter: brightness(1.06);
+      box-shadow: 0 7px 19px rgba(5,75,124,.23);
+    }
+    #openingSplash #openingEnter:focus-visible {
+      outline: 3px solid #42acb9;
+      outline-offset: 4px;
+    }
+    #openingSplash #openingEnter:disabled { cursor: default; }
+    #openingSplash #openingEnter .opening-arrow { font-size: 1.3em; line-height: 1; }
+    @keyframes opening-enter-appear { from { opacity: 0; } to { opacity: 1; } }
     #openingSplash .opening-track {
       position: relative;
       overflow: hidden;
@@ -761,7 +800,7 @@
       transform-origin: right center;
     }
     html.station-opening #openingSplash .opening-progress {
-      animation: opening-progress 3750ms linear both;
+      animation: opening-progress 4000ms linear both;
     }
     @keyframes opening-progress {
       from { transform: scaleX(0); }
@@ -779,9 +818,13 @@
       #openingSplash .opening-logos { max-width: 430px; }
       #openingSplash h2 { font-size: clamp(1.25rem, 2.8vw, 2.3rem); }
       #openingSplash .opening-accent { margin-block: 0.9rem; }
-      #openingSplash .opening-loading { margin-top: 1.15rem; gap: .5rem; }
+      #openingSplash .opening-entry { margin-top: 1.15rem; min-height: 56px; }
+      #openingSplash .opening-loading { gap: .5rem; }
     }
     @media (max-width: 560px) {
+      #openingSplash .opening-logos { gap: clamp(0.75rem, 3.3vw, 1rem); }
+      #openingSplash .opening-content { --opening-shift: -1.3rem; }
+      #openingSplash .opening-entry { min-height: 60px; margin-top: 1.9rem; }
       #openingSplash::before, #openingSplash::after { width: 220px; }
       #openingSplash::before { top: -142px; left: -72px; }
       #openingSplash::after { bottom: -132px; right: -70px; }
@@ -789,6 +832,7 @@
     @media (prefers-reduced-motion: reduce) {
       #openingSplash { transition: none; }
       html.station-opening #openingSplash .opening-content { animation: none; }
+      #openingSplash #openingEnter { animation: none; transition: none; }
       html.station-opening #openingSplash .opening-progress {
         animation: none;
         transform: scaleX(.66);
@@ -802,8 +846,7 @@
   <script>
     (function () {
       try {
-        if (sessionStorage.getItem('qassim-lift-station-opening-v10') === 'seen') return;
-        sessionStorage.setItem('qassim-lift-station-opening-v10', 'seen');
+        if (sessionStorage.getItem('qassim-lift-station-opening-v11') === 'seen') return;
       } catch (_) {}
       document.documentElement.classList.add('station-opening');
     })();
@@ -820,9 +863,12 @@
       <span class="opening-accent" aria-hidden="true"></span>
       <h2>محاكي التشغيل الآلي لمحطة رفع الصرف الصحي وخزانات التجميع (GLS)</h2>
       <p class="opening-location">بمجمع الطالبات ببريدة (الفروسية)</p>
-      <div class="opening-loading" role="status" aria-live="polite">
-        <div class="opening-track" aria-hidden="true"><span class="opening-progress"></span></div>
-        <p class="opening-loading-text">جاري تحميل المحاكاة...</p>
+      <div class="opening-entry">
+        <div id="openingLoading" class="opening-loading" role="status" aria-live="polite">
+          <div class="opening-track" aria-hidden="true"><span class="opening-progress"></span></div>
+          <p class="opening-loading-text">جاري تحميل المحاكاة...</p>
+        </div>
+        <button type="button" id="openingEnter" hidden>دخول <span class="opening-arrow" aria-hidden="true">←</span></button>
       </div>
     </div>
   </section>
@@ -875,12 +921,27 @@
       const logos = document.querySelectorAll('.top-header .logo-box img');
       if (logos[0]) document.getElementById('openingUniversityLogo').src = logos[0].src;
       if (logos[1]) document.getElementById('openingConsultantLogo').src = logos[1].src;
-      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        window.setTimeout(() => root.classList.add('station-opening-fade'), 3750);
-      }
+      const loading = document.getElementById('openingLoading');
+      const enter = document.getElementById('openingEnter');
       window.setTimeout(() => {
-        root.classList.remove('station-opening', 'station-opening-fade');
+        loading.hidden = true;
+        enter.hidden = false;
+        enter.focus({preventScroll: true});
       }, 4000);
+      enter.addEventListener('click', () => {
+        if (enter.hidden || enter.disabled) return;
+        enter.disabled = true;
+        try {
+          sessionStorage.setItem('qassim-lift-station-opening-v11', 'seen');
+        } catch (_) {}
+        const finish = () => root.classList.remove('station-opening', 'station-opening-fade');
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+          finish();
+        } else {
+          root.classList.add('station-opening-fade');
+          window.setTimeout(finish, 250);
+        }
+      });
     })();
   </script>
 
@@ -4595,8 +4656,10 @@ function createStationPresentation(parameters){
       function loop(now) {
         const dt = Math.min(0.1, (now - lastTs) / 1000);
         lastTs = now;
-        stepSimulation(dt);
-        render(now);
+        if (!document.documentElement.classList.contains('station-opening')) {
+          stepSimulation(dt);
+          render(now);
+        }
         requestAnimationFrame(loop);
       }
       requestAnimationFrame(loop);
