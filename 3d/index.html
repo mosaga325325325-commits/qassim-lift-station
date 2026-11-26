@@ -300,7 +300,7 @@
     .qty-inp { width: 4rem; text-align: center; border: 1px solid var(--slate-300); border-radius: 0.35rem; padding: 0.18rem; font-family: inherit; font-size: 0.76rem; font-weight: 700; }
 
     .cost-scope p { margin: 0.2rem 0; }
-    .cost-shared-price { display: block; font-size: 0.72rem; line-height: 1.45; color: var(--slate-600); }
+    @media print { .cost-tbl tr, .cost-scope, .cost-summary-grid { break-inside: avoid; } }
     .cost-summary-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.6rem; }
     @media (max-width: 780px) { .cost-summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
     .sum-box { background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: var(--radius-lg); padding: 0.6rem 0.75rem; }
@@ -1661,7 +1661,7 @@
         <div style="display:flex;align-items:center;gap:0.75rem;">
           <div style="text-align:left;">
             <div style="font-size:0.7rem;color:var(--slate-600);">الإجمالي النهائي شامل الضريبة</div>
-            <div id="costHeaderTotal" style="font-size:1.05rem;font-weight:800;color:var(--qu-navy);" dir="ltr">447,810 ر.س</div>
+            <div id="costHeaderTotal" style="font-size:1.05rem;font-weight:800;color:var(--qu-navy);" dir="ltr">545,215 ر.س</div>
           </div>
           <span id="costChevron" class="chevron">▼</span>
         </div>
@@ -1688,7 +1688,7 @@
                 <th class="txt-right">البند ومواصفاته الفنية (شامل التوريد والتركيب والاختبار والتشغيل)</th>
                 <th style="width:4.5rem;">الوحدة</th>
                 <th style="width:5.5rem;">الكمية</th>
-                <th style="width:7.5rem;">أساس السعر (ر.س)</th>
+                <th style="width:7.5rem;">سعر الوحدة (ر.س)</th>
                 <th style="width:8rem;">الإجمالي (ر.س)</th>
               </tr>
             </thead>
@@ -1697,26 +1697,26 @@
         </div>
 
         <div class="hint-text cost-scope">
-          <p><strong>حدود الربط.</strong> يشمل التقدير ربط خط P-75 القائم ببيارة الرفع الجديدة. أي وصلات إلى بيارات أخرى تتطلب حصرًا مستقلًا. يلزم تحديد مسؤولية خط التوازن ومحابس السحب عند الخزانين مع مورّد GLS.</p>
-          <p><strong>تغذية اللوحة.</strong> مخصص اللوحة والكابلات تقديري، وتُراجع كفايته بعد تحديد نقطة التغذية وأطوال مسارات الكابلات ومقاطعها.</p>
+          <p><strong>حدود الربط.</strong> يشمل بند البيارة ربط مدخلها بخط P-75 القائم بعد MH-75. مبلغ غرفتي المحابس ومواسير الخروج 39,000 ريال، ويضاف إليه طقم الربط السفلي والمحابس الطرفية بمخصص 21,000 ريال للخزانين معًا. توريد جسمي الخزانين بعقد مستقل.</p>
+          <p><strong>مغذّي المحطة.</strong> طول المسار المبدئي 200 متر. يفترض التقدير حفرًا وحمايةً وإعادة تشطيب، استرشادًا بالبند 23 من مقايسة تطوير موقع كليات الطب والتمريض بعنيزة (مايو 2026). تُراجع كفاية المصدر والقاطع ومقطع الكابل وهبوط الجهد وطبيعة المسار قبل الطرح.</p>
         </div>
 
         <div class="cost-summary-grid">
           <div class="sum-box">
             <div class="sum-l">إجمالي البنود المختارة</div>
-            <div id="sumSub" class="sum-v" style="color:var(--slate-800);">354,000 ر.س</div>
+            <div id="sumSub" class="sum-v" style="color:var(--slate-800);">431,000 ر.س</div>
           </div>
           <div class="sum-box">
             <div class="sum-l">احتياطي 10%</div>
-            <div id="sumCont" class="sum-v" style="color:var(--qu-amber);">35,400 ر.س</div>
+            <div id="sumCont" class="sum-v" style="color:var(--qu-amber);">43,100 ر.س</div>
           </div>
           <div class="sum-box">
             <div class="sum-l">ضريبة القيمة المضافة (15% إلزامي)</div>
-            <div id="sumVat" class="sum-v" style="color:#0284c7;">58,410 ر.س</div>
+            <div id="sumVat" class="sum-v" style="color:#0284c7;">71,115 ر.س</div>
           </div>
           <div class="sum-box grand">
             <div class="sum-l">الإجمالي النهائي شامل الضريبة</div>
-            <div id="sumGrand" class="sum-v">447,810 ر.س</div>
+            <div id="sumGrand" class="sum-v">545,215 ر.س</div>
           </div>
         </div>
       </div>
@@ -3688,11 +3688,23 @@ function createStationPresentation(parameters){
         { id: "c2", name: "توريد وتركيب مصفاة سلة SS316 على قضبان توجيه + وحدة فلتر كربون نشط للروائح", unit: "عدد", qty: 1, price: 19000, checked: true },
         {
           id: "c3",
-          name: "توريد وتركيب واختبار وتشغيل مضخات صرف غاطسة (Cutter/Vortex) بتصرف 8 لتر/ثانية عند رفع 18 مترًا، وقدرة 5.5 كيلوواط وتردد 60 هرتز للمضخة، مع قواعد التثبيت وقضبان الرفع. يُحمَّل على البند توريد وتركيب وبرمجة لوحة MCC/PLC واحدة لمنظومة المضخات (2+1)، وحساس منسوب بالموجات فوق الصوتية وعوامات الإنذار، وتمديد وتوصيل واختبار كابلات القدرة والتحكم والإشارة اللازمة لتغذية اللوحة وربطها بالمضخات وأجهزة المنسوب.",
-          unit: "عدد", qty: 3, maxQty: 3, price: 30000, sharedCost: 38000, checked: true
+          name: "توريد وتركيب واختبار وتشغيل مضخات صرف غاطسة (Cutter/Vortex) بتصرف 8 لتر/ثانية عند رفع 18 مترًا، وقدرة 5.5 كيلوواط وتردد 60 هرتز للمضخة، مع قواعد التثبيت وقضبان الرفع.",
+          unit: "عدد", qty: 3, maxQty: 3, price: 30000, checked: true
         },
-        { id: "c4", name: "إنشاء وتجهيز غرفة محابس البيارة بثلاثة محابس عدم رجوع وثلاثة محابس عزل DN100 ومجمع طرد DN150 وعداد تدفق، وغرفة التوزيع بمحبسي عزل DN100 على فرعي تغذية الخزانين. يشمل المخصص خط خروج الوايتات وخط المعالجة المستقبلية حتى نقطة الغلق.", unit: "عدد", qty: 2, price: 19500, checked: true },
-        { id: "c5", name: "توريد وتمديد واختبار خط طرد مدفون DN125 (Ø 140 ملم PE100 SDR17 PN10) شامل الحفر والردم والوصلات", unit: "م.ط", qty: 50, price: 460, checked: true }
+        { id: "c4", name: "إنشاء وتجهيز غرفة محابس البيارة بثلاثة محابس عدم رجوع وثلاثة محابس عزل DN100 ومجمع طرد DN150 وعداد تدفق، وغرفة التوزيع بمحبسي عزل DN100 على فرعي تغذية الخزانين. يشمل المخصص مواسير خطّي الخروج للوايتات والمعالجة المستقبلية. محابس السحب وملحقات نهايتي الخطين ضمن طقم الربط السفلي.", unit: "عدد", qty: 2, price: 19500, checked: true },
+        { id: "c5", name: "توريد وتمديد واختبار خط طرد مدفون DN125 (Ø 140 ملم PE100 SDR17 PN10) شامل الحفر والردم والوصلات", unit: "متر طولي", qty: 50, price: 460, checked: true },
+        {
+          id: "c6", unit: "عدد", qty: 1, price: 38000, checked: true,
+          name: "توريد وتركيب وبرمجة واختبار لوحة القدرة والتحكم MCC/PLC لمجموعة الرفع (2+1)، شاملة حساس المنسوب وعوامات الإنذار وكابلات القدرة والتحكم والإشارة بين اللوحة والمضخات وأجهزة المنسوب، مع التوصيلات واختبار التشغيل المتكامل."
+        },
+        {
+          id: "c7", unit: "متر طولي", qty: 200, price: 280, checked: true,
+          name: "توريد وتمديد واختبار مغذّي جهد منخفض من مصدر الكهرباء القائم إلى لوحة محطة الرفع، شامل موصل التأريض والحفر والفرشة والردم والحماية والنهايات والربط وإعادة تشطيب المسار المتأثر."
+        },
+        {
+          id: "c8", unit: "طقم", qty: 1, price: 21000, checked: true,
+          name: "توريد وتركيب واختبار طقم الربط السفلي لخزاني GLS من الوصلات الخارجية، شامل خط التوازن DN100 ومحبسه، ومحبس عزل على مخرج كل خزان ومجمع السحب، ومحبس تحميل الوايت ووصلة سريعة 4 بوصات، ومحبس عزل وفلنجة صماء بنهاية فرع المعالجة المستقبلية."
+        }
       ];
 
       function makeInitialState() {
@@ -3916,10 +3928,8 @@ function createStationPresentation(parameters){
         el("valInflow").textContent = state.inflowM3h.toFixed(1) + " م³/س";
       }
 
-      // The common control equipment is charged once for any installed pump quantity.
       function itemTotal(item) {
-        if (!item.checked || item.qty === 0) return 0;
-        return item.qty * item.price + (item.sharedCost || 0);
+        return item.checked ? item.qty * item.price : 0;
       }
 
       // Cost table for the selected items and optional contingency.
@@ -3927,9 +3937,6 @@ function createStationPresentation(parameters){
         const tbody = el("costTableBody");
         tbody.innerHTML = "";
         COST_ITEMS.forEach((item, idx) => {
-          const priceBasis = item.sharedCost
-            ? `<bdi>${fmtNum(item.price)}</bdi> للمضخة<span class="cost-shared-price">+ <bdi>${fmtNum(item.sharedCost)}</bdi> للوحة والكابلات وملحقاتهما مرة واحدة</span>`
-            : `<bdi>${fmtNum(item.price)}</bdi>`;
           const tr = document.createElement("tr");
           tr.innerHTML = `
             <td style="text-align:center;">
@@ -3941,7 +3948,7 @@ function createStationPresentation(parameters){
             <td style="text-align:center;">
               <input type="number" min="0" step="1" data-qty="${item.id}" ${item.maxQty ? `max="${item.maxQty}"` : ""} aria-label="كمية البند ${idx + 1}" value="${item.qty}" class="cost-qty qty-inp" />
             </td>
-            <td style="text-align:center;font-weight:700;" dir="rtl">${priceBasis}</td>
+            <td style="text-align:center;font-weight:700;" dir="rtl"><bdi>${fmtNum(item.price)}</bdi></td>
             <td style="text-align:center;font-weight:800;color:${item.checked ? "var(--qu-navy)" : "#94a3b8"};" dir="ltr">${fmtNum(itemTotal(item))}</td>
           `;
           tbody.appendChild(tr);
