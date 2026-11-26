@@ -639,9 +639,15 @@
       position: fixed;
       inset: 0;
       z-index: 20000;
+      isolation: isolate;
+      overflow: hidden;
       place-items: center;
-      padding: clamp(1.05rem, 4vw, 3rem);
-      background: linear-gradient(145deg, #f4fafc 0%, #fff 33%, #fff 72%, #f5f9fc 100%);
+      padding: clamp(1.1rem, 4vw, 3rem);
+      background:
+        linear-gradient(180deg, transparent 0%, #fff 12%, #fff 76%, transparent 100%),
+        radial-gradient(ellipse at 0% 0%, #eaf6f9 0%, transparent 49%),
+        radial-gradient(ellipse at 100% 100%, #eef3f9 0%, transparent 49%),
+        #fff;
       color: #064673;
       opacity: 1;
       transition: opacity 250ms ease;
@@ -652,20 +658,43 @@
       visibility: hidden;
     }
     html.station-opening-fade #openingSplash { opacity: 0; }
+    #openingSplash::before, #openingSplash::after {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      width: clamp(260px, 41vw, 680px);
+      aspect-ratio: 1;
+      background:
+        repeating-linear-gradient(45deg, transparent 0 47px, rgba(0,151,167,0.092) 48px 50px, transparent 51px 73px),
+        repeating-linear-gradient(-45deg, transparent 0 47px, rgba(5,75,124,0.07) 48px 50px, transparent 51px 73px);
+      mask-image: radial-gradient(ellipse, #000 0%, rgba(0,0,0,.8) 32%, transparent 73%);
+      pointer-events: none;
+    }
+    #openingSplash::before { top: -26%; left: -14%; }
+    #openingSplash::after { bottom: -29%; right: -12%; }
     #openingSplash .opening-content {
-      width: min(100%, 44rem);
+      --opening-shift: calc(-1 * clamp(1.15rem, 5.8vh, 3.5rem));
+      width: min(100%, 56rem);
       display: flex;
       flex-direction: column;
       align-items: center;
       text-align: center;
       gap: 0;
+      transform: translateY(var(--opening-shift));
+    }
+    html.station-opening #openingSplash .opening-content {
+      animation: opening-arrive 480ms cubic-bezier(.22,.75,.26,1) both;
+    }
+    @keyframes opening-arrive {
+      from { opacity: 0; transform: translateY(calc(var(--opening-shift) + 12px)); }
+      to   { opacity: 1; transform: translateY(var(--opening-shift)); }
     }
     #openingSplash .opening-logos {
-      width: min(100%, 35rem);
+      width: min(100%, 37rem);
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: clamp(0.45rem, 2.5vw, 1.75rem);
+      gap: clamp(0.45rem, 2.5vw, 1.9rem);
     }
     #openingSplash .opening-logos img {
       display: block;
@@ -673,33 +702,97 @@
       object-fit: contain;
       min-width: 0;
     }
-    #openingUniversityLogo { width: min(63%, 340px); }
-    #openingConsultantLogo { width: min(27%, 136px); }
+    #openingUniversityLogo { width: min(63%, 358px); }
+    #openingConsultantLogo { width: min(27%, 143px); }
     #openingSplash .opening-logos img:not([src]) { visibility: hidden; }
     #openingSplash .opening-divider {
       width: 1px;
       height: clamp(2.2rem, 6vw, 3.5rem);
       flex: none;
-      background: #dbe7eb;
+      background: #d4e4e9;
     }
     #openingSplash .opening-accent {
-      width: 64px;
+      width: 76px;
       height: 3px;
       flex: none;
       border-radius: 3px;
-      margin: clamp(1.65rem, 4vh, 2.35rem) 0 clamp(1.35rem, 3vh, 1.85rem);
+      margin: clamp(1.3rem, 3.6vh, 2rem) 0 clamp(1.06rem, 2.7vh, 1.6rem);
       background: linear-gradient(90deg, #064673 0%, #0a9ba9 100%);
     }
     #openingSplash h2 {
       margin: 0;
       max-width: 100%;
-      font-size: clamp(1.18rem, 2.5vw, 1.86rem);
-      font-weight: 650;
-      line-height: 1.72;
+      font-size: clamp(1.47rem, 3.18vw, 2.95rem);
+      font-weight: 750;
+      line-height: 1.52;
+      letter-spacing: -0.015em;
       text-wrap: balance;
+    }
+    #openingSplash .opening-location {
+      margin: clamp(0.5rem, 1.8vh, 0.95rem) 0 0;
+      font-size: clamp(1rem, 1.62vw, 1.54rem);
+      font-weight: 650;
+      line-height: 1.65;
+      color: #147684;
+      text-wrap: balance;
+    }
+    #openingSplash .opening-loading {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.82rem;
+      margin-top: clamp(1.7rem, 4.4vh, 2.8rem);
+      width: min(244px, 74%);
+    }
+    #openingSplash .opening-track {
+      position: relative;
+      overflow: hidden;
+      width: 100%;
+      height: 4px;
+      border-radius: 100px;
+      background: #e3edf1;
+    }
+    #openingSplash .opening-progress {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(90deg, #0ab0b5 0%, #0a7da3 55%, #064673 100%);
+      transform: scaleX(0);
+      transform-origin: right center;
+    }
+    html.station-opening #openingSplash .opening-progress {
+      animation: opening-progress 3750ms linear both;
+    }
+    @keyframes opening-progress {
+      from { transform: scaleX(0); }
+      to   { transform: scaleX(1); }
+    }
+    #openingSplash .opening-loading-text {
+      margin: 0;
+      font-size: clamp(.78rem, 1vw, .9rem);
+      font-weight: 600;
+      color: #607887;
+      line-height: 1.5;
+    }
+    @media (max-height: 540px) {
+      #openingSplash .opening-content { --opening-shift: -0.6rem; }
+      #openingSplash .opening-logos { max-width: 430px; }
+      #openingSplash h2 { font-size: clamp(1.25rem, 2.8vw, 2.3rem); }
+      #openingSplash .opening-accent { margin-block: 0.9rem; }
+      #openingSplash .opening-loading { margin-top: 1.15rem; gap: .5rem; }
+    }
+    @media (max-width: 560px) {
+      #openingSplash::before, #openingSplash::after { width: 220px; }
+      #openingSplash::before { top: -142px; left: -72px; }
+      #openingSplash::after { bottom: -132px; right: -70px; }
     }
     @media (prefers-reduced-motion: reduce) {
       #openingSplash { transition: none; }
+      html.station-opening #openingSplash .opening-content { animation: none; }
+      html.station-opening #openingSplash .opening-progress {
+        animation: none;
+        transform: scaleX(.66);
+      }
     }
     @media print {
       #openingSplash { display: none !important; }
@@ -709,8 +802,8 @@
   <script>
     (function () {
       try {
-        if (sessionStorage.getItem('qassim-lift-station-opening-v9') === 'seen') return;
-        sessionStorage.setItem('qassim-lift-station-opening-v9', 'seen');
+        if (sessionStorage.getItem('qassim-lift-station-opening-v10') === 'seen') return;
+        sessionStorage.setItem('qassim-lift-station-opening-v10', 'seen');
       } catch (_) {}
       document.documentElement.classList.add('station-opening');
     })();
@@ -726,6 +819,11 @@
       </div>
       <span class="opening-accent" aria-hidden="true"></span>
       <h2>محاكي التشغيل الآلي لمحطة رفع الصرف الصحي وخزانات التجميع (GLS)</h2>
+      <p class="opening-location">بمجمع الطالبات ببريدة (الفروسية)</p>
+      <div class="opening-loading" role="status" aria-live="polite">
+        <div class="opening-track" aria-hidden="true"><span class="opening-progress"></span></div>
+        <p class="opening-loading-text">جاري تحميل المحاكاة...</p>
+      </div>
     </div>
   </section>
 
