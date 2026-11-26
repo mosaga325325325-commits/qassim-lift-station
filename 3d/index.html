@@ -398,11 +398,18 @@
 #stationStudio .station-stage {
   grid-area:stage;position:relative;direction:rtl;isolation:isolate;overflow:hidden;
   min-width:0;min-height:clamp(435px,42cqw,595px);
-  color:#d9f1ef;background-color:#102a37;
-  background-image:radial-gradient(ellipse at 55% 28%,#35616a99,transparent 70%),
-    linear-gradient(#b8ece908 1px,transparent 1px),linear-gradient(90deg,#b8ece908 1px,transparent 1px),
-    linear-gradient(135deg,#213d4a,#0b2130 90%);
-  background-size:auto,32px 32px,32px 32px,auto;
+  color:#d9f1ef;
+  background-color: #071722;
+  background-image:
+    radial-gradient(ellipse 72% 58% at 54% 38%, rgba(42, 118, 134, 0.42) 0%, rgba(16, 56, 72, 0.22) 48%, transparent 78%),
+    radial-gradient(ellipse 46% 36% at 28% 72%, rgba(20, 128, 120, 0.16) 0%, transparent 72%),
+    linear-gradient(rgba(184, 236, 233, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(184, 236, 233, 0.055) 1px, transparent 1px),
+    linear-gradient(rgba(184, 236, 233, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(184, 236, 233, 0.022) 1px, transparent 1px),
+    linear-gradient(155deg, #133140 0%, #0a1f2d 55%, #05111a 100%);
+  background-size: auto, auto, 64px 64px, 64px 64px, 16px 16px, 16px 16px, auto;
+  box-shadow: inset 0 0 80px rgba(2, 10, 16, 0.65);
 }
 #stationStudio #stationViewCanvas {display:block;position:absolute;inset:0;width:100%;height:100%;max-width:none;cursor:grab;touch-action:none;outline-offset:-4px}
 #stationStudio #stationViewCanvas:active {cursor:grabbing}
@@ -1514,7 +1521,7 @@
               <button type="button" data-speed="60" class="speed-btn active">60x</button>
               <button type="button" data-speed="240" class="speed-btn">240x</button>
             </div><button type="button" id="stationScenarioJump" class="studio-scenarios">سيناريوهات التشغيل</button></div>
-    <div class="studio-export"><small>المسافات الأفقية مختصرة. طبقات التربة وتفاصيل السطح توضيحية.</small><button type="button" id="stationSnapshot" title="تحميل صورة PNG للمشهد الحالي">حفظ لقطة</button></div>
+    <div class="studio-export"><small>المسافات الأفقية مختصرة. طبقات التربة والمظلة وذراع الرفع والدرابزين تفاصيل توضيحية.</small><button type="button" id="stationSnapshot" title="تحميل صورة PNG للمشهد الحالي">حفظ لقطة</button></div>
   </footer>
 </section>
 
@@ -1754,6 +1761,8 @@ class StationViewport {
       face:(p,c)=>this.polygon(p,c),
       line:(p,c,w=1)=>this.polyline(p,c,w),
       flowing:(p,c)=>this.flow(p,c),
+      shadow:(p,a=.22)=>this.shadowPoly(p,a),
+      glow:(x,y,z,r,c,a=.45)=>this.glowDot([x,y,z],r,c,a),
       label:(x,y,z,str,key)=>this.captions.push({p:[x,y,z],str,key})
     };
     this.preset('overview');
@@ -1976,9 +1985,25 @@ class StationViewport {
     for(const item of this.queue) {
       const p=item.p;
       if(item.type===2) {
-        ctx.fillStyle=item.c; ctx.globalAlpha=.27;
-        ctx.beginPath(); ctx.arc(p[0][0],p[0][1],item.w*1.85,0,Math.PI*2); ctx.fill();
-        ctx.globalAlpha=1; ctx.beginPath(); ctx.arc(p[0][0],p[0][1],item.w,0,Math.PI*2); ctx.fill();
+        const cx=p[0][0], cy=p[0][1], r=item.w;
+        ctx.fillStyle=item.c;
+        ctx.globalAlpha=.16; ctx.beginPath(); ctx.arc(cx,cy,r*2.6,0,Math.PI*2); ctx.fill();
+        ctx.globalAlpha=.42; ctx.beginPath(); ctx.arc(cx,cy,r*1.55,0,Math.PI*2); ctx.fill();
+        ctx.globalAlpha=.98; ctx.beginPath(); ctx.arc(cx,cy,r*0.92,0,Math.PI*2); ctx.fill();
+        ctx.fillStyle='#ffffff'; ctx.globalAlpha=.85;
+        ctx.beginPath(); ctx.arc(cx,cy,r*0.42,0,Math.PI*2); ctx.fill();
+        ctx.globalAlpha=1;
+        continue;
+      }
+      if(item.type===3) {
+        const cx=p[0][0], cy=p[0][1], r=item.w;
+        const grad=ctx.createRadialGradient(cx,cy,0,cx,cy,r);
+        grad.addColorStop(0, item.c);
+        grad.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.globalAlpha=item.a;
+        ctx.fillStyle=grad;
+        ctx.beginPath(); ctx.arc(cx,cy,r,0,Math.PI*2); ctx.fill();
+        ctx.globalAlpha=1;
         continue;
       }
       ctx.beginPath(); ctx.moveTo(p[0][0],p[0][1]);
@@ -2210,23 +2235,43 @@ class StationViewport {
   material(c,nx,ny,nz) {
     const rgba=this.color(c);
     if(!rgba) return c;
-    // Warm overhead key, cool skylight and a restrained moving highlight.
-    const main=Math.max(0,-.54*nx+.76*ny+.35*nz);
-    const fill=Math.max(0,.60*nx+.30*ny+.56*nz);
-    const tone=Math.round(32*(.67+.44*main+.13*fill));
-    const v=this.halfLight;
-    const dot=Math.max(0,nx*v[0]+ny*v[1]+nz*v[2]);
-    const spec=rgba[3]>=.99?Math.round(12*dot**14):0;
-    const key=c+'|'+tone+'|'+spec;
-    let mat=this.shades.get(key);
+    // Architectural 3-point lighting: warm sun key + cool sky fill + warm ground bounce + Fresnel rim + glossy specular
+    const main = Math.max(0, -0.52*nx + 0.78*ny + 0.34*nz);
+    const fill = Math.max(0,  0.58*nx + 0.34*ny + 0.58*nz);
+    const bounce = Math.max(0, -ny) * 0.14;
+    const ndotv = StationViewport.clamp(nx*this.eye[0] + ny*this.eye[1] + nz*this.eye[2], 0, 1);
+    const rim = Math.pow(1 - ndotv, 2.8) * Math.max(0.25, ny + 0.45);
+    const tone = Math.round(36 * (0.56 + 0.52*main + 0.16*fill + bounce));
+    const v = this.halfLight;
+    const dot = Math.max(0, nx*v[0] + ny*v[1] + nz*v[2]);
+    const spec = rgba[3] >= 0.99 ? Math.round(28 * Math.pow(dot, 20) + 14 * rim) : Math.round(18 * Math.pow(dot, 12));
+    const key = c + '|' + tone + '|' + spec;
+    let mat = this.shades.get(key);
     if(!mat) {
-      const k=tone/32, sky=Math.max(0,1-k)*12;
-      const r=Math.min(255,Math.round(rgba[0]*k+(k-0.9)*4+spec));
-      const g=Math.min(255,Math.round(rgba[1]*k+sky*.30+spec));
-      const b=Math.min(255,Math.round(rgba[2]*k+sky+spec*.90));
-      mat='rgba('+r+','+g+','+b+','+rgba[3]+')'; this.shades.set(key,mat);
+      const k = tone / 36;
+      const shadowCool = Math.max(0, 1 - k) * 18;
+      const sunWarm = Math.max(0, k - 0.85) * 12;
+      const r = Math.min(255, Math.max(0, Math.round(rgba[0]*k + sunWarm + spec*0.95)));
+      const g = Math.min(255, Math.max(0, Math.round(rgba[1]*k + shadowCool*0.35 + sunWarm*0.45 + spec*0.98)));
+      const b = Math.min(255, Math.max(0, Math.round(rgba[2]*k + shadowCool*1.15 + spec*1.02)));
+      mat = 'rgba(' + r + ',' + g + ',' + b + ',' + rgba[3] + ')';
+      if (this.shades.size > 4000) this.shades.clear();
+      this.shades.set(key, mat);
     }
     return mat;
+  }
+  shadowPoly(points, alpha=0.22) {
+    if (!points || points.length < 3) return;
+    const p = points.map(v => this.projectDepth(v));
+    let depth = 0;
+    for (const q of p) depth += q[2];
+    this.queue.push({ type: 0, p, depth: depth / p.length + 0.008, c: 'rgba(3,12,20,' + alpha + ')', seal: false });
+  }
+  glowDot(pt, rMeters, color, alpha=0.45) {
+    const q = this.projectDepth(pt);
+    if (q[0] < -60 || q[0] > this.w + 60 || q[1] < -60 || q[1] > this.h + 60) return;
+    const rad = StationViewport.clamp(rMeters * this.scale, 5, 52);
+    this.queue.push({ type: 3, p: [q], depth: q[2] + 0.45, c: color, w: rad, a: alpha });
   }
   meshData(vertices,faces,closed) {
     const prepared=[], facets=[];
@@ -2495,21 +2540,83 @@ function drawStationYard(g, state) {
     g.cyl(x,.34,z,.086,.12,'#555e58',7);
     g.cyl(x,.57,z,.086,.06,'#ddd0aa',7);
   }
-  // Quiet rear edge marks the service hardstanding; no fictitious process lines.
-  // Above-ground control cubicle represented schematically beside access paving.
+  // Soft contact shadows under major above-ground equipment for photorealistic grounding
+  const shadowRect = (cx, cz, w, d, a=0.22) => {
+    const y = grade + 0.016;
+    g.shadow([[cx-w/2,y,cz-d/2],[cx+w/2,y,cz-d/2],[cx+w/2,y,cz+d/2],[cx-w/2,y,cz+d/2]], a);
+  };
+  const shadowDisk = (cx, cz, r, a=0.22, n=18) => {
+    const y = grade + 0.016;
+    const pts = Array.from({length: n}, (_, i) => {
+      const ang = i * Math.PI * 2 / n;
+      return [cx + r * Math.cos(ang), y, cz + r * Math.sin(ang)];
+    });
+    g.shadow(pts, a);
+  };
+  // Ground shadows under GLS tanks, Tanker truck & MCC cabinet
+  shadowDisk(5.22, -2.38, 3.02, 0.24, 22);
+  shadowDisk(12.22, -2.38, 3.02, 0.24, 22);
+  shadowRect(9.85, 4.72, 7.85, 2.55, 0.30);
+  shadowRect(-6.05, -3.72, 2.25, 1.55, 0.24);
+
+  // Above-ground MCC / PLC Control Cabinet with illustrative sun canopy and status beacon
   const panelX=-6.24, panelZ=-3.86, faceZ=panelZ+.35;
-  g.box(panelX,.075,panelZ,1.53,.15,.92,'#b8beb0');
-  g.box(panelX,.97,panelZ,1.35,1.65,.67,'#82928e');
-  g.box(panelX,1.82,panelZ,1.45,.08,.78,'#aab2a7');
-  g.face([[panelX-.59,.24,faceZ],[panelX+.59,.24,faceZ],[panelX+.59,1.71,faceZ],[panelX-.59,1.71,faceZ]],'#b5c0b6');
-  g.line([[panelX+.12,.26,faceZ+.009],[panelX+.12,1.67,faceZ+.009]],'#73867e',1);
-  g.box(panelX-.08,.93,faceZ+.03,.045,.19,.04,'#415958');
-  g.box(panelX-.29,1.39,faceZ+.025,.35,.22,.04,'#354e51');
+  g.box(panelX,.075,panelZ,1.76,.15,1.12,'#b8beb0');
+  g.box(panelX,.97,panelZ,1.38,1.65,.68,'#7c8f91');
+  g.box(panelX,1.82,panelZ,1.48,.08,.78,'#aeb8b0');
+  g.face([[panelX-.60,.24,faceZ],[panelX+.60,.24,faceZ],[panelX+.60,1.71,faceZ],[panelX-.60,1.71,faceZ]],'#c4d0cc');
+  g.line([[panelX+.12,.26,faceZ+.009],[panelX+.12,1.67,faceZ+.009]],'#647b7d',1.1);
+  g.box(panelX-.08,.93,faceZ+.03,.045,.19,.04,'#374f52');
+  // Glowing HMI Touchscreen
+  g.box(panelX-.29,1.39,faceZ+.025,.38,.24,.04,'#14303a');
+  g.box(panelX-.29,1.39,faceZ+.048,.32,.18,.012,'#38bdf8');
   for(let i=0;i<3;i++){
-    const lamp=state.pFault?.[i]?'#e68b76':state.pOn?.[i]?'#83dbb6':'#abafa1';
-    g.box(panelX-.405+i*.105,1.15,faceZ+.035,.066,.06,.035,lamp);
+    const lamp=state.pFault?.[i]?'#ef4444':state.pOn?.[i]?'#34d399':'#94a3b8';
+    g.box(panelX-.41+i*.11,1.14,faceZ+.035,.07,.065,.035,lamp);
+    if(state.pOn?.[i] || state.pFault?.[i]) g.glow(panelX-.41+i*.11, 1.14, faceZ+.06, 0.22, lamp, 0.45);
   }
-  for(let i=0;i<4;i++)g.line([[panelX+.27,.52+i*.075,faceZ+.014],[panelX+.49,.52+i*.075,faceZ+.014]],'#798d84',.85);
+  for(let i=0;i<4;i++)g.line([[panelX+.27,.52+i*.075,faceZ+.014],[panelX+.49,.52+i*.075,faceZ+.014]],'#6b8280',.9);
+
+  // Illustrative sun canopy over the control cabinet.
+  for (const [cx, cz] of [[panelX-.88, panelZ-.52],[panelX+.88, panelZ-.52],[panelX-.88, panelZ+.52],[panelX+.88, panelZ+.52]]) {
+    g.cyl(cx, .15, cz, .042, 2.28, '#4e676c', 6);
+  }
+  g.box(panelX, 2.48, panelZ, 2.18, .09, 1.48, '#dbe5e3');
+  g.box(panelX, 2.42, panelZ, 2.04, .05, 1.34, '#5a747a');
+  // Live Status/Alarm Rotating Beacon on top of Canopy
+  const isRed = state.alarmSeverity === 'critical';
+  const beaconCol = isRed ? '#ef4444' : state.alarmSeverity === 'warning' ? '#f59e0b' : '#10b981';
+  g.cyl(panelX, 2.52, panelZ, .055, .14, '#334155', 8);
+  g.cyl(panelX, 2.66, panelZ, .095, .16, beaconCol, 10);
+  const pulse = isRed && !state.alarmAck && state.running
+    ? 0.45 + 0.24 * Math.sin(state.animationSeconds * 5)
+    : 0.38;
+  g.glow(panelX, 2.74, panelZ, isRed ? 0.85 : 0.45, beaconCol, pulse);
+
+  // Activated Carbon Odor Control Scrubber Tower beside the Wet Well
+  const carbX = -11.45, carbZ = -3.75;
+  shadowDisk(carbX + 0.12, carbZ + 0.12, 0.72, 0.22, 14);
+  g.cyl(carbX, 0.0, carbZ, 0.62, 0.12, '#b0b8ac', 14);
+  g.cyl(carbX, 0.12, carbZ, 0.46, 1.45, '#1d7a6e', 16);
+  g.cyl(carbX, 1.57, carbZ, 0.49, 0.08, '#9bb5ae', 16);
+  g.cyl(carbX, 1.65, carbZ, 0.12, 0.78, '#cbd5e1', 10);
+  g.cyl(carbX, 2.43, carbZ, 0.18, 0.05, '#64748b', 10);
+  g.pipe([[carbX + 0.44, 0.65, carbZ], [-9.9, 0.65, carbZ], [-9.9, 0.65, -1.35], [-9.9, 0.08, -1.35]], 0.068, '#7ea0a8', 8);
+
+  // Stainless-Steel Pump Lifting Davit Crane on Wet Well Service Deck
+  const davX = -9.05, davZ = -2.42;
+  g.cyl(davX, 0.0, davZ, 0.085, 0.14, '#475569', 8);
+  g.pipe([[davX, 0.12, davZ], [davX, 1.85, davZ], [davX, 2.22, davZ + 0.75], [davX, 2.28, davZ + 1.35]], 0.052, '#cbd5e1', 8);
+  g.line([[davX, 2.26, davZ + 1.32], [davX, 1.25, davZ + 1.32]], '#e2e8f0', 1.15);
+  g.box(davX, 1.22, davZ + 1.32, 0.12, 0.14, 0.10, '#f59e0b');
+
+  // Rear Service Safety Guardrail along the Yard Perimeter
+  const railZ = farZ + 0.35;
+  for (let rx = -15.5; rx <= 15.2; rx += 3.05) {
+    g.cyl(rx, 0.0, railZ, 0.032, 1.02, '#eab308', 6);
+  }
+  g.line([[-15.5, 0.98, railZ], [15.2, 0.98, railZ]], '#facc15', 1.6);
+  g.line([[-15.5, 0.54, railZ], [15.2, 0.54, railZ]], '#ca8a04', 1.15);
   g.line([[left+.12,grade+.015,farZ+.22],[right-.12,grade+.015,farZ+.22]],'#d5d1b7',1.0);
   // Small recessed grated surface strips, drawn outside the cut.
   for(const x of [-12.75,-2.80]){
@@ -2647,12 +2754,21 @@ function drawWet(g, s) {
     g.cyl(xWell,floor-.23,0,1.72,.23,"#8e9ea2",24);
     casing(xWell,1.5,1.68,floor,.07,22);
     const level = Math.min(.05, Math.max(floor+.025, s.wellLevel));
-    // A translucent cut through the liquid leaves the submerged pumps visible.
+    // Volumetric translucent liquid with animated shimmer ripples
     const surface = arc(xWell,1.47,level,Math.PI*.85,Math.PI*2.15,23);
     const l=surface[0], r=surface[surface.length-1];
-    g.face(surface, "#62d6d84a");
-    g.face([l,r,[r[0],floor+.012,r[2]],[l[0],floor+.012,l[2]]], "#2fabbc51");
-    g.line([l,r],"#a4efe6",1.55);
+    const midY = (level + floor) * 0.5;
+    g.face(surface, "rgba(103,232,249,0.40)");
+    g.face([l,r,[r[0],midY,r[2]],[l[0],midY,l[2]]], "rgba(34,211,238,0.34)");
+    g.face([[l[0],midY,l[2]],[r[0],midY,r[2]],[r[0],floor+.012,r[2]],[l[0],floor+.012,l[2]]], "rgba(14,116,144,0.44)");
+    g.line([l,r],"#cffafe",1.85);
+    if (s.inflowM3h > 0 || s.actualPumpM3h > 0) {
+      const phase = s.animationSeconds * 0.28;
+      for (const offset of [0, 0.5]) {
+        const radius = 0.25 + ((phase + offset) % 1) * 1.05;
+        g.line(arc(xWell, radius, level + 0.015, Math.PI*0.95, Math.PI*2.05, 16), "rgba(224,242,254,0.45)", 1);
+      }
+    }
 
     // Color-coded operating level rings on the inner wet well wall
     const opLevelRings = [
@@ -2663,8 +2779,10 @@ function drawWet(g, s) {
       [-6.60,  '#22d3ee', 1.25],
       [-6.90,  '#34d399', 1.5]
     ];
-    for (const [ly, lcol, lw] of opLevelRings) {
-      g.line(arc(xWell, 1.48, ly, angleStart + 0.04, angleEnd - 0.04, 18), lcol, s.levels ? lw : lw * 0.75);
+    if (s.levels) {
+      for (const [ly, lcol, lw] of opLevelRings) {
+        g.line(arc(xWell, 1.48, ly, angleStart + 0.04, angleEnd - 0.04, 18), lcol, lw);
+      }
     }
 
     // Ladder and level sensor cable on sheltered inner wall.
@@ -2741,6 +2859,8 @@ function drawWet(g, s) {
         g.line([[px,-7.02,pz],[px,-6.75,pz]],trim,.7);
       }
       g.box(x,-6.62,z+.16,.13,.07,.04,tag);
+      if (operating) g.glow(x, -6.95, z + 0.25, 0.55, '#2dd4bf', 0.42);
+      else if (fault) g.glow(x, -6.95, z + 0.25, 0.55, '#f87171', 0.45);
       const cable=[[x-.14,-6.56,z-.09],[x-.23,-6.04,z-.16],[x-.20,-4.89,z-.19],[x-.16,-2.7,z-.22],[x-.13,-.65,z-.22],[x-.23,-.34,z-.29]];
       g.line(cable,'#333e43',nearWell?1.45:.9);
       if(nearWell){
@@ -2863,12 +2983,19 @@ function drawTanks(g, s) {
       const faceZ = cZ + liquidR * Math.cos(sector);
       const chord = y => [[cx - xa, y, faceZ], [cx + xa, y, faceZ]];
       if (vol > 0.01) {
-        g.face([chord(deck + 0.005)[0], chord(deck + 0.005)[1], chord(height)[1], chord(height)[0]], '#298797');
+        const midH = (deck + height) * 0.5;
+        g.face([chord(deck + 0.005)[0], chord(deck + 0.005)[1], chord(midH)[1], chord(midH)[0]], '#135d73');
+        g.face([chord(midH)[0], chord(midH)[1], chord(height)[1], chord(height)[0]], '#2296ae');
         for (let i = 0; i < panels; i++) {
-          g.face([[cx, height, faceZ], p(liquidR, height, angles[i + 1]), p(liquidR, height, angles[i])], '#5dc2c5');
+          g.face([[cx, height, faceZ], p(liquidR, height, angles[i + 1]), p(liquidR, height, angles[i])], '#5eead4');
         }
-        g.line(chord(height), '#c4f2e7', 2.2);
-        g.line(arc(liquidR, height), '#9cddcd', 0.8);
+        g.line(chord(height), '#e0f2fe', 2.4);
+        g.line(arc(liquidR, height), '#a5f3fc', 1.0);
+        const volumeChange = tankIndex === 0 ? s.t1Trend : s.t2Trend;
+        if (Math.abs(volumeChange) > 0.000001) {
+          const phase = (s.animationSeconds * 0.18 + tankIndex * 0.4) % 1;
+          g.line(arc(0.45 + phase * (liquidR - 0.65), height + 0.015), 'rgba(224,242,254,0.45)', 0.95);
+        }
       }
       for (const a of [sector, tau - sector]) {
         g.line([p(radius, deck, a), p(radius, shoulder, a), p(0.68, 4.97, a), [cx, 5.0, cZ]], '#d1ceb0', 2.0);
@@ -3065,7 +3192,8 @@ function drawTanks(g, s) {
     g.box(12.98,2.27,zc+sign*1.17,0.14,0.25,0.12,frame);
   }
   g.box(12.24,2.86,zc,1.71,0.105,1.88,'#e8e1c7');
-  g.cyl(11.69,2.92,zc+.47,.085,.10,'#d49b44',8);
+  g.cyl(11.69,2.92,zc+.47,.085,.10, s.tankerActive ? '#fbbf24' : '#d49b44', 8);
+  if (s.tankerActive) g.glow(11.69, 3.02, zc + .47, 0.58, '#fbbf24', 0.55);
   g.box(13.366,1.46,zc,0.055,0.30,1.10,frame);
   for (const dy of [1.39,1.47,1.55]) g.line([[13.398,dy,zc-0.48],[13.398,dy,zc+0.48]],steel,0.85);
   for (const dz of [-0.75,0.75]) g.box(13.36,1.37,zc+dz,0.07,0.16,0.31,'#efe3aa');
@@ -3314,11 +3442,17 @@ function createStationPresentation(parameters){
   const signed=(n,digits=2)=>'\u2066'+(n>0?'+':'')+n.toFixed(digits).replace('-','−')+'\u2069';
   const units=(n,s,digits=1)=>n.toFixed(digits)+' '+s;
   function text(node,value){if(node.textContent!==value)node.textContent=value;}
+  let latestAlarmSeverity = 'normal', animationSeconds = 0;
   let latest=null,latestAvailability=null,visible=true,lastPaint=-Infinity,lastPausedKey='',lastPaintState=null;
   let drawnModel=null,drawnInfo=null;
   let history=[],preceding=null,sampleState=null,nextSample=0,chartVersion=0,paintedChart=-1;
   function record(s){
     const t=s.simSeconds,v=s.wellLevel;
+    if (sampleState === s && preceding && t >= preceding.t) {
+      animationSeconds += (t - preceding.t) / s.speed;
+    } else {
+      animationSeconds = 0;
+    }
     if(sampleState!==s||!preceding||t<preceding.t){
       history=[{t,v}];nextSample=t+15;sampleState=s;chartVersion++;
     }else if(t>preceding.t && t>=nextSample){
@@ -3404,18 +3538,18 @@ function createStationPresentation(parameters){
       default:return [['منسوب البيارة',signed(s.wellLevel)+' م'],['مضخات تعمل',s.pOn.filter(Boolean).length+' من 3'],['مخزون الخزانين',units(s.tank1Vol+s.tank2Vol,'م³')]];
     }
   }
-  function update(s,available,force=false){
-    latest=s;latestAvailability=available;record(s);
+  function update(s,available,alarmSeverity,force=false){
+    latest=s;latestAvailability=available;latestAlarmSeverity=alarmSeverity;record(s);
     if(!visible&&!force)return;
     const now=performance.now();
     if(!force&&now-lastPaint<65)return;
-    const pausedKey=s.running?'':JSON.stringify([s.simSeconds,s.inflowM3h,s.pOn,s.pFault,s.pDegraded,s.tankMode,s.drawMode,s.outMode,s.balanceOpen,s.tankerRemainingM3]);
+    const pausedKey=s.running?'':JSON.stringify([s.simSeconds,s.inflowM3h,s.pOn,s.pFault,s.pDegraded,s.tankMode,s.drawMode,s.outMode,s.balanceOpen,s.tankerRemainingM3,alarmSeverity,s.alarmAck]);
     if(!force&&!s.running&&lastPaintState===s&&pausedKey===lastPausedKey)return;
     lastPaint=now;lastPaintState=s;lastPausedKey=pausedKey;
     text(refs.stationPause,s.running?'إيقاف مؤقت':'استئناف التشغيل');
     if(cfg.mode!=='3D'||!viewport)return;
     const tankerActive=activeDraw(s);
-    const model={...s,stage:cfg.view,section:cfg.section,levels:cfg.levels,view:cfg.view,actualPumpM3h:s.lastActualPumpM3h,tankerActive};
+    const model={...s,stage:cfg.view,section:cfg.section,levels:cfg.levels,view:cfg.view,actualPumpM3h:s.lastActualPumpM3h,tankerActive,alarmSeverity,animationSeconds};
     viewport.draw(model);
     const clock=String(Math.floor(s.simSeconds/3600)%24).padStart(2,'0')+':'+String(Math.floor(s.simSeconds/60)%60).padStart(2,'0');
     text(refs.studioClock,clock);text(refs.stationRunText,s.running?'المحاكاة جارية':'المحاكاة متوقفة');
@@ -3425,7 +3559,7 @@ function createStationPresentation(parameters){
     details.forEach(([k,v],i)=>{text(fields[i][0],k);text(fields[i][1],v);});
     chart();drawnModel=model;drawnInfo={title:'محطة رفع الصرف الصحي',viewLabel:titles[cfg.view],note:notes[cfg.view],clock,readings:details,running:s.running};
   }
-  const redraw=()=>{if(latest)update(latest,latestAvailability,true);};
+  const redraw=()=>{if(latest)update(latest,latestAvailability,latestAlarmSeverity,true);};
   const pressed=(node,flag)=>node.setAttribute('aria-pressed',String(flag));
   function syncTour(){
     pressed(byId('stationTour'),cfg.tour);byId('stationTourNav').hidden=!cfg.tour;
@@ -4562,7 +4696,7 @@ function createStationPresentation(parameters){
         el("outletTankerDash").setAttribute("class", tankerActive ? "flow-active" : "");
 
         el("svgPanelTimer").textContent = `مؤقت التعفن: ${String(Math.floor(state.idleMinutes)).padStart(2, "0")}/60 د`;
-      stationPresentation.update(state,getDrawableTankVol());
+        stationPresentation.update(state,getDrawableTankVol(),activeRed ? "critical" : activeWarn ? "warning" : "normal");
       }
 
       // Bind Hover Tooltip to all P&ID Components
