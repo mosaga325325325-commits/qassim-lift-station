@@ -800,7 +800,7 @@
       transform-origin: right center;
     }
     html.station-opening #openingSplash .opening-progress {
-      animation: opening-progress 4000ms linear both;
+      animation: opening-progress 3000ms linear both;
     }
     @keyframes opening-progress {
       from { transform: scaleX(0); }
@@ -846,7 +846,7 @@
   <script>
     (function () {
       try {
-        if (sessionStorage.getItem('qassim-lift-station-opening-v11') === 'seen') return;
+        if (sessionStorage.getItem('qassim-lift-station-opening-v12') === 'seen') return;
       } catch (_) {}
       document.documentElement.classList.add('station-opening');
     })();
@@ -927,12 +927,12 @@
         loading.hidden = true;
         enter.hidden = false;
         enter.focus({preventScroll: true});
-      }, 4000);
+      }, 3000);
       enter.addEventListener('click', () => {
         if (enter.hidden || enter.disabled) return;
         enter.disabled = true;
         try {
-          sessionStorage.setItem('qassim-lift-station-opening-v11', 'seen');
+          sessionStorage.setItem('qassim-lift-station-opening-v12', 'seen');
         } catch (_) {}
         const finish = () => root.classList.remove('station-opening', 'station-opening-fade');
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
