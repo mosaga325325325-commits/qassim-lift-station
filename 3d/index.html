@@ -800,7 +800,7 @@
       transform-origin: right center;
     }
     html.station-opening #openingSplash .opening-progress {
-      animation: opening-progress 2000ms linear both;
+      animation: opening-progress 3000ms linear both;
     }
     @keyframes opening-progress {
       from { transform: scaleX(0); }
@@ -812,6 +812,37 @@
       font-weight: 600;
       color: #607887;
       line-height: 1.5;
+    }
+    #openingSplash .opening-footer {
+      position: absolute;
+      inset-inline: 0;
+      bottom: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.25rem 1.2rem;
+      padding: 0.48rem clamp(1rem, 3vw, 2.4rem);
+      padding-bottom: max(0.48rem, env(safe-area-inset-bottom));
+      min-height: 39px;
+      border-top: 1px solid #dbe7ed;
+      background: rgba(255,255,255,.88);
+      color: #49697a;
+      font-size: clamp(0.72rem, .92vw, 0.82rem);
+      line-height: 1.5;
+    }
+    #openingSplash .opening-footer-department { font-weight: 650; }
+    #openingSplash .opening-footer time {
+      white-space: nowrap;
+      font-variant-numeric: tabular-nums;
+    }
+    @media (max-width: 460px) {
+      #openingSplash .opening-footer {
+        flex-wrap: wrap;
+        justify-content: center;
+        text-align: center;
+        gap: 0.12rem 0.8rem;
+        padding-inline: 0.65rem;
+      }
     }
     @media (max-height: 540px) {
       #openingSplash .opening-content { --opening-shift: -0.6rem; }
@@ -846,7 +877,7 @@
   <script>
     (function () {
       try {
-        if (sessionStorage.getItem('qassim-lift-station-opening-v13') === 'seen') return;
+        if (sessionStorage.getItem('qassim-lift-station-opening-v14') === 'seen') return;
       } catch (_) {}
       document.documentElement.classList.add('station-opening');
     })();
@@ -871,6 +902,10 @@
         <button type="button" id="openingEnter" hidden>دخول <span class="opening-arrow" aria-hidden="true">←</span></button>
       </div>
     </div>
+    <footer class="opening-footer">
+      <span class="opening-footer-department">الإدارة العامة للمشاريع - قسم الدراسات والتصاميم</span>
+      <time id="openingDate"></time>
+    </footer>
   </section>
 
 
@@ -921,18 +956,26 @@
       const logos = document.querySelectorAll('.top-header .logo-box img');
       if (logos[0]) document.getElementById('openingUniversityLogo').src = logos[0].src;
       if (logos[1]) document.getElementById('openingConsultantLogo').src = logos[1].src;
+      const date = new Date();
+      const openingDate = document.getElementById('openingDate');
+      openingDate.textContent = new Intl.DateTimeFormat('ar-SA-u-ca-gregory-nu-latn', {
+        day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Asia/Riyadh'
+      }).format(date);
+      openingDate.dateTime = new Intl.DateTimeFormat('en-CA', {
+        day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'Asia/Riyadh'
+      }).format(date);
       const loading = document.getElementById('openingLoading');
       const enter = document.getElementById('openingEnter');
       window.setTimeout(() => {
         loading.hidden = true;
         enter.hidden = false;
         enter.focus({preventScroll: true});
-      }, 2000);
+      }, 3000);
       enter.addEventListener('click', () => {
         if (enter.hidden || enter.disabled) return;
         enter.disabled = true;
         try {
-          sessionStorage.setItem('qassim-lift-station-opening-v13', 'seen');
+          sessionStorage.setItem('qassim-lift-station-opening-v14', 'seen');
         } catch (_) {}
         const finish = () => root.classList.remove('station-opening', 'station-opening-fade');
         if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
