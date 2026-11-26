@@ -299,6 +299,8 @@
     table.cost-tbl td { padding: 0.5rem 0.45rem; border-bottom: 1px solid var(--slate-200); vertical-align: middle; }
     .qty-inp { width: 4rem; text-align: center; border: 1px solid var(--slate-300); border-radius: 0.35rem; padding: 0.18rem; font-family: inherit; font-size: 0.76rem; font-weight: 700; }
 
+    .cost-scope p { margin: 0.2rem 0; }
+    .cost-shared-price { display: block; font-size: 0.72rem; line-height: 1.45; color: var(--slate-600); }
     .cost-summary-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0.6rem; }
     @media (max-width: 780px) { .cost-summary-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
     .sum-box { background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: var(--radius-lg); padding: 0.6rem 0.75rem; }
@@ -1654,7 +1656,7 @@
       <button id="btnToggleCost" type="button" class="cost-toggle">
         <div>
           <div class="section-title">حسابات تكلفة المنظومة بعد الخط القائم</div>
-          <div class="section-sub">تشمل جميع الأعمال المدنية والميكانيكية والكهربائية والاختبار والتشغيل باستثناء خزانات GLS</div>
+          <div class="section-sub">تقدير أعمال بيارة الرفع والضخ والمحابس والربط. توريد خزاني GLS بعقد مستقل.</div>
         </div>
         <div style="display:flex;align-items:center;gap:0.75rem;">
           <div style="text-align:left;">
@@ -1686,12 +1688,17 @@
                 <th class="txt-right">البند ومواصفاته الفنية (شامل التوريد والتركيب والاختبار والتشغيل)</th>
                 <th style="width:4.5rem;">الوحدة</th>
                 <th style="width:5.5rem;">الكمية</th>
-                <th style="width:7.5rem;">سعر الوحدة (ر.س)</th>
+                <th style="width:7.5rem;">أساس السعر (ر.س)</th>
                 <th style="width:8rem;">الإجمالي (ر.س)</th>
               </tr>
             </thead>
             <tbody id="costTableBody"></tbody>
           </table>
+        </div>
+
+        <div class="hint-text cost-scope">
+          <p><strong>حدود الربط.</strong> يشمل التقدير ربط خط P-75 القائم ببيارة الرفع الجديدة. أي وصلات إلى بيارات أخرى تتطلب حصرًا مستقلًا. يلزم تحديد مسؤولية خط التوازن ومحابس السحب عند الخزانين مع مورّد GLS.</p>
+          <p><strong>تغذية اللوحة.</strong> مخصص اللوحة والكابلات تقديري، وتُراجع كفايته بعد تحديد نقطة التغذية وأطوال مسارات الكابلات ومقاطعها.</p>
         </div>
 
         <div class="cost-summary-grid">
@@ -3677,12 +3684,15 @@ function createStationPresentation(parameters){
 
       const COST_CONTINGENCY_RATE = 10 / 100;
       const COST_ITEMS = [
-        { id: "c1", name: "إنشاء بيارة رفع خرسانية دائرية مسلحة (Ø 3.0 م × عمق 7.5 م) شاملة الحفر والنزح والعزل الإيبوكسي والربط مع خط P-75", unit: "عدد", qty: 1, price: 145000, checked: true },
+        { id: "c1", name: "إنشاء بيارة رفع خرسانية دائرية مسلحة (Ø 3.0 م × عمق 7.5 م) شاملة الحفر والنزح والعزل الإيبوكسي وربط مدخلها بنهاية خط الجاذبية القائم P-75 بقطر 400 مم القادم من المنهول MH-75", unit: "عدد", qty: 1, price: 145000, checked: true },
         { id: "c2", name: "توريد وتركيب مصفاة سلة SS316 على قضبان توجيه + وحدة فلتر كربون نشط للروائح", unit: "عدد", qty: 1, price: 19000, checked: true },
-        { id: "c3", name: "توريد وتركيب واختبار مضخات صرف غاطسة (Cutter/Vortex — 8 ل/ث @ 18 م، 5.5 ك.و، 60Hz — Flygt/Grundfos/Wilo) مع قواعد التثبيت وقضبان الرفع", unit: "عدد", qty: 3, price: 30000, checked: true },
-        { id: "c4", name: "إنشاء وتجهيز غرفتي المحابس (غرفة البيارة + غرفة التوزيع قبل GLS) شاملة محابس عدم الرجوع والعزل DN100 ومجمع DN150 وعداد FT وخطي الخروج", unit: "عدد", qty: 2, price: 19500, checked: true },
-        { id: "c5", name: "توريد وتمديد واختبار خط طرد مدفون DN125 (Ø 140 ملم PE100 SDR17 PN10) شامل الحفر والردم والوصلات", unit: "م.ط", qty: 50, price: 460, checked: true },
-        { id: "c6", name: "توريد وتركيب وبرمجة لوحة تحكم MCC/PLC (3 مضخات 2+1) مع حساس ألتراسونيك وعوامات الإنذار والكابلات والاختبار والتشغيل", unit: "عدد", qty: 1, price: 38000, checked: true }
+        {
+          id: "c3",
+          name: "توريد وتركيب واختبار وتشغيل مضخات صرف غاطسة (Cutter/Vortex) بتصرف 8 لتر/ثانية عند رفع 18 مترًا، وقدرة 5.5 كيلوواط وتردد 60 هرتز للمضخة، مع قواعد التثبيت وقضبان الرفع. يُحمَّل على البند توريد وتركيب وبرمجة لوحة MCC/PLC واحدة لمنظومة المضخات (2+1)، وحساس منسوب بالموجات فوق الصوتية وعوامات الإنذار، وتمديد وتوصيل واختبار كابلات القدرة والتحكم والإشارة اللازمة لتغذية اللوحة وربطها بالمضخات وأجهزة المنسوب.",
+          unit: "عدد", qty: 3, maxQty: 3, price: 30000, sharedCost: 38000, checked: true
+        },
+        { id: "c4", name: "إنشاء وتجهيز غرفة محابس البيارة بثلاثة محابس عدم رجوع وثلاثة محابس عزل DN100 ومجمع طرد DN150 وعداد تدفق، وغرفة التوزيع بمحبسي عزل DN100 على فرعي تغذية الخزانين. يشمل المخصص خط خروج الوايتات وخط المعالجة المستقبلية حتى نقطة الغلق.", unit: "عدد", qty: 2, price: 19500, checked: true },
+        { id: "c5", name: "توريد وتمديد واختبار خط طرد مدفون DN125 (Ø 140 ملم PE100 SDR17 PN10) شامل الحفر والردم والوصلات", unit: "م.ط", qty: 50, price: 460, checked: true }
       ];
 
       function makeInitialState() {
@@ -3906,12 +3916,20 @@ function createStationPresentation(parameters){
         el("valInflow").textContent = state.inflowM3h.toFixed(1) + " م³/س";
       }
 
+      // The common control equipment is charged once for any installed pump quantity.
+      function itemTotal(item) {
+        if (!item.checked || item.qty === 0) return 0;
+        return item.qty * item.price + (item.sharedCost || 0);
+      }
+
       // Cost table for the selected items and optional contingency.
       function renderCostTable() {
         const tbody = el("costTableBody");
         tbody.innerHTML = "";
         COST_ITEMS.forEach((item, idx) => {
-          const rowTotal = item.checked ? item.qty * item.price : 0;
+          const priceBasis = item.sharedCost
+            ? `<bdi>${fmtNum(item.price)}</bdi> للمضخة<span class="cost-shared-price">+ <bdi>${fmtNum(item.sharedCost)}</bdi> للوحة والكابلات وملحقاتهما مرة واحدة</span>`
+            : `<bdi>${fmtNum(item.price)}</bdi>`;
           const tr = document.createElement("tr");
           tr.innerHTML = `
             <td style="text-align:center;">
@@ -3921,10 +3939,10 @@ function createStationPresentation(parameters){
             <td style="font-weight:600;line-height:1.5;">${item.name}</td>
             <td style="text-align:center;font-weight:700;">${item.unit}</td>
             <td style="text-align:center;">
-              <input type="number" min="0" step="1" data-qty="${item.id}" value="${item.qty}" class="cost-qty qty-inp" />
+              <input type="number" min="0" step="1" data-qty="${item.id}" ${item.maxQty ? `max="${item.maxQty}"` : ""} aria-label="كمية البند ${idx + 1}" value="${item.qty}" class="cost-qty qty-inp" />
             </td>
-            <td style="text-align:center;font-weight:700;" dir="ltr">${fmtNum(item.price)}</td>
-            <td style="text-align:center;font-weight:800;color:${item.checked ? "var(--qu-navy)" : "#94a3b8"};" dir="ltr">${fmtNum(rowTotal)}</td>
+            <td style="text-align:center;font-weight:700;" dir="rtl">${priceBasis}</td>
+            <td style="text-align:center;font-weight:800;color:${item.checked ? "var(--qu-navy)" : "#94a3b8"};" dir="ltr">${fmtNum(itemTotal(item))}</td>
           `;
           tbody.appendChild(tr);
         });
@@ -3938,16 +3956,19 @@ function createStationPresentation(parameters){
         tbody.querySelectorAll(".cost-qty").forEach((inp) => {
           inp.addEventListener("input", () => {
             const it = COST_ITEMS.find((x) => x.id === inp.dataset.qty);
-            if (it) it.qty = Math.max(0, Number(inp.value) || 0);
+            if (!it) return;
+            const requested = Math.max(0, Number(inp.value) || 0);
+            it.qty = it.maxQty ? Math.min(it.maxQty, Math.floor(requested)) : requested;
+            if (it.maxQty && inp.value !== "" && Number(inp.value) !== it.qty) inp.value = String(it.qty);
+            inp.closest("tr").lastElementChild.textContent = fmtNum(itemTotal(it));
             updateCostTotals();
-            inp.closest("tr").lastElementChild.textContent = fmtNum(it.checked ? it.qty * it.price : 0);
           });
         });
         updateCostTotals();
       }
 
       function updateCostTotals() {
-        const sub = COST_ITEMS.reduce((acc, it) => acc + (it.checked ? it.qty * it.price : 0), 0);
+        const sub = COST_ITEMS.reduce((acc, it) => acc + itemTotal(it), 0);
         const cont = el("chkContingency").checked ? sub * COST_CONTINGENCY_RATE : 0;
         const vat = (sub + cont) * 0.15;
         const grand = sub + cont + vat;
