@@ -632,9 +632,75 @@
 @media print {.main-grid.review-grid{display:block}.review-grid .specs-card{break-inside:avoid}.review-grid .log-card{margin-top:1rem}}
 
 
+
+    /* Opening screen shown on the first visit in the current tab. */
+    #openingSplash {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 20000;
+      place-items: center;
+      padding: 2rem;
+      background: #fff;
+      color: var(--qu-navy-dark);
+      opacity: 1;
+      transition: opacity 250ms ease;
+    }
+    html.station-opening #openingSplash { display: grid; }
+    html.station-opening, html.station-opening body { overflow: hidden; }
+    html.station-opening:not(.station-opening-fade) body > :not(#openingSplash) {
+      visibility: hidden;
+    }
+    html.station-opening-fade #openingSplash { opacity: 0; }
+    #openingSplash .opening-content {
+      width: min(100%, 42rem);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: clamp(1.6rem, 4vh, 2.8rem);
+    }
+    #openingSplash img {
+      display: block;
+      width: min(280px, 70vw);
+      height: auto;
+      object-fit: contain;
+    }
+    #openingSplash img:not([src]) { visibility: hidden; }
+    #openingSplash h2 {
+      margin: 0;
+      max-width: 100%;
+      font-size: clamp(1.25rem, 3.1vw, 2rem);
+      font-weight: 750;
+      line-height: 1.65;
+      text-wrap: balance;
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #openingSplash { transition: none; }
+    }
+    @media print {
+      #openingSplash { display: none !important; }
+      html.station-opening body > :not(#openingSplash) { visibility: visible !important; }
+    }
 </style>
+  <script>
+    (function () {
+      try {
+        if (sessionStorage.getItem('qassim-lift-station-opening') === 'seen') return;
+        sessionStorage.setItem('qassim-lift-station-opening', 'seen');
+      } catch (_) {}
+      document.documentElement.classList.add('station-opening');
+    })();
+  </script>
 </head>
 <body>
+  <section id="openingSplash" aria-label="شاشة بداية العرض">
+    <div class="opening-content">
+      <img id="openingUniversityLogo" alt="جامعة القصيم" width="360" height="120" />
+      <h2>محاكي التشغيل الآلي لمحطة رفع الصرف الصحي وخزانات التجميع (GLS)</h2>
+    </div>
+  </section>
+
 
   <!-- Floating Hover Tooltip for P&ID Components -->
   <div id="hoverTooltip" class="hover-tooltip" role="tooltip">
@@ -676,6 +742,22 @@
       </div>
     </div>
   </header>
+  <script>
+    (function () {
+      const root = document.documentElement;
+      if (!root.classList.contains('station-opening')) return;
+      const universityLogo = document.querySelector('.top-header .logo-box img');
+      if (universityLogo) {
+        document.getElementById('openingUniversityLogo').src = universityLogo.src;
+      }
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        window.setTimeout(() => root.classList.add('station-opening-fade'), 2750);
+      }
+      window.setTimeout(() => {
+        root.classList.remove('station-opening', 'station-opening-fade');
+      }, 3000);
+    })();
+  </script>
 
   <main class="main-wrap">
     <!-- ==================== 8 KPI CARDS ==================== -->
@@ -1103,20 +1185,19 @@
 <path id="pidDistLowerDash" d="M 352 261 V 280" fill="none" stroke="#E0F2FE" stroke-width="1.55" stroke-linejoin="round" opacity="0"/>
       <circle cx="352" cy="261" r="3.5" fill="#196785"/>
     </g>
-              <path d="M 352 238 L 310 238 L 310 78 L 268 78 L 268 108" fill="none" stroke="#CBD5E1" stroke-width="6.5" stroke-linejoin="round"/>
-              <path id="tk1InFlow" d="M 352 238 L 310 238 L 310 78 L 268 78 L 268 108" fill="none" stroke="#0284C7" stroke-width="4.8" stroke-linejoin="round" opacity="0"/>
-              <path id="tk1InDash" d="M 352 238 L 310 238 L 310 78 L 268 78 L 268 108" fill="none" stroke="#E0F2FE" stroke-width="1.8" stroke-linejoin="round" opacity="0"/>
+              <path d="M 352 280 H 298 V 78 H 268 V 108" fill="none" stroke="#CBD5E1" stroke-width="6.5" stroke-linejoin="round"/>
+              <path id="tk1InFlow" d="M 352 280 H 298 V 78 H 268 V 108" fill="none" stroke="#0284C7" stroke-width="4.8" stroke-linejoin="round" opacity="0"/>
+              <path id="tk1InDash" d="M 352 280 H 298 V 78 H 268 V 108" fill="none" stroke="#E0F2FE" stroke-width="1.8" stroke-linejoin="round" opacity="0"/>
 
-              <path d="M 298 84 C 289 84 289 72 298 72" fill="none" stroke="#fff" stroke-width="10"/>
-<path d="M 352 280 H 298 V 84 C 289 84 289 72 298 72 V 54 H 106 V 108" fill="none" stroke="#CBD5E1" stroke-width="6.5" stroke-linejoin="round"/>
-              <path id="tk2InFlow" d="M 352 280 H 298 V 84 C 289 84 289 72 298 72 V 54 H 106 V 108" fill="none" stroke="#0284C7" stroke-width="4.8" stroke-linejoin="round" opacity="0"/>
-              <path id="tk2InDash" d="M 352 280 H 298 V 84 C 289 84 289 72 298 72 V 54 H 106 V 108" fill="none" stroke="#E0F2FE" stroke-width="1.8" stroke-linejoin="round" opacity="0"/>
+<path d="M 352 238 H 310 V 54 H 106 V 108" fill="none" stroke="#CBD5E1" stroke-width="6.5" stroke-linejoin="round"/>
+              <path id="tk2InFlow" d="M 352 238 H 310 V 54 H 106 V 108" fill="none" stroke="#0284C7" stroke-width="4.8" stroke-linejoin="round" opacity="0"/>
+              <path id="tk2InDash" d="M 352 238 H 310 V 54 H 106 V 108" fill="none" stroke="#E0F2FE" stroke-width="1.8" stroke-linejoin="round" opacity="0"/>
 
               <g class="comp-clickable" data-comp="glsvalves">
-                <polygon id="gvTk1L" points="320,232 329,238 320,244" fill="#FFFFFF" stroke="#18734B" stroke-width="1.4"/>
-                <polygon id="gvTk1R" points="338,232 329,238 338,244" fill="#FFFFFF" stroke="#18734B" stroke-width="1.4"/>
-                <polygon id="gvTk2L" points="320,274 329,280 320,286" fill="#FFFFFF" stroke="#18734B" stroke-width="1.4"/>
-                <polygon id="gvTk2R" points="338,274 329,280 338,286" fill="#FFFFFF" stroke="#18734B" stroke-width="1.4"/>
+                <polygon id="gvTk1L" points="320,274 329,280 320,286" fill="#FFFFFF" stroke="#18734B" stroke-width="1.4"/>
+                <polygon id="gvTk1R" points="338,274 329,280 338,286" fill="#FFFFFF" stroke="#18734B" stroke-width="1.4"/>
+                <polygon id="gvTk2L" points="320,232 329,238 320,244" fill="#FFFFFF" stroke="#18734B" stroke-width="1.4"/>
+                <polygon id="gvTk2R" points="338,232 329,238 338,244" fill="#FFFFFF" stroke="#18734B" stroke-width="1.4"/>
               </g>
 
               <text x="205" y="38" text-anchor="middle" font-size="10.5" font-weight="700" fill="#075579">تغذية علوية لخزانات GLS (DN100 — +5.00 م)</text>
@@ -4178,8 +4259,8 @@ function createStationPresentation(parameters){
 
         const feed1 = pumping && (state.tankMode === "both" || state.tankMode === "tk1");
         const feed2 = pumping && (state.tankMode === "both" || state.tankMode === "tk2");
-        setPipeLeg("distHeaderFlow","distHeaderDash",feed1);
-        setPipeLeg("pidDistLowerFlow","pidDistLowerDash",feed2);
+        setPipeLeg("distHeaderFlow","distHeaderDash",feed2);
+        setPipeLeg("pidDistLowerFlow","pidDistLowerDash",feed1);
         el("tk1InFlow").setAttribute("opacity", feed1 ? "1" : "0");
         el("tk1InDash").setAttribute("opacity", feed1 ? "1" : "0");
         el("tk1InDash").setAttribute("class", feed1 ? "flow-active" : "");
