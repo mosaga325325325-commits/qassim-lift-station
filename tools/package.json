@@ -1,0 +1,10 @@
+{
+  "name": "qassim-station-graphics",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "esbuild station-webgl.mjs --bundle --minify --format=iife --target=es2020 --outfile=../3d/assets/station-webgl.js"
+  },
+  "dependencies": {"three": "0.186.1"},
+  "devDependencies": {"esbuild": "0.25.12"}
+}

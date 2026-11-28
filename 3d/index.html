@@ -891,6 +891,14 @@
       document.documentElement.classList.add('station-opening');
     })();
   </script>
+  <script src="assets/station-webgl.js"></script>
+  <style>
+    #stationStudio .station-webgl-surface{display:block;position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+    #stationStudio .station-webgl-surface[hidden]{display:none;}
+    #stationStudio #stationViewCanvas{z-index:0;}
+    #stationStudio .studio-export a{color:#176b68;font-size:.78rem;font-weight:700;text-decoration:underline;text-underline-offset:3px;}
+    @media(max-width:540px){#stationStudio .stage-note{display:none;}}
+  </style>
 </head>
 <body>
   <section id="openingSplash" aria-label="شاشة بداية العرض">
@@ -1521,7 +1529,7 @@
               <button type="button" data-speed="60" class="speed-btn active">60x</button>
               <button type="button" data-speed="240" class="speed-btn">240x</button>
             </div><button type="button" id="stationScenarioJump" class="studio-scenarios">سيناريوهات التشغيل</button></div>
-    <div class="studio-export"><small>المسافات الأفقية مختصرة. طبقات التربة والمظلة وذراع الرفع والدرابزين تفاصيل توضيحية.</small><button type="button" id="stationSnapshot" title="تحميل صورة PNG للمشهد الحالي">حفظ لقطة</button></div>
+    <div class="studio-export"><a href="../3d-classic/" target="_blank" rel="noopener">النسخة السابقة</a><small>المسافات الأفقية مختصرة. طبقات التربة والمظلة وذراع الرفع والدرابزين تفاصيل توضيحية.</small><button type="button" id="stationSnapshot" title="تحميل صورة PNG للمشهد الحالي">حفظ لقطة</button></div>
   </footer>
 </section>
 
@@ -2849,10 +2857,13 @@ function drawWet(g, s) {
       g.pipe([[x+.02,-7.21,z+.06],[x+.21,-7.18,z+.04],[x+.31,-7.14,z]],.115,color,9);
       g.pipe([[x+.19,-7.17,z+.04],[x+.23,-7.16,z+.035]],.144,steel,9);
       g.cyl(x-.033,-7.13,z+.015,.255,.039,trim,14);
-      g.cyl(x,-7.091,z,.204,.345,color,14);
-      g.cyl(x,-6.746,z,.216,.054,steel,14);
-      g.cyl(x,-6.692,z,.185,.078,color,12);
-      g.cyl(x,-6.615,z,.150,.079,color,10);
+      if(g.pumpMotor) g.pumpMotor(x,-7.091,z,color,trim);
+      else {
+        g.cyl(x,-7.091,z,.204,.345,color,14);
+        g.cyl(x,-6.746,z,.216,.054,steel,14);
+        g.cyl(x,-6.692,z,.185,.078,color,12);
+        g.cyl(x,-6.615,z,.150,.079,color,10);
+      }
       g.line([[x-.096,-6.53,z],[x-.096,-6.44,z],[x-.067,-6.405,z],[x+.067,-6.405,z],[x+.096,-6.44,z],[x+.096,-6.53,z]],trim,1.7);
       for(const a of [.18,.93,1.65,2.4]) {
         const px=x+.208*Math.cos(a), pz=z+.208*Math.sin(a);
@@ -2914,6 +2925,7 @@ function drawTanks(g, s) {
   const withdraw = '#b8884a';
   const future = '#77788b';
   const ringPoint = (cx, y, cz, r, a) => [cx + r * Math.sin(a), y, cz + r * Math.cos(a)];
+  const curved=(points,color,axis,center)=>g.radialFace?g.radialFace(points,color,axis,center):g.face(points,color);
   const cZ = -2.6;
   const radius = 2.675;
   const deck = 0.13;
@@ -2945,11 +2957,11 @@ function drawTanks(g, s) {
         const y0=courses[j], y1=courses[j+1], mid=(a+b)/2;
         const phase=(i+Math.floor(j/2)+tankIndex)%enamel.length;
         if(j===1) {
-          g.face([p(radius,y0,a),p(radius,y0,mid),p(radius,y1,mid),p(radius,y1,a)],enamel[phase]);
-          g.face([p(radius,y0,mid),p(radius,y0,b),p(radius,y1,b),p(radius,y1,mid)],enamel[(phase+1)%4]);
+          curved([p(radius,y0,a),p(radius,y0,mid),p(radius,y1,mid),p(radius,y1,a)],enamel[phase],'y',[cx,cZ]);
+          curved([p(radius,y0,mid),p(radius,y0,b),p(radius,y1,b),p(radius,y1,mid)],enamel[(phase+1)%4],'y',[cx,cZ]);
           if(i%2===0)g.line([p(radius+.018,y0,mid),p(radius+.018,y1,mid)],'#83aaa1',.75);
         } else {
-          g.face([p(radius,y0,a),p(radius,y0,b),p(radius,y1,b),p(radius,y1,a)],enamel[phase]);
+          curved([p(radius,y0,a),p(radius,y0,b),p(radius,y1,b),p(radius,y1,a)],enamel[phase],'y',[cx,cZ]);
         }
       }
       g.face([p(radius + 0.055, shoulder, a), p(radius + 0.055, shoulder, b), p(0.68, 4.97, b), p(0.68, 4.97, a)], i % 3 === 0 ? '#91a9a2' : '#a4b7af');
@@ -3140,7 +3152,8 @@ function drawTanks(g, s) {
     const [xa,ra] = profiles[k-1], [xb,rb] = profiles[k];
     for (let j = 0; j < count; j++) {
       const a = tau*j/count, b = tau*(j+1)/count;
-      g.face([bp(xa,ra,a),bp(xb,rb,a),bp(xb,rb,b),bp(xa,ra,b)],k === 1 || k === 7 ? '#93a49e' : '#b2c2b6');
+      const panel=[bp(xa,ra,a),bp(xb,rb,a),bp(xb,rb,b),bp(xa,ra,b)], panelColor=k === 1 || k === 7 ? '#93a49e' : '#b2c2b6';
+      if(Math.abs(ra-rb)<.045)curved(panel,panelColor,'x',[barrelY,zc]);else g.face(panel,panelColor);
     }
   }
   for (const x of [6.82,8.34,10.54]) {
@@ -3280,7 +3293,7 @@ async function saveStationSnapshot(viewport, model, info) {
   document.body.appendChild(virtual);
   let clone;
   try {
-    clone = new StationViewport(virtual, viewport.drawScene);
+    clone = viewport.outputCanvas && virtual.getContext('2d') && window.createStationWebGLViewport ? window.createStationWebGLViewport(StationViewport,virtual,viewport.drawScene,{export:true}) : new StationViewport(virtual,viewport.drawScene);
     clone.target = viewport.target.slice();
     for (const key of ['viewName','yaw','pitch','spanX','spanY','zoom']) clone[key] = viewport[key];
     const setup = clone.setupCamera.bind(clone);
@@ -3291,6 +3304,7 @@ async function saveStationSnapshot(viewport, model, info) {
       return true;
     };
     clone.draw(model);
+    if(clone.outputCanvas&&!clone.contextLost&&!clone.failed)ctx.drawImage(clone.outputCanvas, box.x, box.y, box.w, box.h);
     ctx.drawImage(virtual, box.x, box.y, box.w, box.h);
   } finally {
     clone?.destroy(); virtual.remove(); ctx.restore();
@@ -3525,7 +3539,7 @@ function createStationPresentation(parameters){
         g.label(4.30,.93,3.43,'وصلة تحميل الوايت','outlet');break;
     }
   }
-  const viewport=canvas.getContext('2d')?new StationViewport(canvas,drawScene):null;
+  const viewport=canvas.getContext('2d')?(window.createStationWebGLViewport?window.createStationWebGLViewport(StationViewport,canvas,drawScene):new StationViewport(canvas,drawScene)):null;
   const activeDraw=s=>s.outMode==='tanker'&&s.tankerRemainingM3>.05&&latestAvailability>.05;
   const tankName={tk1:'الخزان الأول',tk2:'الخزان الثاني',both:'الخزانان'};
   function readings(s,tankerActive){
